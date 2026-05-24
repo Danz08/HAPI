@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "npm run build:client && concurrently \"nodemon --ignore client/ --ignore public/dist/ server.js\" \"npx vite build --watch\"",
-    "build:client": "npx vite build",
-    "build:css": "npx tailwindcss -i ./public/css/input.css -o ./public/css/output.css --minify"
+    "build:client": "npx vite build"
   },
   "keywords": [
     "fatigue",

@@ -12,4 +12,18 @@ router.get('/', (req, res) => {
   });
 });
 
+// Onboarding page
+router.get('/onboarding', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/auth/login');
+  }
+  if (req.session.user.is_onboarded === 1) {
+    return res.redirect('/dashboard');
+  }
+  res.render('pages/onboarding', {
+    title: 'Welcome to HAPI - Onboarding',
+    layout: 'layouts/main',
+  });
+});
+
 module.exports = router;

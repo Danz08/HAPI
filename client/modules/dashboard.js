@@ -1,7 +1,3 @@
-/**
- * Dashboard Module
- * Chart initialization, activity form, and mood modal handlers
- */
 
 import { showToast } from './toast.js';
 import { logActivity, logMood } from './api.js';
@@ -10,10 +6,87 @@ export function initCharts() {
   const activityEl = document.getElementById('activityChart');
   if (!activityEl || typeof Chart === 'undefined') return;
 
-  Chart.defaults.color = '#94a3b8';
-  Chart.defaults.font.family = 'Inter';
-  Chart.defaults.plugins.legend.labels.usePointStyle = true;
-  Chart.defaults.plugins.legend.labels.pointStyle = 'circle';
+  const data = window.__chartData;
+  if (!data) return;
+
+  Chart.defaults.color = '#B8A89E';
+  Chart.defaults.font.family = 'Manrope';
+
+  // Build labels based on selected days
+  const days = data.selectedDays || 7;
+  const labels = [];
+  const workData = [];
+  const moodData = [];
+  const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    labels.push(days <= 7 ? dayNames[d.getDay()] : `${d.getDate()}/${d.getMonth()+1}`);
+
+    const activity = data.recentActivities.find(a => a.date === dateStr);
+    workData.push(activity ? Math.round(activity.total_work / 60 * 10) / 10 : 0);
+
+    const mood = data.moodTrend.find(m => m.log_date === dateStr);
+    moodData.push(mood ? mood.mood_score : null);
+  }
+
+  new Chart(activityEl, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Jam Kerja',
+          data: workData,
+          borderColor: '#C47B5A',
+          backgroundColor: 'rgba(196,123,90,0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#C47B5A',
+        },
+        {
+          label: 'Mood',
+          data: moodData,
+          borderColor: '#489A98',
+          backgroundColor: 'rgba(72,154,152,0.1)',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#489A98',
+          yAxisID: 'y1',
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          labels: { usePointStyle: true, pointStyle: 'circle', padding: 16 }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: 'Jam', color: '#8a7168' },
+          grid: { color: 'rgba(62,45,34,0.1)' },
+        },
+        y1: {
+          position: 'right',
+          min: 0, max: 5,
+          title: { display: true, text: 'Mood', color: '#8a7168' },
+          grid: { drawOnChartArea: false },
+        },
+        x: {
+          grid: { color: 'rgba(62,45,34,0.08)' },
+        }
+      }
+    }
+  });
 }
 
 export function initActivityForm() {
@@ -33,7 +106,7 @@ export function initActivityForm() {
       const res = await logActivity(data);
       if (res.data.success) {
         form.reset();
-        showToast('Aktivitas berhasil disimpan! ✅', 'success');
+        showToast('Aktivitas berhasil disimpan! âœ…', 'success');
         setTimeout(() => location.reload(), 1200);
       }
     } catch (err) {
@@ -45,7 +118,7 @@ export function initActivityForm() {
 let selectedMood = null;
 
 export function openMoodModal() {
-  const modal = document.getElementById('mood-modal');
+  const modal = document.getElementById('global-mood-overlay') || document.getElementById('mood-modal');
   if (modal) {
     modal.classList.remove('hidden');
     modal.classList.add('flex');
@@ -53,7 +126,7 @@ export function openMoodModal() {
 }
 
 export function closeMoodModal() {
-  const modal = document.getElementById('mood-modal');
+  const modal = document.getElementById('global-mood-overlay') || document.getElementById('mood-modal');
   if (modal) {
     modal.classList.add('hidden');
     modal.classList.remove('flex');
@@ -96,11 +169,20 @@ export function initMoodModal() {
       const res = await logMood(data);
       if (res.data.success) {
         closeMoodModal();
-        showToast('Mood berhasil disimpan! 😊', 'success');
+        showToast('Mood berhasil disimpan! ðŸ˜Š', 'success');
         setTimeout(() => location.reload(), 1200);
       }
     } catch (err) {
       showToast('Gagal menyimpan mood.', 'error');
     }
   });
+}
+
+export function initDashboardEvents() {
+  const rangeSelect = document.getElementById('dashboard-range');
+  if (rangeSelect) {
+    rangeSelect.addEventListener('change', (e) => {
+      window.location.href = `/dashboard?days=${e.target.value}`;
+    });
+  }
 }

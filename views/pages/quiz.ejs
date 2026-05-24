@@ -41,22 +41,34 @@
 const questions = <%- JSON.stringify(questions) %>;
 let currentQ = 0;
 let answers = [];
-const dimLabels = { emotional_exhaustion:'Kelelahan Emosional', depersonalization:'Depersonalisasi', personal_accomplishment:'Pencapaian Personal', work_pattern:'Pola Kerja' };
+
+function getDimLabel(dim) {
+  const t = window.t || (k => k);
+  const keys = {
+    emotional_exhaustion: 'quiz.dimEmotional',
+    depersonalization: 'quiz.dimDepersonalization',
+    personal_accomplishment: 'quiz.dimAccomplishment',
+    work_pattern: 'quiz.dimWorkPattern'
+  };
+  return t(keys[dim]) || dim;
+}
 
 function showQuestion(idx) {
   if (idx >= questions.length) { submitQuiz(); return; }
   const q = questions[idx];
+  const lang = window.getLang ? window.getLang() : 'id';
   document.getElementById('q-current').textContent = idx + 1;
   document.getElementById('q-progress').style.width = ((idx + 1) / questions.length * 100) + '%';
-  document.getElementById('q-dimension').textContent = dimLabels[q.dimension] || '';
-  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-dimension').textContent = getDimLabel(q.dimension);
+  document.getElementById('q-text').textContent = lang === 'en' && q.text_en ? q.text_en : q.text;
 
   const optContainer = document.getElementById('q-options');
   optContainer.innerHTML = '';
   q.options.forEach(opt => {
+    const optLabel = lang === 'en' && opt.label_en ? opt.label_en : opt.label;
     const btn = document.createElement('button');
     btn.className = 'quiz-option w-full text-left px-5 py-4 flex items-center gap-4';
-    btn.innerHTML = `<span class="w-8 h-8 rounded-lg bg-surface-700 flex items-center justify-center text-sm font-bold text-surface-300">${opt.value}</span><span class="text-surface-200 font-medium">${opt.label}</span>`;
+    btn.innerHTML = `<span class="w-8 h-8 rounded-lg bg-surface-700 flex items-center justify-center text-sm font-bold text-surface-300">${opt.value}</span><span class="text-surface-200 font-medium">${optLabel}</span>`;
     btn.onclick = () => selectAnswer(opt.value);
     optContainer.appendChild(btn);
   });
@@ -80,11 +92,12 @@ async function submitQuiz() {
     const res = await axios.post('/api/quiz', { answers });
     const data = res.data;
 
+    const t = window.t || (k => k);
     const icons = { Low:'🟢', Medium:'⚠️', High:'🔴' };
-    const titles = { Low:'Risiko Rendah', Medium:'Risiko Sedang', High:'Risiko Tinggi' };
+    const titleKeys = { Low:'quiz.lowRisk', Medium:'quiz.medRisk', High:'quiz.highRisk' };
 
     document.getElementById('result-icon').textContent = icons[data.riskLevel] || '❓';
-    document.getElementById('result-title').textContent = titles[data.riskLevel];
+    document.getElementById('result-title').textContent = t(titleKeys[data.riskLevel]);
     document.getElementById('result-score').textContent = data.score;
     document.getElementById('result-score').style.color = data.riskColor.text;
 
@@ -98,7 +111,7 @@ async function submitQuiz() {
       recContainer.innerHTML += `<div class="p-3 rounded-xl bg-surface-800/50 text-sm text-surface-300 flex gap-2"><span>•</span><span>${a}</span></div>`;
     });
   } catch(e) {
-    document.getElementById('result-title').textContent = 'Terjadi Kesalahan';
+    document.getElementById('result-title').textContent = window.t ? window.t('quiz.error') : 'Error';
   }
 }
 
@@ -110,4 +123,11 @@ function restartQuiz() {
 }
 
 showQuestion(0);
+
+window.addEventListener('langChanged', () => {
+  if (document.getElementById('quiz-question').classList.contains('hidden')) return;
+  const oldWidth = document.getElementById('q-progress').style.width;
+  showQuestion(currentQ);
+  document.getElementById('q-progress').style.width = oldWidth;
+});
 </script>

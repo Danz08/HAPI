@@ -1,5 +1,8 @@
 node_modules/
 .env
 *.db
+*.db-shm
+*.db-wal
 public/css/output.css
+public/dist/
 .DS_Store

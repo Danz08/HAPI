@@ -1,115 +1,115 @@
 <!-- Landing Page -->
 <div class="min-h-screen flex flex-col">
 
-  <!-- Navigation -->
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-surface-950/80 backdrop-blur-xl border-b border-surface-700/30">
+  <!-- Navigation â€” theme-aware -->
+  <nav class="fixed top-0 left-0 right-0 z-50 landing-nav backdrop-blur-xl border-b border-surface-700/30">
     <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center shadow-lg shadow-brand-600/25">
           <i data-lucide="brain" class="w-5 h-5 text-white"></i>
         </div>
-        <span class="text-xl font-bold font-display text-surface-50">HAPI</span>
+        <span class="text-xl font-bold font-display landing-text-primary">HAPI</span>
       </div>
-      <div class="flex items-center gap-3">
-        <a href="/auth/login" class="btn-ghost btn-sm" id="landing-login">Login</a>
-        <a href="/auth/register" class="btn-primary btn-sm" id="landing-register">Mulai Gratis</a>
+      <div class="flex items-center gap-2">
+        <!-- Theme Toggle -->
+        <button onclick="toggleTheme()" class="landing-nav-btn p-2 rounded-lg transition-colors" id="landing-theme-btn" title="Ganti Tema">
+          <i data-lucide="sun" class="w-4 h-4" id="landing-theme-icon"></i>
+        </button>
+        <!-- Language Toggle -->
+        <button onclick="toggleLang()" class="landing-nav-btn p-2 rounded-lg transition-colors" id="landing-lang-btn" title="Ganti Bahasa">
+          <span class="text-xs font-bold" id="lang-label">ID</span>
+        </button>
+        <a href="/auth/login" class="landing-nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors" id="landing-login" data-i18n="landing.nav.login">Masuk</a>
+        <a href="/auth/register" class="btn-primary btn-sm" id="landing-register" data-i18n="landing.nav.register">Mulai Sekarang</a>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section — Centered, calm aesthetic -->
+  <!-- Hero Section â€” Centered, calm aesthetic -->
   <section class="flex-1 flex items-center justify-center px-6 pt-28 pb-20">
     <div class="max-w-3xl mx-auto text-center animate-slide-up">
       <!-- Small pill badge -->
       <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-600/10 border border-brand-500/20 text-brand-400 text-xs font-semibold mb-8">
         <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-        AI-Powered Fatigue Monitoring
+        <span data-i18n="landing.hero.badge">AI-Powered Fatigue Monitoring</span>
       </div>
 
       <!-- Main heading -->
       <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight mb-6">
-        <span class="text-surface-50">Cara yang lebih tenang</span><br>
-        <span class="text-surface-50">untuk </span>
-        <span class="text-gradient-brand">bekerja</span>
-        <span class="text-surface-50"> dan </span>
-        <span class="text-gradient-accent">beristirahat.</span>
+        <span class="landing-text-primary" data-i18n="landing.hero.title1">Cara yang lebih tenang</span><br>
+        <span class="landing-text-primary" data-i18n="landing.hero.title2">untuk </span>
+        <span class="text-gradient-brand" data-i18n="landing.hero.title3">bekerja</span>
+        <span class="landing-text-primary" data-i18n="landing.hero.title4"> dan </span>
+        <span class="text-gradient-accent" data-i18n="landing.hero.title5">beristirahat.</span>
       </h1>
 
       <!-- Subtitle -->
-      <p class="text-lg text-surface-300 leading-relaxed max-w-2xl mx-auto mb-10">
+      <p class="text-lg landing-text-secondary leading-relaxed max-w-2xl mx-auto mb-10" data-i18n="landing.hero.subtitle">
         HAPI adalah teman pintar yang memantau kelelahanmu, mengelola mood, 
-        dan menjaga produktivitasmu tetap seimbang — semua didukung oleh kecerdasan buatan.
+        dan menjaga produktivitasmu tetap seimbang â€” semua didukung oleh kecerdasan buatan.
       </p>
 
       <!-- CTA Buttons -->
       <div class="flex flex-wrap gap-4 justify-center mb-8">
-        <a href="/auth/register" class="btn-primary btn-lg group" id="hero-cta">
-          <i data-lucide="rocket" class="w-5 h-5 group-hover:animate-bounce"></i>
-          Mulai Sekarang — Gratis
+        <a href="/auth/register" class="btn-primary btn-lg" id="hero-cta">
+          <i data-lucide="rocket" class="w-5 h-5 "></i>
+          <span data-i18n="landing.hero.cta">Mulai Sekarang</span>
         </a>
         <a href="#features" class="btn-secondary btn-lg" id="hero-learn-more">
           <i data-lucide="arrow-down" class="w-5 h-5"></i>
-          Pelajari Lebih Lanjut
+          <span data-i18n="landing.hero.learnMore">Pelajari Lebih Lanjut</span>
         </a>
       </div>
 
       <!-- Trust badges -->
-      <div class="flex flex-wrap items-center justify-center gap-6 text-sm text-surface-400">
+      <div class="flex flex-wrap items-center justify-center gap-6 text-sm landing-text-muted">
         <div class="flex items-center gap-2">
           <i data-lucide="shield-check" class="w-4 h-4 text-success-400"></i>
-          <span>Bukan Diagnosis Medis</span>
+          <span data-i18n="landing.hero.trust1">Bukan Diagnosis Medis</span>
         </div>
         <div class="flex items-center gap-2">
           <i data-lucide="lock" class="w-4 h-4 text-brand-400"></i>
-          <span>Data Aman & Privat</span>
+          <span data-i18n="landing.hero.trust2">Data Aman & Privat</span>
         </div>
         <div class="flex items-center gap-2">
-          <i data-lucide="zap" class="w-4 h-4 text-warning-400"></i>
-          <span>Gratis Selamanya</span>
+          <i data-lucide="globe" class="w-4 h-4 text-accent-teal"></i>
+          <span data-i18n="landing.hero.trust3">Open Source</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Features Section — "Intelligence for your daily rhythm" -->
-  <section id="features" class="py-20 px-6 border-t border-surface-800/50">
+  <!-- Features Section â€” "Intelligence for your daily rhythm" -->
+  <section id="features" class="py-20 px-6 landing-section-border">
     <div class="max-w-6xl mx-auto">
       <!-- Section Header -->
       <div class="text-center mb-6">
-        <h2 class="text-3xl md:text-4xl font-bold font-display text-surface-50 mb-4">
-          Kecerdasan untuk <span class="text-gradient-brand">ritme harianmu</span>
+        <h2 class="text-3xl md:text-4xl font-bold font-display landing-text-primary mb-4">
+          <span data-i18n="landing.feat.title1">Kecerdasan untuk </span><span class="text-gradient-brand" data-i18n="landing.feat.title2">ritme harianmu</span>
         </h2>
-        <p class="text-surface-400 max-w-2xl mx-auto">
-          Lebih dari sekadar manajemen waktu — HAPI memahami kondisimu secara menyeluruh dengan fitur-fitur cerdas.
+        <p class="landing-text-muted max-w-2xl mx-auto" data-i18n="landing.feat.subtitle">
+          Lebih dari sekadar manajemen waktu â€” HAPI memahami kondisimu secara menyeluruh dengan fitur-fitur cerdas.
         </p>
       </div>
 
-      <!-- Feature dots indicator -->
-      <div class="flex justify-center gap-2 mb-12">
-        <div class="w-2 h-2 rounded-full bg-brand-400"></div>
-        <div class="w-2 h-2 rounded-full bg-surface-600"></div>
-        <div class="w-2 h-2 rounded-full bg-surface-600"></div>
-      </div>
-
-      <!-- Feature Cards with Visual Previews — 2-column layout -->
       <div class="grid lg:grid-cols-2 gap-8 mb-12">
 
         <!-- Feature 1: Smart Pomodoro Timer -->
-        <div class="glass-card-hover p-8 group">
+        <div class="glass-card landing-card-pomodoro p-8">
           <div class="flex items-center gap-3 mb-5">
-            <div class="w-10 h-10 rounded-xl bg-success-500/15 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div class="w-10 h-10 rounded-xl bg-success-500/15 flex items-center justify-center ">
               <i data-lucide="timer" class="w-5 h-5 text-success-400"></i>
             </div>
-            <h3 class="text-lg font-bold text-surface-50">Smart Pomodoro Timer</h3>
+            <h3 class="text-lg font-bold landing-text-primary" data-i18n="landing.feat1.title">Smart Pomodoro Timer</h3>
           </div>
-          <p class="text-sm text-surface-400 leading-relaxed mb-6">
+          <p class="text-sm landing-text-muted leading-relaxed mb-6" data-i18n="landing.feat1.desc">
             Timer Pomodoro cerdas yang terintegrasi dengan Google Calendar. Durasi fokus dan istirahat 
             tercatat otomatis, dan bisa disesuaikan berdasarkan jadwal meetingmu.
           </p>
           <!-- Visual Preview: Mini bar chart -->
           <div class="glass-card p-4 space-y-2">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs text-surface-400 font-semibold">Produktivitas Minggu Ini</span>
+              <span class="text-xs landing-text-muted font-semibold">Produktivitas Minggu Ini</span>
               <span class="text-xs text-success-400 font-semibold">+12%</span>
             </div>
             <div class="flex items-end gap-1.5 h-24">
@@ -121,21 +121,21 @@
               <div class="flex-1 rounded-t-md bg-surface-600" style="height:30%"></div>
               <div class="flex-1 rounded-t-md bg-surface-600" style="height:20%"></div>
             </div>
-            <div class="flex justify-between text-[9px] text-surface-500">
+            <div class="flex justify-between text-[9px] landing-text-muted">
               <span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span><span>Min</span>
             </div>
           </div>
         </div>
 
-        <!-- Feature 2: Journaling / Curhat -->
-        <div class="glass-card-hover p-8 group">
+        <!-- Feature 2: AI Chatbot -->
+        <div class="glass-card landing-card-chatbot p-8">
           <div class="flex items-center gap-3 mb-5">
-            <div class="w-10 h-10 rounded-xl bg-accent-pink/15 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div class="w-10 h-10 rounded-xl bg-accent-pink/15 flex items-center justify-center ">
               <i data-lucide="message-circle-heart" class="w-5 h-5 text-accent-pink"></i>
             </div>
-            <h3 class="text-lg font-bold text-surface-50">AI Journaling (Curhat)</h3>
+            <h3 class="text-lg font-bold landing-text-primary" data-i18n="landing.feat2.title">AI Chatbot Asisten</h3>
           </div>
-          <p class="text-sm text-surface-400 leading-relaxed mb-6">
+          <p class="text-sm landing-text-muted leading-relaxed mb-6" data-i18n="landing.feat2.desc">
             Chatbot AI empatik yang selalu siap mendengarkan. Ceritakan perasaanmu kapan saja 
             dan dapatkan respons yang menyesuaikan tingkat fatigue-mu.
           </p>
@@ -147,7 +147,7 @@
                   <i data-lucide="bot" class="w-3 h-3 text-white"></i>
                 </div>
                 <div class="bg-surface-700/80 text-surface-200 rounded-2xl rounded-bl-sm px-3 py-2 text-xs">
-                  Hai! 👋 Apa yang kamu rasakan hari ini?
+                  Hai! ðŸ‘‹ Apa yang kamu rasakan hari ini?
                 </div>
               </div>
             </div>
@@ -162,7 +162,7 @@
                   <i data-lucide="bot" class="w-3 h-3 text-white"></i>
                 </div>
                 <div class="bg-surface-700/80 text-surface-200 rounded-2xl rounded-bl-sm px-3 py-2 text-xs">
-                  Wajar kok! Coba istirahat 10 menit dulu ya 💙
+                  Wajar kok! Coba istirahat 10 menit dulu ya ðŸ’™
                 </div>
               </div>
             </div>
@@ -170,47 +170,47 @@
         </div>
       </div>
 
-      <!-- Feature 3: Fatigue Risk Scoring — Full width -->
-      <div class="glass-card-hover p-8 group">
+      <!-- Feature 3: Fatigue Risk Scoring â€” Full width -->
+      <div class="glass-card landing-card-fatigue p-8">
         <div class="grid lg:grid-cols-2 gap-8 items-center">
           <div>
             <div class="flex items-center gap-3 mb-5">
-              <div class="w-10 h-10 rounded-xl bg-warning-500/15 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div class="w-10 h-10 rounded-xl bg-warning-500/15 flex items-center justify-center ">
                 <i data-lucide="activity" class="w-5 h-5 text-warning-400"></i>
               </div>
-              <h3 class="text-lg font-bold text-surface-50">Fatigue Risk Scoring</h3>
+              <h3 class="text-lg font-bold landing-text-primary" data-i18n="landing.feat3.title">Fatigue Risk Scoring</h3>
             </div>
-            <p class="text-sm text-surface-400 leading-relaxed mb-4">
+            <p class="text-sm landing-text-muted leading-relaxed mb-4" data-i18n="landing.feat3.desc">
               Algoritma AI menganalisis pola kerjamu, hasil quiz MBI (Maslach Burnout Inventory), 
               mood harian, dan data Google Calendar untuk menghasilkan skor risiko kelelahan yang akurat.
             </p>
             <div class="flex flex-wrap gap-2">
-              <span class="badge-low">✅ Low Risk</span>
-              <span class="badge-medium">⚡ Medium Risk</span>
-              <span class="badge-high">🔴 High Risk</span>
+              <span class="badge-low">âœ… Low Risk</span>
+              <span class="badge-medium">âš¡ Medium Risk</span>
+              <span class="badge-high">ðŸ”´ High Risk</span>
             </div>
           </div>
           <!-- Visual Preview: Score bars -->
           <div class="glass-card p-5 space-y-4">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-semibold text-surface-200">Breakdown Skor</span>
-              <span class="badge-medium text-[10px]">⚡ 42 — Medium</span>
+              <span class="text-sm font-semibold landing-text-primary">Breakdown Skor</span>
+              <span class="badge-medium text-[10px]">âš¡ 42 â€” Medium</span>
             </div>
             <div class="space-y-3">
               <div>
-                <div class="flex justify-between text-xs mb-1"><span class="text-surface-300">Quiz MBI</span><span class="text-surface-400">55%</span></div>
+                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary">Quiz MBI</span><span class="landing-text-muted">55%</span></div>
                 <div class="h-2 bg-surface-700 rounded-full overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-warning-400 to-danger-400" style="width:55%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-xs mb-1"><span class="text-surface-300">Mood</span><span class="text-surface-400">35%</span></div>
+                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary">Mood</span><span class="landing-text-muted">35%</span></div>
                 <div class="h-2 bg-surface-700 rounded-full overflow-hidden"><div class="h-full rounded-full gradient-brand" style="width:35%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-xs mb-1"><span class="text-surface-300">Beban Kerja</span><span class="text-surface-400">60%</span></div>
+                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary">Beban Kerja</span><span class="landing-text-muted">60%</span></div>
                 <div class="h-2 bg-surface-700 rounded-full overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-warning-400 to-danger-500" style="width:60%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-xs mb-1"><span class="text-surface-300">Istirahat</span><span class="text-surface-400">20%</span></div>
+                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary">Istirahat</span><span class="landing-text-muted">20%</span></div>
                 <div class="h-2 bg-surface-700 rounded-full overflow-hidden"><div class="h-full rounded-full gradient-success" style="width:20%"></div></div>
               </div>
             </div>
@@ -220,60 +220,60 @@
     </div>
   </section>
 
-  <!-- Steps Section — "A simple path to balance" -->
-  <section class="py-20 px-6 border-t border-surface-800/50">
+  <!-- Steps Section â€” "A simple path to balance" -->
+  <section class="py-20 px-6 landing-section-border">
     <div class="max-w-5xl mx-auto">
       <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold font-display text-surface-50 mb-4">
-          Langkah sederhana menuju <span class="text-gradient-accent">keseimbangan</span>
+        <h2 class="text-3xl md:text-4xl font-bold font-display landing-text-primary mb-4">
+          <span data-i18n="landing.step.title1">Langkah sederhana menuju </span><span class="text-gradient-accent" data-i18n="landing.step.title2">keseimbangan</span>
         </h2>
-        <p class="text-surface-400 max-w-xl mx-auto">
+        <p class="landing-text-muted max-w-xl mx-auto" data-i18n="landing.step.subtitle">
           Mulai pantau kesehatan mentalmu dalam 4 langkah mudah.
         </p>
       </div>
 
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Step 1 -->
-        <div class="text-center group">
-          <div class="w-14 h-14 rounded-2xl gradient-brand flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-600/25 group-hover:scale-110 transition-transform">
-            <span class="text-xl font-bold text-white font-display">1</span>
+        <div class="text-center">
+          <div class="w-14 h-14 rounded-2xl landing-step-box landing-step-box-teal flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-600/25 ">
+            <span class="text-xl font-bold font-display">1</span>
           </div>
-          <h4 class="text-sm font-bold text-surface-50 mb-2">Daftar Akun</h4>
-          <p class="text-xs text-surface-400 leading-relaxed">Buat akun gratis atau masuk dengan Google dalam hitungan detik.</p>
+          <h4 class="text-sm font-bold landing-text-primary mb-2" data-i18n="landing.step1.title">Daftar Akun</h4>
+          <p class="text-xs landing-text-muted leading-relaxed" data-i18n="landing.step1.desc">Buat akun atau masuk dengan Google dalam hitungan detik.</p>
         </div>
 
         <!-- Step 2 -->
-        <div class="text-center group">
-          <div class="w-14 h-14 rounded-2xl gradient-accent flex items-center justify-center mx-auto mb-4 shadow-lg shadow-accent-purple/25 group-hover:scale-110 transition-transform">
-            <span class="text-xl font-bold text-white font-display">2</span>
+        <div class="text-center">
+          <div class="w-14 h-14 rounded-2xl landing-step-box landing-step-box-teal flex items-center justify-center mx-auto mb-4 shadow-lg shadow-accent-purple/25 ">
+            <span class="text-xl font-bold font-display">2</span>
           </div>
-          <h4 class="text-sm font-bold text-surface-50 mb-2">Isi Quiz & Log Mood</h4>
-          <p class="text-xs text-surface-400 leading-relaxed">Jawab 10 pertanyaan fatigue dan catat moodmu setiap hari.</p>
+          <h4 class="text-sm font-bold landing-text-primary mb-2" data-i18n="landing.step2.title">Isi Quiz & Log Mood</h4>
+          <p class="text-xs landing-text-muted leading-relaxed" data-i18n="landing.step2.desc">Jawab 10 pertanyaan fatigue dan catat moodmu setiap hari.</p>
         </div>
 
         <!-- Step 3 -->
-        <div class="text-center group">
-          <div class="w-14 h-14 rounded-2xl bg-gradient-to-r from-warning-500 to-danger-400 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-warning-500/25 group-hover:scale-110 transition-transform">
-            <span class="text-xl font-bold text-white font-display">3</span>
+        <div class="text-center">
+          <div class="w-14 h-14 rounded-2xl landing-step-box landing-step-box-teal flex items-center justify-center mx-auto mb-4 shadow-lg shadow-warning-500/25 ">
+            <span class="text-xl font-bold font-display">3</span>
           </div>
-          <h4 class="text-sm font-bold text-surface-50 mb-2">Gunakan Pomodoro</h4>
-          <p class="text-xs text-surface-400 leading-relaxed">Kerja dengan teknik Pomodoro yang terintegrasi kalender.</p>
+          <h4 class="text-sm font-bold landing-text-primary mb-2" data-i18n="landing.step3.title">Gunakan Pomodoro</h4>
+          <p class="text-xs landing-text-muted leading-relaxed" data-i18n="landing.step3.desc">Kerja dengan teknik Pomodoro yang terintegrasi kalender.</p>
         </div>
 
         <!-- Step 4 -->
-        <div class="text-center group">
-          <div class="w-14 h-14 rounded-2xl gradient-success flex items-center justify-center mx-auto mb-4 shadow-lg shadow-success-500/25 group-hover:scale-110 transition-transform">
-            <span class="text-xl font-bold text-white font-display">4</span>
+        <div class="text-center">
+          <div class="w-14 h-14 rounded-2xl landing-step-box landing-step-box-teal flex items-center justify-center mx-auto mb-4 shadow-lg shadow-success-500/25 ">
+            <span class="text-xl font-bold font-display">4</span>
           </div>
-          <h4 class="text-sm font-bold text-surface-50 mb-2">Lihat Insight</h4>
-          <p class="text-xs text-surface-400 leading-relaxed">Dapatkan analisis, tren, dan rekomendasi personal dari AI.</p>
+          <h4 class="text-sm font-bold landing-text-primary mb-2" data-i18n="landing.step4.title">Lihat Insight</h4>
+          <p class="text-xs landing-text-muted leading-relaxed" data-i18n="landing.step4.desc">Dapatkan analisis, tren, dan rekomendasi personal dari AI.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Scientific Basis & Community Section -->
-  <section class="py-20 px-6 border-t border-surface-800/50">
+  <section class="py-20 px-6 landing-section-teal">
     <div class="max-w-4xl mx-auto">
       <div class="glass-card p-10 text-center relative overflow-hidden">
         <!-- Decorative glow -->
@@ -282,75 +282,56 @@
         <div class="relative z-10">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-purple/10 border border-accent-purple/20 text-accent-purple text-xs font-semibold mb-6">
             <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i>
-            Berbasis Riset
+            <span data-i18n="landing.sci.badge">Berbasis Riset</span>
           </div>
 
-          <h2 class="text-3xl md:text-4xl font-bold font-display text-surface-50 mb-4">
-            Basis Ilmiah & <span class="text-gradient-accent">Komunitas</span>
+          <h2 class="text-3xl md:text-4xl font-bold font-display landing-text-primary mb-4">
+            <span data-i18n="landing.sci.title1">Basis Ilmiah & </span><span class="text-gradient-accent" data-i18n="landing.sci.title2">Komunitas</span>
           </h2>
 
-          <p class="text-surface-300 leading-relaxed max-w-2xl mx-auto mb-8">
-            HAPI menggunakan <strong class="text-surface-100">Maslach Burnout Inventory (MBI)</strong> — 
-            instrumen psikometri yang paling banyak digunakan di dunia untuk mengukur burnout. 
-            Quiz kami mengukur tiga dimensi kunci: kelelahan emosional, depersonalisasi, dan pencapaian personal.
+          <p class="landing-text-secondary leading-relaxed max-w-2xl mx-auto mb-8" data-i18n="landing.sci.desc">
+            HAPI menggunakan Maslach Burnout Inventory (MBI), instrumen psikometri paling banyak digunakan di dunia untuk mengukur burnout.
           </p>
-
-          <div class="grid md:grid-cols-3 gap-6 mb-8">
-            <div class="p-4 rounded-xl bg-surface-800/50">
-              <div class="text-2xl font-bold font-display text-brand-400 mb-1">MBI</div>
-              <div class="text-xs text-surface-400">Maslach Burnout Inventory sebagai dasar quiz</div>
-            </div>
-            <div class="p-4 rounded-xl bg-surface-800/50">
-              <div class="text-2xl font-bold font-display text-accent-purple mb-1">AI</div>
-              <div class="text-xs text-surface-400">Gemini AI untuk chatbot empatik & rekomendasi</div>
-            </div>
-            <div class="p-4 rounded-xl bg-surface-800/50">
-              <div class="text-2xl font-bold font-display text-success-400 mb-1">Open</div>
-              <div class="text-xs text-surface-400">Proyek terbuka dari DBS Foundation Coding Camp</div>
-            </div>
-          </div>
-
           <a href="/auth/register" class="btn-secondary" id="btn-scientific-cta">
             <i data-lucide="book-open" class="w-4 h-4"></i>
-            Pelajari Metodologi Kami
+            <span data-i18n="landing.sci.methodology">Pelajari Metodologi Kami</span>
           </a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Final CTA Section — "Ready to find your balance?" -->
-  <section class="py-20 px-6 border-t border-surface-800/50">
-    <div class="max-w-3xl mx-auto text-center">
-      <h2 class="text-3xl md:text-4xl font-bold font-display text-surface-50 mb-4">
-        Siap menemukan <span class="text-gradient-brand">keseimbanganmu?</span>
+  <!-- Final CTA Section -->
+  <section class="py-24 px-6 landing-section-terracotta text-center relative overflow-hidden">
+    <div class="max-w-3xl mx-auto relative z-10">
+      <h2 class="text-3xl md:text-4xl font-bold font-display landing-text-primary mb-4">
+        <span data-i18n="landing.cta.title1">Siap menemukan </span><span class="text-gradient-brand" data-i18n="landing.cta.title2">keseimbanganmu?</span>
       </h2>
-      <p class="text-surface-400 max-w-xl mx-auto mb-8">
-        Mulai monitor kelelahanmu, kelola mood, dan tingkatkan produktivitas — semuanya gratis.
+      <p class="landing-text-secondary mb-8" data-i18n="landing.cta.desc">
+        Bergabunglah dengan para profesional yang membangun hubungan sehat dengan pekerjaan mereka.
       </p>
-      <a href="/auth/register" class="btn-primary btn-lg group" id="final-cta">
-        <i data-lucide="heart" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
-        Mulai Sekarang — Gratis
+      <a href="/auth/register" class="btn-primary btn-lg">
+        <span data-i18n="landing.cta.btn">Mulai Perjalananmu</span>
+        <i data-lucide="arrow-right" class="w-5 h-5 transition-transform"></i>
       </a>
     </div>
   </section>
 
   <!-- Disclaimer -->
   <section class="py-12 px-6">
-    <div class="max-w-3xl mx-auto glass-card p-6 text-center">
+    <div class="max-w-3xl mx-auto glass-card p-6 text-center bg-white/50 dark:bg-surface-900/50">
       <div class="flex items-center justify-center gap-2 text-warning-400 mb-3">
         <i data-lucide="alert-triangle" class="w-5 h-5"></i>
         <span class="font-semibold text-sm">Disclaimer</span>
       </div>
-      <p class="text-sm text-surface-400 leading-relaxed">
-        HAPI adalah alat monitoring dan self-assessment, <strong class="text-surface-300">bukan pengganti diagnosis medis profesional</strong>. 
-        Jika kamu mengalami gejala fatigue atau burnout yang berat, silakan konsultasikan dengan psikolog atau tenaga kesehatan profesional.
+      <p class="text-sm landing-text-muted leading-relaxed" data-i18n="landing.disclaimer">
+        HAPI adalah alat monitoring dan self-assessment, bukan pengganti diagnosis medis profesional. Jika kamu mengalami gejala fatigue atau burnout yang berat, silakan konsultasikan dengan psikolog atau tenaga kesehatan profesional.
       </p>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="py-10 px-6 border-t border-surface-800/50">
+  <footer class="py-10 px-6 landing-section-border">
     <div class="max-w-6xl mx-auto">
       <div class="grid md:grid-cols-3 gap-8 mb-8">
         <!-- Brand -->
@@ -359,28 +340,27 @@
             <div class="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center shadow-lg shadow-brand-600/25">
               <i data-lucide="brain" class="w-5 h-5 text-white"></i>
             </div>
-            <span class="text-lg font-bold font-display text-surface-50">HAPI</span>
+            <span class="text-lg font-bold font-display landing-text-primary">HAPI</span>
           </div>
-          <p class="text-xs text-surface-500 leading-relaxed">
-            Human Activity Pattern Intelligence — Monitor kelelahan, kelola mood, 
-            dan tingkatkan produktivitasmu dengan AI.
+          <p class="text-xs landing-text-muted leading-relaxed" data-i18n="landing.footer.desc">
+            Human Activity Pattern Intelligence — Monitor kelelahan, kelola mood, dan tingkatkan produktivitasmu dengan AI.
           </p>
         </div>
         <!-- Links -->
         <div>
-          <h4 class="text-sm font-semibold text-surface-200 mb-3">Fitur</h4>
-          <ul class="space-y-2 text-xs text-surface-400">
+          <h4 class="text-sm font-semibold landing-text-secondary mb-3">Fitur</h4>
+          <ul class="space-y-2 text-xs landing-text-muted">
             <li>Fatigue Risk Score</li>
             <li>Pomodoro Timer</li>
-            <li>AI Chatbot Curhat</li>
+            <li>AI Chatbot Asisten</li>
             <li>Google Calendar Integration</li>
             <li>Activity Analytics</li>
           </ul>
         </div>
         <!-- Info -->
         <div>
-          <h4 class="text-sm font-semibold text-surface-200 mb-3">Info</h4>
-          <ul class="space-y-2 text-xs text-surface-400">
+          <h4 class="text-sm font-semibold landing-text-secondary mb-3">Info</h4>
+          <ul class="space-y-2 text-xs landing-text-muted">
             <li>Berbasis Maslach Burnout Inventory</li>
             <li>Data privat & aman</li>
             <li>Bukan diagnosis medis</li>
@@ -388,10 +368,49 @@
           </ul>
         </div>
       </div>
-      <div class="border-t border-surface-800/50 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-surface-500">
-        <p>&copy; 2026 HAPI Team — DBS Coding Camp</p>
+      <div class="border-t landing-section-border pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs landing-text-muted">
+        <p>&copy; 2026 HAPI Team â€” DBS Coding Camp</p>
         <p>Human Activity Pattern Intelligence</p>
       </div>
     </div>
   </footer>
 </div>
+
+<!-- Landing page init script -->
+<script>
+  document.body.classList.add('landing-page');
+
+  // Landing-specific theme icon update (Vite theme.js uses #theme-icon, landing uses #landing-theme-icon)
+  function updateLandingThemeIcon(theme) {
+    const icon = document.getElementById('landing-theme-icon');
+    if (icon) {
+      icon.setAttribute('data-lucide', theme === 'dark' ? 'sun' : 'moon');
+      if (window.lucide) window.lucide.createIcons();
+    }
+  }
+
+  // Watch for theme changes from Vite toggleTheme
+  const observer = new MutationObserver(() => {
+    updateLandingThemeIcon(document.documentElement.getAttribute('data-theme'));
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('hapi-theme') || 'dark';
+    updateLandingThemeIcon(saved);
+
+    const langSaved = localStorage.getItem('hapi-lang') || 'id';
+    const langLabel = document.getElementById('lang-label');
+    if (langLabel) langLabel.textContent = langSaved.toUpperCase();
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+      });
+    });
+  });
+</script>
+

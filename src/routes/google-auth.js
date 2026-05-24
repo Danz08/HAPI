@@ -7,9 +7,6 @@ const { extractCalendarFeatures, calculateCalendarBurnoutScore } = require('../u
 
 const router = express.Router();
 
-/**
- * Create OAuth2 client
- */
 function getOAuth2Client() {
   return new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
@@ -62,8 +59,7 @@ router.get('/callback', async (req, res) => {
     const db = getDb();
 
     if (flowType === 'connect' && req.session.user) {
-      // === CONNECT flow: link calendar to existing account ===
-      const userId = req.session.user.id;
+            const userId = req.session.user.id;
 
       db.prepare(`
         UPDATE users SET
@@ -81,7 +77,7 @@ router.get('/callback', async (req, res) => {
 
       try {
         await syncCalendarEvents(oauth2Client, userId);
-        req.flash('success', 'Google Calendar berhasil terhubung dan data tersinkronisasi! 📅');
+        req.flash('success', 'Google Calendar berhasil terhubung dan data tersinkronisasi! ðŸ“…');
       } catch (syncErr) {
         console.error('Calendar sync error:', syncErr);
         req.flash('success', 'Google Calendar terhubung!');
@@ -90,8 +86,7 @@ router.get('/callback', async (req, res) => {
       return res.redirect('/analytics');
     }
 
-    // === LOGIN flow: create/find account from Google profile ===
-    const email = googleUser.email;
+        const email = googleUser.email;
     const displayName = googleUser.name || email.split('@')[0];
     const username = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_');
 
@@ -104,7 +99,7 @@ router.get('/callback', async (req, res) => {
         'INSERT INTO users (username, email, password, display_name) VALUES (?, ?, ?, ?)'
       ).run(username, email, dummyPassword, displayName);
 
-      user = { id: result.lastInsertRowid, username, email, display_name: displayName };
+      user = { id: result.lastInsertRowid, username, email, display_name: displayName, is_onboarded: 0 };
     }
 
     // Save Google tokens
@@ -128,6 +123,7 @@ router.get('/callback', async (req, res) => {
       username: user.username,
       email: user.email,
       display_name: user.display_name || user.username,
+      is_onboarded: user.is_onboarded,
     };
 
     // Sync calendar
@@ -138,6 +134,9 @@ router.get('/callback', async (req, res) => {
     }
 
     req.flash('success', `Selamat datang, ${user.display_name || user.username}! Google Calendar tersinkronisasi 📅`);
+    if (!user.is_onboarded) {
+      return res.redirect('/onboarding');
+    }
     return res.redirect('/dashboard');
 
   } catch (err) {
@@ -207,9 +206,6 @@ router.post('/sync', requireAuth, async (req, res) => {
   }
 });
 
-/**
- * Sync calendar events for a user
- */
 async function syncCalendarEvents(oauth2Client, userId, days = 30) {
   const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
   const db = getDb();
@@ -281,9 +277,6 @@ async function syncCalendarEvents(oauth2Client, userId, days = 30) {
   return { synced: events.length, dates: Object.keys(eventsByDate).length };
 }
 
-/**
- * Categorize an event based on summary
- */
 function categorizeEvent(event) {
   const summary = (event.summary || '').toLowerCase();
   if (summary.includes('meeting') || summary.includes('rapat') || summary.includes('sync') || summary.includes('standup')) return 'meeting';

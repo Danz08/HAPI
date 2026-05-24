@@ -2,14 +2,18 @@ const express = require('express');
 const { getDb } = require('../config/database');
 const { requireAuth } = require('../middleware/auth');
 const { calculateFatigueFromQuiz, getRiskColor } = require('../utils/fatigue-calculator');
-const { getRecommendations, generateCurhatResponse } = require('../utils/recommendations');
+const { getRecommendations } = require('../utils/recommendations');
 
 const router = express.Router();
 router.use(requireAuth);
 
-// =====================================================
-// ===== Activities =====
-// =====================================================
+// POST /api/onboard - Complete onboarding
+router.post('/onboard', (req, res) => {
+  const db = getDb();
+  db.prepare('UPDATE users SET is_onboarded = 1 WHERE id = ?').run(req.session.user.id);
+  req.session.user.is_onboarded = 1;
+  res.json({ success: true });
+});
 
 // POST /api/activities - Log a new activity
 router.post('/activities', (req, res) => {
@@ -51,9 +55,9 @@ router.get('/activities', (req, res) => {
   res.json({ activities });
 });
 
-// =====================================================
-// ===== Mood =====
-// =====================================================
+
+
+
 
 // POST /api/mood - Log mood
 router.post('/mood', (req, res) => {
@@ -100,9 +104,9 @@ router.get('/mood', (req, res) => {
   res.json({ moods });
 });
 
-// =====================================================
-// ===== Dashboard Stats =====
-// =====================================================
+
+
+
 
 // GET /api/stats/overview
 router.get('/stats/overview', (req, res) => {
@@ -137,9 +141,9 @@ router.get('/stats/overview', (req, res) => {
   });
 });
 
-// =====================================================
-// ===== Pomodoro =====
-// =====================================================
+
+
+
 
 // POST /api/pomodoro/sessions - Save completed pomodoro session
 router.post('/pomodoro/sessions', (req, res) => {
@@ -196,16 +200,14 @@ router.get('/pomodoro/stats', (req, res) => {
   res.json({ today: todayStats, week: weekStats });
 });
 
-// =====================================================
-// ===== Quiz =====
-// =====================================================
 
-// Quiz questions based on MBI dimensions (10 questions)
-const QUIZ_QUESTION_COUNT = 10;
+
+
 
 // POST /api/quiz - Submit quiz answers
 router.post('/quiz', (req, res) => {
   const { answers } = req.body;
+  const QUIZ_QUESTION_COUNT = 10;
 
   if (!answers || !Array.isArray(answers) || answers.length !== QUIZ_QUESTION_COUNT) {
     return res.status(400).json({ error: 'Jawab semua pertanyaan terlebih dahulu.' });
@@ -249,43 +251,24 @@ router.get('/quiz/history', (req, res) => {
   res.json({ history });
 });
 
-// =====================================================
-// ===== Chat (Curhat) =====
-// =====================================================
 
-// POST /api/chat - Send a chat message
+
+
+// TODO: Connect to AI API when ready
+// For now, the chatbot uses client-side placeholder responses
+
+// POST /api/chat - Send a chat message (placeholder)
 router.post('/chat', (req, res) => {
   const { message } = req.body;
-  const userId = req.session.user.id;
 
   if (!message || message.trim().length === 0) {
     return res.status(400).json({ error: 'Pesan tidak boleh kosong.' });
   }
 
-  const db = getDb();
-
-  // Get user's current risk level
-  const latestQuiz = db.prepare(
-    'SELECT risk_level FROM quiz_results WHERE user_id = ? ORDER BY taken_at DESC LIMIT 1'
-  ).get(userId);
-  const riskLevel = latestQuiz ? latestQuiz.risk_level : 'Medium';
-
-  // Save user message
-  db.prepare(
-    'INSERT INTO chat_messages (user_id, role, message) VALUES (?, ?, ?)'
-  ).run(userId, 'user', message.trim());
-
-  // Generate AI response
-  const aiResponse = generateCurhatResponse(message, riskLevel);
-
-  // Save AI response
-  db.prepare(
-    'INSERT INTO chat_messages (user_id, role, message) VALUES (?, ?, ?)'
-  ).run(userId, 'ai', aiResponse);
-
+  // TODO: Replace with actual AI API call
   res.json({
     success: true,
-    response: aiResponse,
+    response: 'Fitur AI chatbot sedang dalam pengembangan. Sementara ini, chatbot menggunakan respons lokal.',
   });
 });
 
@@ -296,9 +279,9 @@ router.delete('/chat', (req, res) => {
   res.json({ success: true });
 });
 
-// =====================================================
-// ===== Analytics =====
-// =====================================================
+
+
+
 
 // GET /api/analytics/day/:date - Get details for a specific day (AJAX)
 router.get('/analytics/day/:date', (req, res) => {

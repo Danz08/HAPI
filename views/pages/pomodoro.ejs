@@ -225,18 +225,22 @@ function resetTimer() {
   document.getElementById('btn-pause').classList.add('hidden');
 }
 
+function getModeLabel(mode) {
+  const t = window.t || (k => k);
+  const keys = { work: 'pomo.focus', break: 'pomo.shortBreak', long: 'pomo.longBreak' };
+  return t(keys[mode]) || mode;
+}
+
 function setMode(mode) {
   currentMode = mode;
   clearInterval(timerInterval);
   isRunning = false;
 
   const modes = { work: workDuration, break: breakDuration, long: longBreakDuration };
-  const labels = { work: 'Fokus', break: 'Istirahat Singkat', long: 'Istirahat Panjang' };
-
   timeLeft = modes[mode] * 60;
   totalTime = timeLeft;
 
-  document.getElementById('timer-label').textContent = labels[mode];
+  document.getElementById('timer-label').textContent = getModeLabel(mode);
   document.getElementById('btn-start').classList.remove('hidden');
   document.getElementById('btn-pause').classList.add('hidden');
 
@@ -316,7 +320,8 @@ async function loadCalendarEvents() {
     const container = document.getElementById('cal-events-list');
 
     if (!data.calEvents || data.calEvents.length === 0) {
-      container.innerHTML = '<p class="text-sm text-surface-500 text-center py-2">Tidak ada jadwal hari ini</p>';
+      const t = window.t || (k => k);
+      container.innerHTML = `<p class="text-sm text-surface-500 text-center py-2">${t('pomo.noSchedule')}</p>`;
       return;
     }
 
@@ -337,7 +342,7 @@ async function loadCalendarEvents() {
       html += `<span class="text-xs">${typeIcons[ev.event_type] || '📌'}</span>`;
       html += `<span class="text-xs font-mono text-surface-500">${startStr}–${endStr}</span>`;
       html += `<span class="text-xs text-surface-200">${ev.title}</span>`;
-      if (isNow) html += `<span class="px-1.5 py-0.5 rounded text-[9px] bg-brand-500/20 text-brand-400 font-bold">SEKARANG</span>`;
+      if (isNow) { const t = window.t || (k => k); html += `<span class="px-1.5 py-0.5 rounded text-[9px] bg-brand-500/20 text-brand-400 font-bold">${t('pomo.now')}</span>`; }
       html += `</div>`;
       // Auto-set timer button for future events
       if (isFuture || isNow) {
@@ -347,7 +352,8 @@ async function loadCalendarEvents() {
     });
     container.innerHTML = html;
   } catch(e) {
-    document.getElementById('cal-events-list').innerHTML = '<p class="text-xs text-surface-500 text-center">Gagal memuat jadwal</p>';
+    const t = window.t || (k => k);
+    document.getElementById('cal-events-list').innerHTML = `<p class="text-xs text-surface-500 text-center">${t('pomo.loadFail')}</p>`;
   }
 }
 
@@ -364,8 +370,12 @@ window.setCalendarTimer = function(minutes, title) {
 // Initialize
 restorePomoState();
 if (!isRunning) updateDisplay();
-// Load calendar events after axios is available (from Vite bundle)
 document.addEventListener('DOMContentLoaded', () => {
   loadCalendarEvents();
+});
+
+// Re-apply labels when language changes
+window.addEventListener('langChanged', () => {
+  document.getElementById('timer-label').textContent = getModeLabel(currentMode);
 });
 </script>

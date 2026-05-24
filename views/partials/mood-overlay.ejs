@@ -1,15 +1,13 @@
-<!-- Global Mood Overlay - Accessible from any authenticated page -->
 <div id="global-mood-overlay" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/60 backdrop-blur-sm">
   <div class="glass-card p-8 w-full max-w-md mx-4 animate-scale-in border border-surface-600/40 shadow-2xl shadow-black/30">
-    <!-- Header -->
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl gradient-accent flex items-center justify-center shadow-lg shadow-accent-purple/20">
           <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
         </div>
         <div>
-          <h3 class="text-lg font-bold font-display text-surface-50">Bagaimana Perasaanmu?</h3>
-          <p class="text-xs text-surface-400">Ceritakan moodmu saat ini</p>
+          <h3 class="text-lg font-bold font-display text-surface-50" data-i18n="mood.title">Bagaimana Perasaanmu?</h3>
+          <p class="text-xs text-surface-400" data-i18n="mood.subtitle">Catat moodmu saat ini</p>
         </div>
       </div>
       <button onclick="closeGlobalMood()" class="p-2 rounded-lg hover:bg-surface-700/50 text-surface-400 hover:text-surface-200 transition-colors" id="btn-close-mood">
@@ -18,76 +16,73 @@
     </div>
 
     <form id="global-mood-form" class="space-y-5">
-      <!-- Mood Selector -->
       <div>
-        <label class="input-label text-xs">Pilih Mood</label>
+        <label class="input-label text-xs" data-i18n="mood.title">Pilih Mood</label>
         <div class="flex justify-between gap-2" id="global-mood-selector">
-          <button type="button" class="flex-1 py-3 rounded-xl text-center hover:bg-surface-700/50 border-2 border-transparent global-mood-btn transition-all duration-200 hover:scale-105" data-score="1" data-label="Sangat Buruk">
+          <button type="button" class="flex-1 py-3 rounded-xl text-center hover:bg-surface-700/50 border-2 border-transparent global-mood-btn transition-all duration-200 hover:scale-105" data-score="1" data-label-id="Sangat Buruk" data-label-en="Very Bad">
             <div class="text-3xl mb-1">😞</div>
-            <div class="text-[10px] text-surface-400">Sangat Buruk</div>
+            <div class="text-[10px] text-surface-400 mood-label" data-i18n="mood.veryBad">Sangat Buruk</div>
           </button>
-          <button type="button" class="flex-1 py-3 rounded-xl text-center hover:bg-surface-700/50 border-2 border-transparent global-mood-btn transition-all duration-200 hover:scale-105" data-score="2" data-label="Buruk">
+          <button type="button" class="flex-1 py-3 rounded-xl text-center hover:bg-surface-700/50 border-2 border-transparent global-mood-btn transition-all duration-200 hover:scale-105" data-score="2" data-label-id="Buruk" data-label-en="Bad">
             <div class="text-3xl mb-1">😕</div>
-            <div class="text-[10px] text-surface-400">Buruk</div>
+            <div class="text-[10px] text-surface-400 mood-label" data-i18n="mood.bad">Buruk</div>
           </button>
-          <button type="button" class="flex-1 py-3 rounded-xl text-center hover:bg-surface-700/50 border-2 border-transparent global-mood-btn transition-all duration-200 hover:scale-105" data-score="3" data-label="Biasa">
+          <button type="button" class="flex-1 py-3 rounded-xl text-center hover:bg-surface-700/50 border-2 border-transparent global-mood-btn transition-all duration-200 hover:scale-105" data-score="3" data-label-id="Biasa" data-label-en="Okay">
             <div class="text-3xl mb-1">😐</div>
-            <div class="text-[10px] text-surface-400">Biasa</div>
+            <div class="text-[10px] text-surface-400 mood-label" data-i18n="mood.okay">Biasa</div>
           </button>
-          <button type="button" class="flex-1 py-3 rounded-xl text-center hover:bg-surface-700/50 border-2 border-transparent global-mood-btn transition-all duration-200 hover:scale-105" data-score="4" data-label="Baik">
+          <button type="button" class="flex-1 py-3 rounded-xl text-center hover:bg-surface-700/50 border-2 border-transparent global-mood-btn transition-all duration-200 hover:scale-105" data-score="4" data-label-id="Baik" data-label-en="Good">
             <div class="text-3xl mb-1">😊</div>
-            <div class="text-[10px] text-surface-400">Baik</div>
+            <div class="text-[10px] text-surface-400 mood-label" data-i18n="mood.good">Baik</div>
           </button>
-          <button type="button" class="flex-1 py-3 rounded-xl text-center hover:bg-surface-700/50 border-2 border-transparent global-mood-btn transition-all duration-200 hover:scale-105" data-score="5" data-label="Sangat Baik">
+          <button type="button" class="flex-1 py-3 rounded-xl text-center hover:bg-surface-700/50 border-2 border-transparent global-mood-btn transition-all duration-200 hover:scale-105" data-score="5" data-label-id="Sangat Baik" data-label-en="Great">
             <div class="text-3xl mb-1">😄</div>
-            <div class="text-[10px] text-surface-400">Sangat Baik</div>
+            <div class="text-[10px] text-surface-400 mood-label" data-i18n="mood.great">Sangat Baik</div>
           </button>
         </div>
       </div>
 
-      <!-- Sliders -->
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label class="input-label text-xs flex items-center gap-1.5">
-            <i data-lucide="zap" class="w-3.5 h-3.5 text-warning-400"></i> Energi
+            <i data-lucide="zap" class="w-3.5 h-3.5 text-warning-400"></i>
+            <span data-i18n="mood.energy">Energi</span>
             <span class="ml-auto text-surface-400 font-mono" id="global-energy-val">3</span>
           </label>
           <input type="range" min="1" max="5" value="3" class="w-full accent-warning-400 range-slider" name="energy_level" id="global-energy-slider" oninput="document.getElementById('global-energy-val').textContent=this.value">
           <div class="flex justify-between text-[9px] text-surface-500 mt-1">
-            <span>Rendah</span><span>Tinggi</span>
+            <span data-i18n="mood.low">Rendah</span><span data-i18n="mood.high">Tinggi</span>
           </div>
         </div>
         <div>
           <label class="input-label text-xs flex items-center gap-1.5">
-            <i data-lucide="flame" class="w-3.5 h-3.5 text-danger-400"></i> Stres
+            <i data-lucide="flame" class="w-3.5 h-3.5 text-danger-400"></i>
+            <span data-i18n="mood.stress">Stres</span>
             <span class="ml-auto text-surface-400 font-mono" id="global-stress-val">3</span>
           </label>
           <input type="range" min="1" max="5" value="3" class="w-full accent-danger-400 range-slider" name="stress_level" id="global-stress-slider" oninput="document.getElementById('global-stress-val').textContent=this.value">
           <div class="flex justify-between text-[9px] text-surface-500 mt-1">
-            <span>Rendah</span><span>Tinggi</span>
+            <span data-i18n="mood.low">Rendah</span><span data-i18n="mood.high">Tinggi</span>
           </div>
         </div>
       </div>
 
-      <!-- Notes -->
       <div>
-        <label class="input-label text-xs">Catatan <span class="text-surface-500">(opsional)</span></label>
-        <textarea name="notes" rows="2" placeholder="Apa yang mempengaruhi moodmu hari ini?" class="input-field resize-none text-sm" id="global-mood-notes"></textarea>
+        <label class="input-label text-xs"><span data-i18n="mood.notes">Catatan</span> <span class="text-surface-500" data-i18n="mood.notesOptional">(opsional)</span></label>
+        <textarea name="notes" rows="2" class="input-field resize-none text-sm" id="global-mood-notes" data-i18n-placeholder="mood.notesPlaceholder" placeholder="Apa yang mempengaruhi moodmu hari ini?"></textarea>
       </div>
 
-      <!-- Submit -->
       <button type="submit" class="btn-primary w-full group" id="btn-save-global-mood">
         <i data-lucide="check-circle" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
-        Simpan Mood
+        <span data-i18n="mood.saveMood">Simpan Mood</span>
       </button>
     </form>
 
-    <p class="text-[10px] text-surface-500 text-center mt-3">Tracking mood membantumu memahami pola emosimu</p>
+    <p class="text-[10px] text-surface-500 text-center mt-3" data-i18n="mood.trackingHelp">Tracking mood membantumu memahami pola emosimu</p>
   </div>
 </div>
 
 <script>
-// Global Mood Overlay Logic
 let globalSelectedMood = null;
 
 function openGlobalMood() {
@@ -105,36 +100,34 @@ function closeGlobalMood() {
     modal.classList.remove('flex');
   }
   globalSelectedMood = null;
-  // Reset visuals
   document.querySelectorAll('.global-mood-btn').forEach(b => {
     b.classList.remove('bg-brand-600/20', 'border-brand-500', 'scale-110');
   });
 }
 
-// Close on backdrop
 document.getElementById('global-mood-overlay')?.addEventListener('click', (e) => {
   if (e.target.id === 'global-mood-overlay') closeGlobalMood();
 });
 
-// Mood buttons
 document.querySelectorAll('.global-mood-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.global-mood-btn').forEach(b => {
       b.classList.remove('bg-brand-600/20', 'border-brand-500', 'scale-110');
     });
     btn.classList.add('bg-brand-600/20', 'border-brand-500', 'scale-110');
+    const lang = window.getLang ? window.getLang() : 'id';
     globalSelectedMood = {
       score: parseInt(btn.dataset.score),
-      label: btn.dataset.label,
+      label: lang === 'en' ? btn.dataset.labelEn : btn.dataset.labelId,
     };
   });
 });
 
-// Submit
 document.getElementById('global-mood-form')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   if (!globalSelectedMood) {
-    window.showToast?.('Pilih mood terlebih dahulu.', 'warning');
+    const msg = window.t ? window.t('mood.selectFirst') : 'Pilih mood terlebih dahulu.';
+    window.showToast?.(msg, 'warning');
     return;
   }
 
@@ -154,18 +147,18 @@ document.getElementById('global-mood-form')?.addEventListener('submit', async (e
     });
     if (res.ok) {
       closeGlobalMood();
-      window.showToast?.('Mood berhasil disimpan! 😊', 'success');
-      // Reload if on dashboard
+      const msg = window.t ? window.t('mood.saved') : 'Mood berhasil disimpan!';
+      window.showToast?.(msg, 'success');
       if (window.location.pathname === '/dashboard') {
         setTimeout(() => location.reload(), 1000);
       }
     }
   } catch (err) {
-    window.showToast?.('Gagal menyimpan mood.', 'error');
+    const msg = window.t ? window.t('mood.saveFail') : 'Gagal menyimpan mood.';
+    window.showToast?.(msg, 'error');
   }
 });
 
-// Override the existing openMoodModal
 window.openMoodModal = openGlobalMood;
 window.closeMoodModal = closeGlobalMood;
 window.openGlobalMood = openGlobalMood;

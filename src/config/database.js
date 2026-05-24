@@ -26,6 +26,7 @@ function initDatabase() {
       password TEXT NOT NULL,
       display_name TEXT,
       avatar_url TEXT,
+      is_onboarded INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
@@ -158,7 +159,7 @@ function initDatabase() {
   database.exec(`CREATE INDEX IF NOT EXISTS idx_cal_events_user_date ON calendar_events(user_id, date)`);
   database.exec(`CREATE INDEX IF NOT EXISTS idx_cal_features_user_date ON calendar_features(user_id, date)`);
 
-  console.log('  ✅ Database initialized successfully');
+  console.log('  âœ… Database initialized successfully');
 }
 
 module.exports = { getDb, initDatabase };

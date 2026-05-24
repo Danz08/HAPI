@@ -1,13 +1,8 @@
-/**
- * Theme Module
- * Dark/Light mode toggle with localStorage persistence
- */
+// Dark/light theme toggle, disimpan di localStorage
 
 export function initTheme() {
   const saved = localStorage.getItem('hapi-theme') || 'dark';
   applyTheme(saved);
-
-  // Update icon on load
   updateThemeIcon(saved);
 }
 
@@ -30,7 +25,6 @@ function updateThemeIcon(theme) {
   const icon = document.getElementById('theme-icon');
   if (icon) {
     icon.setAttribute('data-lucide', theme === 'dark' ? 'sun' : 'moon');
-    // Re-render lucide icons
     if (window.lucide) window.lucide.createIcons();
   }
 }

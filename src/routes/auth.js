@@ -43,10 +43,15 @@ router.post('/login', redirectIfAuth, (req, res) => {
       username: user.username,
       email: user.email,
       display_name: user.display_name || user.username,
+      is_onboarded: user.is_onboarded,
     };
 
     req.flash('success', `Selamat datang kembali, ${user.display_name || user.username}! 👋`);
-    res.redirect('/dashboard');
+    if (!user.is_onboarded) {
+      res.redirect('/onboarding');
+    } else {
+      res.redirect('/dashboard');
+    }
   } catch (err) {
     console.error('Login error:', err);
     req.flash('error', 'Terjadi kesalahan. Silakan coba lagi.');
@@ -100,16 +105,17 @@ router.post('/register', redirectIfAuth, (req, res) => {
       'INSERT INTO users (username, email, password, display_name) VALUES (?, ?, ?, ?)'
     ).run(username, email, hashedPassword, display_name || username);
 
-    // Auto login
+    // Log the user in
     req.session.user = {
       id: result.lastInsertRowid,
-      username,
-      email,
-      display_name: display_name || username,
+      username: username,
+      email: email,
+      display_name: display_name,
+      is_onboarded: 0,
     };
 
-    req.flash('success', 'Akun berhasil dibuat! Selamat datang di HAPI 🎉');
-    res.redirect('/dashboard');
+    req.flash('success', 'Akun berhasil dibuat! Silakan ikuti pengenalan fitur.');
+    res.redirect('/onboarding');
   } catch (err) {
     console.error('Register error:', err);
     req.flash('error', 'Terjadi kesalahan. Silakan coba lagi.');

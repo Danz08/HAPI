@@ -1,8 +1,4 @@
-/**
- * Pomodoro State Manager
- * Persistent timer state via localStorage so it survives page navigation
- */
-
+﻿
 const STORAGE_KEY = 'hapi-pomo';
 
 export function getPomoState() {
@@ -19,9 +15,6 @@ export function clearPomoState() {
   window.pomoState = null;
 }
 
-/**
- * Check and manage overlay for persistent timer
- */
 export function checkPomoOverlay() {
   const state = getPomoState();
   if (!state || !state.running) return;
@@ -59,9 +52,6 @@ export function updateOverlayDisplay(seconds, label) {
   if (labelEl && label) labelEl.textContent = label;
 }
 
-/**
- * Start interval to keep overlay ticking
- */
 export function startOverlayTicker() {
   setInterval(() => {
     const state = getPomoState();

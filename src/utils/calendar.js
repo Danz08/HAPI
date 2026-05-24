@@ -1,13 +1,4 @@
-/**
- * Google Calendar Feature Extraction
- * Extracts burnout-relevant features from calendar events
- */
-
-/**
- * Extract features from an array of Google Calendar events for one day
- * @param {Array} events - Sorted array of Google Calendar event objects
- * @returns {Object} - { meetings_count, work_hours, back_to_back_count, longest_block, avg_gap_minutes }
- */
+﻿
 function extractCalendarFeatures(events) {
   if (!events || events.length === 0) {
     return {
@@ -68,12 +59,6 @@ function extractCalendarFeatures(events) {
   };
 }
 
-/**
- * Calculate calendar-based burnout risk contribution
- * Returns a score 0-100 where higher = more risk
- * @param {Object} features - from extractCalendarFeatures
- * @returns {Object} - { score, factors }
- */
 function calculateCalendarBurnoutScore(features) {
   if (!features || features.meetings_count === 0) {
     return { score: 0, factors: {} };

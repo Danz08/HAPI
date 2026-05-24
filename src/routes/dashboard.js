@@ -1,18 +1,19 @@
 const express = require('express');
 const { getDb } = require('../config/database');
-const { requireAuth } = require('../middleware/auth');
+const { requireOnboarded } = require('../middleware/auth');
 const { calculateComprehensiveFatigue, getRiskColor } = require('../utils/fatigue-calculator');
 const { getRecommendations } = require('../utils/recommendations');
 
 const router = express.Router();
 
-router.use(requireAuth);
+router.use(requireOnboarded);
 
 // GET /dashboard
 router.get('/', (req, res) => {
   const db = getDb();
   const userId = req.session.user.id;
   const today = new Date().toISOString().split('T')[0];
+  const days = parseInt(req.query.days) || 7;
 
   // Get today's activities
   const todayActivities = db.prepare(
@@ -33,18 +34,24 @@ router.get('/', (req, res) => {
     'SELECT * FROM mood_logs WHERE user_id = ? ORDER BY logged_at DESC LIMIT 1'
   ).get(userId);
 
-  // Get last 7 days mood trend
+  // Get mood trend for selected days
   const moodTrend = db.prepare(`
     SELECT mood_score, mood_label, energy_level, stress_level,
            DATE(logged_at) as log_date, TIME(logged_at) as log_time
-    FROM mood_logs WHERE user_id = ?
-    ORDER BY logged_at DESC LIMIT 14
-  `).all(userId);
+    FROM mood_logs WHERE user_id = ? AND DATE(logged_at) >= DATE('now', '-' || ? || ' days')
+    ORDER BY logged_at ASC
+  `).all(userId, days);
 
   // Get latest quiz result
   const latestQuiz = db.prepare(
     'SELECT * FROM quiz_results WHERE user_id = ? ORDER BY taken_at DESC LIMIT 1'
   ).get(userId);
+
+  // Get total quizzes taken today
+  const todayQuizCountQuery = db.prepare(
+    'SELECT COUNT(*) as count FROM quiz_results WHERE user_id = ? AND DATE(taken_at) = ?'
+  ).get(userId, today);
+  const todayQuizCount = todayQuizCountQuery ? todayQuizCountQuery.count : 0;
 
   // Get pomodoro stats for today
   const pomodoroToday = db.prepare(`
@@ -54,17 +61,17 @@ router.get('/', (req, res) => {
     WHERE user_id = ? AND DATE(started_at) = ?
   `).get(userId, today);
 
-  // Get recent activities (last 7 days)
+  // Get recent activities for selected days
   const recentActivities = db.prepare(`
     SELECT date,
            SUM(duration_minutes) as total_work,
            SUM(break_minutes) as total_break,
            COUNT(*) as sessions
     FROM activities
-    WHERE user_id = ? AND date >= DATE('now', '-7 days')
+    WHERE user_id = ? AND date >= DATE('now', '-' || ? || ' days')
     GROUP BY date
     ORDER BY date ASC
-  `).all(userId);
+  `).all(userId, days);
 
   // Calculate comprehensive fatigue score
   const fatigueData = calculateComprehensiveFatigue({
@@ -82,7 +89,7 @@ router.get('/', (req, res) => {
     latestMood ? latestMood.mood_score : 3
   );
 
-  // Get Google Calendar weekly data (#8)
+  // Get Google Calendar weekly data
   const googleUser = db.prepare('SELECT google_connected FROM users WHERE id = ?').get(userId);
   const isGoogleConnected = googleUser && googleUser.google_connected === 1;
 
@@ -116,11 +123,14 @@ router.get('/', (req, res) => {
   res.render('pages/dashboard', {
     title: 'Dashboard - HAPI',
     layout: 'layouts/main',
+    pageTitle: 'Dashboard',
+    pageKey: 'page.dashboard',
     todayStats,
     todayActivities,
     latestMood,
     moodTrend,
     latestQuiz,
+    todayQuizCount,
     pomodoroToday,
     recentActivities,
     fatigueData,
@@ -133,6 +143,7 @@ router.get('/', (req, res) => {
     todayCalFeature,
     weekStartStr,
     weekEndStr,
+    selectedDays: days,
   });
 });
 

@@ -1,7 +1,4 @@
-/**
- * Toast Notification Module
- * Reusable toast system for the entire app
- */
+// Notifikasi toast
 
 export function showToast(message, type = 'success') {
   let container = document.getElementById('flash-container');

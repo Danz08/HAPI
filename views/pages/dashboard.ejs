@@ -1,174 +1,220 @@
-<!-- Dashboard Page -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-  <div class="stat-card glow-<%= fatigueData.riskLevel === 'Low' ? 'success' : fatigueData.riskLevel === 'High' ? 'danger' : 'warning' %>">
-    <div class="flex items-center justify-between">
-      <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: <%= riskColor.bg %>20">
-        <i data-lucide="activity" class="w-5 h-5" style="color: <%= riskColor.text %>"></i>
-      </div>
-      <span class="badge-<%= fatigueData.riskLevel.toLowerCase() %>"><%= riskColor.label %></span>
-    </div>
-    <div class="stat-value" style="color: <%= riskColor.text %>"><%= fatigueData.score %></div>
-    <div class="stat-label" data-i18n="dashboard.fatigue">Fatigue Risk Score</div>
-  </div>
-  <div class="stat-card">
-    <div class="w-10 h-10 rounded-xl bg-brand-500/15 flex items-center justify-center">
-      <i data-lucide="clock" class="w-5 h-5 text-brand-400"></i>
-    </div>
-    <div class="stat-value"><%= Math.floor(todayStats.total_work / 60) %>h <%= todayStats.total_work % 60 %>m</div>
-    <div class="stat-label" data-i18n="dashboard.workDuration">Durasi Kerja Hari Ini</div>
-  </div>
-  <div class="stat-card">
-    <div class="w-10 h-10 rounded-xl bg-accent-purple/15 flex items-center justify-center">
-      <i data-lucide="timer" class="w-5 h-5 text-accent-purple"></i>
-    </div>
-    <div class="stat-value"><%= pomodoroToday.total_cycles %></div>
-    <div class="stat-label" data-i18n="dashboard.pomodoroCycles">Siklus Pomodoro</div>
-  </div>
-  <div class="stat-card">
-    <div class="w-10 h-10 rounded-xl bg-accent-pink/15 flex items-center justify-center">
-      <i data-lucide="heart" class="w-5 h-5 text-accent-pink"></i>
-    </div>
-    <% const moodEmojis = { 1:'😞', 2:'😕', 3:'😐', 4:'😊', 5:'😄' }; %>
-    <div class="stat-value"><%= latestMood ? moodEmojis[latestMood.mood_score] || '😐' : '—' %></div>
-    <div class="stat-label">Mood: <%= latestMood ? latestMood.mood_label : 'Belum diisi' %></div>
+<!-- Dashboard Page — Warm Theme -->
+
+<!-- Dashboard Header -->
+<div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold font-display text-surface-50 mb-1" data-i18n="dashboard.greeting">Selamat datang kembali</h1>
+    <p class="text-sm text-surface-400" data-i18n="dashboard.subtitle">Berikut rangkuman metrik kelelahan dan aktivitasmu hari ini.</p>
   </div>
 </div>
 
-<div class="grid lg:grid-cols-3 gap-6">
-  <div class="lg:col-span-2 space-y-6">
-    <div class="glass-card p-6">
-      <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
-        <i data-lucide="bar-chart-3" class="w-5 h-5 inline text-brand-400 mr-2"></i><span data-i18n="dashboard.activity7days">Aktivitas 7 Hari Terakhir</span>
-      </h3>
-      <div class="h-64"><canvas id="activityChart"></canvas></div>
+<!-- Top Row: Current Risk + 7-Day Fatigue Trend -->
+<div class="grid lg:grid-cols-2 gap-6 mb-6">
+
+  <!-- Current Risk Card -->
+  <div class="glass-card p-6 flex flex-col items-center text-center glow-<%= fatigueData.riskLevel === 'Low' ? 'success' : fatigueData.riskLevel === 'High' ? 'danger' : 'warning' %>">
+    <h3 class="text-lg font-bold font-display text-surface-50 mb-5 self-start" data-i18n="dashboard.currentRisk">Skor Risiko Saat Ini</h3>
+
+    <!-- Circular Gauge -->
+    <div class="relative mb-4">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="70" fill="none" stroke="rgba(62,45,34,0.15)" stroke-width="10"/>
+        <%
+          const score = fatigueData.score;
+          const circumference = 2 * Math.PI * 70;
+          const dashOffset = circumference - (score / 100) * circumference;
+          const gaugeColor = fatigueData.riskLevel === 'Low' ? '#22c55e' : fatigueData.riskLevel === 'High' ? '#ef4444' : '#C47B5A';
+        %>
+        <circle cx="80" cy="80" r="70" fill="none"
+                stroke="<%= gaugeColor %>" stroke-width="10"
+                stroke-dasharray="<%= circumference %>"
+                stroke-dashoffset="<%= dashOffset %>"
+                stroke-linecap="round"
+                transform="rotate(-90 80 80)"
+                style="transition: stroke-dashoffset 1s ease-out"/>
+      </svg>
+      <div class="absolute inset-0 flex flex-col items-center justify-center">
+        <span class="text-4xl font-bold font-display" style="color:<%= gaugeColor %>"><%= score %></span>
+        <span class="text-xs font-semibold uppercase tracking-wider mt-1" style="color:<%= gaugeColor %>"><%= riskColor.label %></span>
+      </div>
     </div>
-    <div class="glass-card p-6">
-      <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
-        <i data-lucide="trending-up" class="w-5 h-5 inline text-accent-pink mr-2"></i><span data-i18n="dashboard.moodTrend">Tren Mood</span>
-      </h3>
-      <div class="h-48"><canvas id="moodChart"></canvas></div>
+
+    <p class="text-sm text-surface-400 leading-relaxed max-w-xs">
+      <% if (fatigueData.riskLevel === 'Low') { %>
+        <span data-i18n="dashboard.fatigueRiskLow">Tingkat kelelahanmu masih dalam batas wajar. Pertahankan ritme baikmu!</span>
+      <% } else if (fatigueData.riskLevel === 'High') { %>
+        <span data-i18n="dashboard.fatigueRiskHigh">Tingkat kelelahanmu tinggi. Segera istirahat dan kurangi beban kerja.</span>
+      <% } else { %>
+        <span data-i18n="dashboard.fatigueRiskMed">Kelelahanmu mulai meningkat. Pertimbangkan istirahat singkat.</span>
+      <% } %>
+    </p>
+    <p class="text-[10px] text-surface-500 mt-3" data-i18n="dashboard.lastUpdated">Terakhir diperbarui: Hari ini, <%= new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) %></p>
+  </div>
+
+  <!-- 7-Day Fatigue Trend -->
+  <div class="glass-card p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold font-display text-surface-50" data-i18n="dashboard.fatigueTrend">Tren Kelelahan 7 Hari</h3>
+      <a href="/analytics" class="text-xs font-semibold text-brand-500 hover:text-brand-400 transition-colors" data-i18n="dashboard.detailedView">Lihat Detail →</a>
     </div>
-    <div class="glass-card p-6">
-      <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
-        <i data-lucide="pie-chart" class="w-5 h-5 inline text-warning-400 mr-2"></i><span data-i18n="dashboard.fatigueBreakdown">Breakdown Fatigue</span>
-      </h3>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <% const bl = { quiz:'Quiz', mood:'Mood', workload:'Beban Kerja', breaks:'Istirahat' }; %>
-        <% for (const [k,l] of Object.entries(bl)) { %>
-        <div class="text-center p-4 rounded-xl bg-surface-800/50">
-          <div class="text-2xl font-bold font-display text-surface-50"><%= fatigueData.breakdown[k] %>%</div>
-          <div class="text-xs text-surface-400 mt-1"><%= l %></div>
-          <div class="mt-2 h-1.5 bg-surface-700 rounded-full overflow-hidden">
-            <div class="h-full rounded-full gradient-brand" style="width:<%= fatigueData.breakdown[k] %>%"></div>
+    <div class="h-56"><canvas id="activityChart"></canvas></div>
+  </div>
+</div>
+
+<script>
+  window.__chartData = {
+    recentActivities: <%- JSON.stringify(recentActivities) %>,
+    moodTrend: <%- JSON.stringify(moodTrend.slice(0, 7).reverse()) %>,
+    fatigueScore: <%= fatigueData.score %>
+  };
+</script>
+
+<!-- Bottom Row: Today's Activity + Insights + Mood History -->
+<div class="grid lg:grid-cols-3 gap-6 mb-6">
+
+  <!-- Today's Activity -->
+  <div class="glass-card p-6">
+    <h3 class="text-lg font-bold font-display text-surface-50 mb-5" data-i18n="dashboard.todayActivity">Aktivitas Hari Ini</h3>
+    <div class="space-y-4">
+      <a href="/pomodoro" class="flex items-center justify-between p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700/50 transition-all group">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-brand-500/15 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i data-lucide="timer" class="w-4 h-4 text-brand-500"></i>
           </div>
+          <span class="text-sm font-medium text-surface-200" data-i18n="dashboard.pomodoroSessions">Sesi Pomodoro</span>
         </div>
+        <span class="text-lg font-bold font-display text-surface-50"><%= pomodoroToday.total_cycles %></span>
+      </a>
+
+      <a href="/quiz" class="flex items-center justify-between p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700/50 transition-all group">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-accent-purple/15 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i data-lucide="clipboard-check" class="w-4 h-4 text-accent-purple"></i>
+          </div>
+          <span class="text-sm font-medium text-surface-200" data-i18n="dashboard.quizzesTaken">Quiz Diambil</span>
+        </div>
+        <span class="text-lg font-bold font-display text-surface-50"><%= todayQuizCount %></span>
+      </a>
+
+      <a href="/analytics" class="flex items-center justify-between p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700/50 transition-all group">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-accent-teal/15 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 text-accent-teal"></i>
+          </div>
+          <span class="text-sm font-medium text-surface-200" data-i18n="nav.analytics">Analitik</span>
+        </div>
+        <span class="text-lg font-bold font-display text-surface-50"><%= todayStats.session_count %></span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Insights -->
+  <div class="glass-card p-6">
+    <div class="flex items-center gap-2 mb-5">
+      <i data-lucide="lightbulb" class="w-5 h-5 text-warning-400"></i>
+      <h3 class="text-lg font-bold font-display text-surface-50" data-i18n="dashboard.insights">Wawasan</h3>
+    </div>
+    <div class="space-y-4">
+      <% recommendations.insights.forEach(function(ins, idx) { %>
+      <div class="p-3 rounded-xl bg-surface-800/50 border-l-2 border-brand-500/50">
+        <p class="text-sm text-surface-200 leading-relaxed mb-2 insight-desc" data-desc-id="<%= ins.description %>" data-desc-en="<%= ins.description_en || ins.description %>"><%= ins.description %></p>
+        <% if (idx === 0) { %>
+        <a href="#" class="text-xs font-semibold text-brand-500 hover:text-brand-400" data-i18n="dashboard.setReminder">Atur Pengingat</a>
         <% } %>
       </div>
+      <% }) %>
+      <div class="p-3 rounded-xl bg-accent-teal/5 border border-accent-teal/20">
+        <p class="text-sm text-surface-200 leading-relaxed mb-2 insight-desc" data-desc-id="<%= recommendations.moodTip %>" data-desc-en="<%= recommendations.moodTip_en || recommendations.moodTip %>"><%= recommendations.moodTip %></p>
+        <button onclick="toggleChatbot()" class="text-xs font-semibold text-accent-teal hover:underline" data-i18n="dashboard.chatStart">Mulai Obrolan</button>
+      </div>
     </div>
   </div>
 
-  <div class="space-y-6">
-    <div class="glass-card p-6">
-      <h3 class="text-lg font-bold font-display text-surface-50 mb-4" data-i18n="dashboard.quickActions">Aksi Cepat</h3>
-      <div class="space-y-3">
-        <a href="/pomodoro" class="flex items-center gap-3 p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700/50 transition-all group">
-          <div class="w-9 h-9 rounded-lg gradient-brand flex items-center justify-center group-hover:scale-110 transition-transform">
-            <i data-lucide="play" class="w-4 h-4 text-white"></i>
-          </div>
-          <div><p class="text-sm font-semibold text-surface-200" data-i18n="dashboard.startPomodoro">Mulai Pomodoro</p><p class="text-xs text-surface-500" data-i18n="dashboard.focusMinutes">25 menit fokus</p></div>
-        </a>
-        <a href="/quiz" class="flex items-center gap-3 p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700/50 transition-all group">
-          <div class="w-9 h-9 rounded-lg gradient-accent flex items-center justify-center group-hover:scale-110 transition-transform">
-            <i data-lucide="clipboard-check" class="w-4 h-4 text-white"></i>
-          </div>
-          <div><p class="text-sm font-semibold text-surface-200" data-i18n="dashboard.takeQuiz">Ambil Quiz</p><p class="text-xs text-surface-500" data-i18n="dashboard.checkFatigue">Cek fatigue</p></div>
-        </a>
-        <a href="/analytics" class="flex items-center gap-3 p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700/50 transition-all group">
-          <div class="w-9 h-9 rounded-lg bg-accent-teal flex items-center justify-center group-hover:scale-110 transition-transform">
-            <i data-lucide="bar-chart-2" class="w-4 h-4 text-white"></i>
-          </div>
-          <div><p class="text-sm font-semibold text-surface-200" data-i18n="nav.analytics">Analytics</p><p class="text-xs text-surface-500" data-i18n="dashboard.viewAnalytics">Lihat kalender & tren</p></div>
-        </a>
-      </div>
+  <!-- Mood History -->
+  <div class="glass-card p-6">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-lg font-bold font-display text-surface-50" data-i18n="dashboard.moodHistory">Riwayat Mood</h3>
+      <button onclick="openMoodModal()" class="text-surface-400 hover:text-surface-200 transition-colors">
+        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+      </button>
     </div>
-
-    <div class="glass-card p-6">
-      <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
-        <i data-lucide="lightbulb" class="w-5 h-5 inline text-warning-400 mr-1"></i><span data-i18n="dashboard.recommendations">Rekomendasi</span>
-      </h3>
-      <div class="space-y-4">
-        <% recommendations.insights.forEach(function(ins) { %>
-        <div class="p-3 rounded-xl bg-surface-800/50 border-l-2 border-brand-500/50">
-          <p class="text-sm font-semibold text-surface-200 mb-1"><%= ins.title %></p>
-          <p class="text-xs text-surface-400"><%= ins.description %></p>
-        </div>
-        <% }) %>
-        <div class="p-3 rounded-xl bg-accent-purple/5 border border-accent-purple/20">
-          <p class="text-xs text-accent-purple font-semibold mb-1">💡 Mood Tip</p>
-          <p class="text-xs text-surface-300"><%= recommendations.moodTip %></p>
-        </div>
+    <% if (moodTrend && moodTrend.length > 0) { %>
+    <div class="space-y-4">
+      <% moodTrend.slice(0, 4).forEach(function(entry) { %>
+      <div class="border-b border-surface-700/30 pb-3 last:border-0 last:pb-0">
+        <p class="text-[10px] text-surface-500 mb-1"><%= entry.log_date %>, <%= entry.log_time ? entry.log_time.substring(0,5) : '' %></p>
+        <p class="text-sm text-surface-200 leading-relaxed">
+          <span data-i18n="mood.<%= entry.mood_score %>"><%= entry.mood_label %></span> — <span data-i18n="dashboard.energy">Energi</span>: <%= entry.energy_level %>/5, <span data-i18n="dashboard.stress">Stres</span>: <%= entry.stress_level %>/5
+        </p>
       </div>
+      <% }) %>
     </div>
-
-    <!-- Google Calendar Weekly Burnout (#8) -->
-    <% if (isGoogleConnected && weeklyCalendar) { %>
-    <div class="glass-card p-6">
-      <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
-        <i data-lucide="calendar-check" class="w-5 h-5 inline text-brand-400 mr-1"></i>Kalender Minggu Ini
-      </h3>
-      <div class="grid grid-cols-2 gap-3 mb-4">
-        <div class="text-center p-3 rounded-xl bg-surface-800/50">
-          <div class="text-xl font-bold text-surface-50"><%= weeklyCalendar.total_meetings %></div>
-          <div class="text-[10px] text-surface-400">Meeting</div>
-        </div>
-        <div class="text-center p-3 rounded-xl <% 
-          const dashBurnout = Math.round(weeklyCalendar.avg_burnout_score); 
-        %> <%= dashBurnout > 65 ? 'bg-danger-500/10' : dashBurnout > 35 ? 'bg-warning-500/10' : 'bg-success-500/10' %>">
-          <div class="text-xl font-bold <%= dashBurnout > 65 ? 'text-danger-400' : dashBurnout > 35 ? 'text-warning-400' : 'text-success-400' %>"><%= dashBurnout %>%</div>
-          <div class="text-[10px] text-surface-400">Burnout Score</div>
-        </div>
-      </div>
-
-      <% if (todayCalEvents.length > 0) { %>
-      <p class="text-xs font-semibold text-surface-400 mb-2">📅 Jadwal Hari Ini</p>
-      <div class="space-y-1.5 max-h-32 overflow-y-auto">
-        <% todayCalEvents.forEach(ev => { 
-          const timeStr = ev.start_time.includes('T') ? ev.start_time.substring(11,16) : 'All day';
-        %>
-        <div class="flex items-center gap-2 text-xs">
-          <span class="text-surface-500 font-mono w-10"><%= timeStr %></span>
-          <span class="text-surface-200 truncate"><%= ev.title %></span>
-        </div>
-        <% }) %>
-      </div>
-      <% } else { %>
-      <p class="text-xs text-surface-500 text-center">Tidak ada jadwal hari ini</p>
-      <% } %>
+    <% } else { %>
+    <div class="text-center py-8">
+      <i data-lucide="smile" class="w-8 h-8 text-surface-500 mx-auto mb-2"></i>
+      <p class="text-sm text-surface-400" data-i18n="dashboard.noMoodYet">Belum ada catatan mood.</p>
+      <button onclick="openMoodModal()" class="text-xs text-brand-500 hover:underline mt-1 inline-block" data-i18n="dashboard.startWriting">Mulai catat →</button>
     </div>
     <% } %>
+  </div>
+</div>
 
-    <div class="glass-card p-6">
-      <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
-        <i data-lucide="plus-circle" class="w-5 h-5 inline text-success-400 mr-1"></i><span data-i18n="dashboard.logActivity">Log Aktivitas</span>
-      </h3>
-      <form id="activity-form" class="space-y-3">
-        <select name="activity_type" class="input-field"><option value="work">Kerja</option><option value="study">Belajar</option><option value="meeting">Meeting</option><option value="other">Lainnya</option></select>
-        <input type="text" name="description" placeholder="Deskripsi..." class="input-field">
-        <div class="grid grid-cols-2 gap-3">
-          <input type="number" name="duration_minutes" min="0" value="25" class="input-field" placeholder="Durasi (mnt)">
-          <input type="number" name="break_minutes" min="0" value="5" class="input-field" placeholder="Break (mnt)">
+<!-- Fatigue Breakdown + Quick Actions Row -->
+<div class="grid lg:grid-cols-3 gap-6 mb-6">
+  <!-- Fatigue Breakdown -->
+  <div class="lg:col-span-2 glass-card p-6">
+    <h3 class="text-lg font-bold font-display text-surface-50 mb-4" data-i18n="dashboard.fatigueBreakdown">
+      <i data-lucide="pie-chart" class="w-5 h-5 inline text-warning-400 mr-2"></i>Rincian Kelelahan
+    </h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <% const bl = { quiz:'Quiz', mood:'Mood', workload:'Beban Kerja', breaks:'Istirahat' }; %>
+      <% for (const [k,l] of Object.entries(bl)) { %>
+      <div class="text-center p-4 rounded-xl bg-surface-800/50">
+        <div class="text-2xl font-bold font-display text-surface-50"><%= fatigueData.breakdown[k] %>%</div>
+        <div class="text-xs text-surface-400 mt-1"><%= l %></div>
+        <div class="mt-2 h-1.5 bg-surface-700 rounded-full overflow-hidden">
+          <div class="h-full rounded-full gradient-brand" style="width:<%= fatigueData.breakdown[k] %>%"></div>
         </div>
-        <button type="submit" class="btn-success w-full btn-sm"><i data-lucide="check" class="w-4 h-4"></i> Simpan</button>
-      </form>
+      </div>
+      <% } %>
     </div>
   </div>
+
+  <!-- Log Activity -->
+  <div class="glass-card p-6">
+    <h3 class="text-lg font-bold font-display text-surface-50 mb-4" data-i18n="dashboard.logActivity">
+      <i data-lucide="plus-circle" class="w-5 h-5 inline text-success-400 mr-1"></i>Catat Aktivitas
+    </h3>
+    <form id="activity-form" class="space-y-3">
+      <select name="activity_type" class="input-field text-sm">
+        <option value="work" data-i18n="form.work">Kerja</option>
+        <option value="study" data-i18n="form.study">Belajar</option>
+        <option value="meeting" data-i18n="form.meeting">Rapat</option>
+        <option value="other" data-i18n="form.other">Lainnya</option>
+      </select>
+      <input type="text" name="description" data-i18n-placeholder="form.description" placeholder="Deskripsi kegiatan..." class="input-field text-sm">
+      <div class="grid grid-cols-2 gap-3">
+        <input type="number" name="duration_minutes" min="0" value="25" class="input-field text-sm" data-i18n-placeholder="form.durationMin" placeholder="Durasi (mnt)">
+        <input type="number" name="break_minutes" min="0" value="5" class="input-field text-sm" data-i18n-placeholder="form.breakMin" placeholder="Istirahat (mnt)">
+      </div>
+      <button type="submit" class="btn-success w-full btn-sm"><i data-lucide="check" class="w-4 h-4"></i> <span data-i18n="form.save">Simpan</span></button>
+    </form>
+  </div>
+</div>
+
+<!-- Disclaimer -->
+<div class="glass-card p-4 text-center">
+  <p class="text-[10px] text-surface-500 leading-relaxed" data-i18n="dashboard.disclaimer">
+    HAPI dirancang untuk memberikan wawasan seputar kelelahan. Ini bukan pengganti saran medis profesional.
+    Selalu konsultasikan dengan dokter atau tenaga kesehatan profesional untuk pertanyaan medis.
+  </p>
 </div>
 
 <!-- Mood Modal -->
 <div id="mood-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm">
   <div class="glass-card p-8 w-full max-w-md mx-4 animate-scale-in">
     <div class="flex items-center justify-between mb-6">
-      <h3 class="text-xl font-bold font-display text-surface-50" data-i18n="mood.title">Bagaimana Moodmu?</h3>
+      <h3 class="text-xl font-bold font-display text-surface-50" data-i18n="mood.title">Bagaimana Perasaanmu?</h3>
       <button onclick="closeMoodModal()" class="text-surface-400 hover:text-surface-200"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
     <form id="mood-form" class="space-y-6">
@@ -179,12 +225,10 @@
         </button>
         <% }) %>
       </div>
-      <div><label class="input-label">Energi</label><input type="range" min="1" max="5" value="3" class="w-full accent-brand-500" name="energy_level" id="energy-slider"></div>
-      <div><label class="input-label">Stres</label><input type="range" min="1" max="5" value="3" class="w-full accent-danger-500" name="stress_level" id="stress-slider"></div>
-      <textarea name="notes" rows="2" placeholder="Catatan..." class="input-field resize-none" id="mood-notes"></textarea>
-      <button type="submit" class="btn-primary w-full"><i data-lucide="save" class="w-4 h-4"></i> Simpan Mood</button>
+      <div><label class="input-label" data-i18n="mood.energy">Tingkat Energi</label><input type="range" min="1" max="5" value="3" class="w-full accent-brand-500" name="energy_level" id="energy-slider"></div>
+      <div><label class="input-label" data-i18n="mood.stress">Tingkat Stres</label><input type="range" min="1" max="5" value="3" class="w-full accent-danger-500" name="stress_level" id="stress-slider"></div>
+      <textarea name="notes" rows="2" data-i18n-placeholder="mood.notes" placeholder="Ada yang ingin diceritakan? (opsional)" class="input-field resize-none" id="mood-notes"></textarea>
+      <button type="submit" class="btn-primary w-full"><i data-lucide="save" class="w-4 h-4"></i> <span data-i18n="mood.saveMood">Simpan Mood</span></button>
     </form>
   </div>
 </div>
-
-

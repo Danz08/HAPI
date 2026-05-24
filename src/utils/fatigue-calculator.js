@@ -1,9 +1,4 @@
-/**
- * Fatigue Risk Score Calculator
- * Based on Maslach Burnout Inventory (MBI) principles
- * Calculates fatigue level from quiz answers, mood, and activity data
- */
-
+﻿
 // Quiz question weights (based on MBI dimensions)
 const DIMENSION_WEIGHTS = {
   emotional_exhaustion: 0.40,  // Kelelahan emosional
@@ -12,11 +7,6 @@ const DIMENSION_WEIGHTS = {
   work_pattern: 0.15,          // Pola kerja
 };
 
-/**
- * Calculate fatigue score from quiz answers
- * @param {Array<number>} answers - Array of answer scores (1-5 scale)
- * @returns {Object} - { score, riskLevel, dimensions }
- */
 function calculateFatigueFromQuiz(answers) {
   if (!answers || answers.length === 0) {
     return { score: 0, riskLevel: 'Low', dimensions: {} };
@@ -71,15 +61,10 @@ function calculateFatigueFromQuiz(answers) {
   return { score, riskLevel, dimensions };
 }
 
-/**
- * Calculate fatigue score including activity and mood data
- * @param {Object} data - { quizScore, avgMood, workHours, breakRatio }
- * @returns {Object}
- */
 function calculateComprehensiveFatigue(data) {
   const { quizScore = 50, avgMood = 3, workHoursToday = 0, breakMinutes = 0 } = data;
 
-  // Mood factor (1-5 → weight: low mood increases fatigue)
+  // Mood factor (1-5 â†’ weight: low mood increases fatigue)
   const moodFactor = ((6 - avgMood) / 5) * 100;
 
   // Work hours factor (more hours = more fatigue, exponential after 8h)
@@ -123,18 +108,12 @@ function calculateComprehensiveFatigue(data) {
   };
 }
 
-/**
- * Determine risk level from score
- */
 function getRiskLevel(score) {
   if (score <= 35) return 'Low';
   if (score <= 65) return 'Medium';
   return 'High';
 }
 
-/**
- * Get risk level color
- */
 function getRiskColor(riskLevel) {
   switch (riskLevel) {
     case 'Low': return { bg: '#22c55e', text: '#4ade80', label: 'Rendah' };

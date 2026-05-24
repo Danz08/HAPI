@@ -61,7 +61,7 @@
 
   /* Glow effects */
   .glow-brand {
-    box-shadow: 0 0 20px rgba(59, 142, 255, 0.15), 0 0 60px rgba(59, 142, 255, 0.05);
+    box-shadow: 0 0 20px rgba(196, 123, 90, 0.15), 0 0 60px rgba(196, 123, 90, 0.05);
   }
 
   .glow-success {
@@ -316,10 +316,10 @@
   /* Mesh gradient background */
   .mesh-gradient {
     background-image:
-      radial-gradient(at 40% 20%, rgba(59,142,255,0.08) 0px, transparent 50%),
-      radial-gradient(at 80% 0%, rgba(167,139,250,0.06) 0px, transparent 50%),
-      radial-gradient(at 0% 50%, rgba(34,211,238,0.04) 0px, transparent 50%),
-      radial-gradient(at 80% 50%, rgba(244,114,182,0.04) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, rgba(59,142,255,0.06) 0px, transparent 50%);
+      radial-gradient(at 40% 20%, rgba(196,123,90,0.08) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, rgba(72,154,152,0.06) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, rgba(196,123,90,0.04) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, rgba(72,154,152,0.04) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(196,123,90,0.06) 0px, transparent 50%);
   }
 }
