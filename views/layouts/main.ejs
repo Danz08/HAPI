@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HAPI - Human Activity Pattern Intelligence. Monitor fatigue, kelola mood, dan tingkatkan produktivitasmu dengan AI.">
+  <title><%= typeof title !== 'undefined' ? title : 'HAPI' %></title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Vite-bundled CSS (Tailwind + custom styles) -->
+  <link rel="stylesheet" href="/dist/css/main.css">
+
+  <!-- Chart.js -->
+  <% if (typeof user !== 'undefined' && user) { %>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <% } %>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <!-- Theme Init (prevent flash) -->
+  <script>
+    (function() {
+      const t = localStorage.getItem('hapi-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+      if (t === 'light') document.documentElement.classList.remove('dark');
+      else document.documentElement.classList.add('dark');
+    })();
+  </script>
+  <style>
+    /* ===== Comprehensive Light Mode Overrides ===== */
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #1e293b;
+      --text-muted: #475569;
+      --border-color: #e2e8f0;
+      --card-bg: rgba(255,255,255,0.85);
+      --card-hover: rgba(255,255,255,0.95);
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    /* Body & Background */
+    [data-theme="light"] body { background: var(--bg) !important; color: var(--text-secondary) !important; }
+    [data-theme="light"] .mesh-gradient {
+      background-image:
+        radial-gradient(at 40% 20%, rgba(59,142,255,0.06) 0px, transparent 50%),
+        radial-gradient(at 80% 0%, rgba(167,139,250,0.04) 0px, transparent 50%),
+        radial-gradient(at 0% 50%, rgba(34,211,238,0.03) 0px, transparent 50%) !important;
+      background-color: var(--bg) !important;
+    }
+
+    /* Glass Cards */
+    [data-theme="light"] .glass-card,
+    [data-theme="light"] .stat-card {
+      background: var(--card-bg) !important;
+      border-color: var(--border-color) !important;
+      box-shadow: var(--card-shadow) !important;
+      backdrop-filter: blur(12px) !important;
+    }
+    [data-theme="light"] .glass-card-hover:hover { background: var(--card-hover) !important; }
+
+    /* ===== Text Colors ===== */
+    [data-theme="light"] .text-surface-50,
+    [data-theme="light"] .text-surface-100,
+    [data-theme="light"] .stat-value,
+    [data-theme="light"] .pomodoro-display,
+    [data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3 {
+      color: var(--text-primary) !important;
+    }
+    [data-theme="light"] .text-surface-200 { color: #1e293b !important; }
+    [data-theme="light"] .text-surface-300 { color: #334155 !important; }
+    [data-theme="light"] .text-surface-400 { color: #64748b !important; }
+    [data-theme="light"] .text-surface-500 { color: #94a3b8 !important; }
+    [data-theme="light"] .text-white { color: #ffffff !important; }
+
+    /* ===== Sidebar ===== */
+    [data-theme="light"] #sidebar {
+      background: rgba(255,255,255,0.92) !important;
+      border-color: var(--border-color) !important;
+      backdrop-filter: blur(20px) !important;
+    }
+    [data-theme="light"] .nav-item { color: #475569 !important; }
+    [data-theme="light"] .nav-item:hover { background: rgba(241,245,249,0.8) !important; color: #1e293b !important; }
+    [data-theme="light"] .nav-item.active {
+      background: rgba(59,142,255,0.08) !important;
+      color: #1f6af5 !important;
+      border-color: #1f6af5 !important;
+    }
+    [data-theme="light"] #sidebar .border-surface-700\/50 { border-color: var(--border-color) !important; }
+
+    /* Sidebar user section */
+    [data-theme="light"] .bg-surface-900\/90 {
+      background: rgba(255,255,255,0.95) !important;
+      border-color: var(--border-color) !important;
+    }
+    [data-theme="light"] .bg-surface-900\/80 { background: rgba(255,255,255,0.92) !important; }
+
+    /* ===== Surface Backgrounds ===== */
+    [data-theme="light"] .bg-surface-950 { background: var(--bg) !important; }
+    [data-theme="light"] .bg-surface-900 { background: var(--bg-secondary) !important; }
+    [data-theme="light"] .bg-surface-800\/50,
+    [data-theme="light"] .bg-surface-800\/60,
+    [data-theme="light"] .bg-surface-800\/70,
+    [data-theme="light"] .bg-surface-800\/30 {
+      background: rgba(241,245,249,0.7) !important;
+    }
+    [data-theme="light"] .bg-surface-800 { background: #f1f5f9 !important; }
+    [data-theme="light"] .bg-surface-700 { background: #e2e8f0 !important; }
+    [data-theme="light"] .bg-surface-700\/50 { background: rgba(226,232,240,0.5) !important; }
+
+    /* ===== Borders ===== */
+    [data-theme="light"] .border-surface-700\/50,
+    [data-theme="light"] .border-surface-700\/30,
+    [data-theme="light"] .border-surface-600\/50,
+    [data-theme="light"] .border-surface-600\/30 { border-color: var(--border-color) !important; }
+    [data-theme="light"] .border-surface-800\/50 { border-color: rgba(226,232,240,0.6) !important; }
+
+    /* ===== Input Fields ===== */
+    [data-theme="light"] .input-field {
+      background: rgba(255,255,255,0.9) !important;
+      border-color: #cbd5e1 !important;
+      color: var(--text-primary) !important;
+    }
+    [data-theme="light"] .input-field:focus { border-color: #3b8eff !important; }
+    [data-theme="light"] .input-field::placeholder { color: #94a3b8 !important; }
+    [data-theme="light"] select.input-field { background-color: #ffffff !important; }
+
+    /* ===== Buttons ===== */
+    [data-theme="light"] .btn-ghost {
+      color: #475569 !important;
+    }
+    [data-theme="light"] .btn-ghost:hover {
+      background: rgba(241,245,249,0.8) !important;
+      color: #1e293b !important;
+    }
+    [data-theme="light"] .btn-secondary {
+      background: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #334155 !important;
+    }
+    [data-theme="light"] .btn-secondary:hover {
+      background: #f8fafc !important;
+      border-color: #94a3b8 !important;
+    }
+
+    /* ===== Navbar ===== */
+    [data-theme="light"] #btn-theme,
+    [data-theme="light"] #btn-lang {
+      color: #475569 !important;
+    }
+    [data-theme="light"] #btn-theme:hover,
+    [data-theme="light"] #btn-lang:hover {
+      background: rgba(241,245,249,0.8) !important;
+      color: #0f172a !important;
+    }
+
+    /* ===== Pomodoro ===== */
+    [data-theme="light"] .pomodoro-display { color: var(--text-primary) !important; }
+    [data-theme="light"] #timer-ring { stroke: url(#timerGradient) !important; }
+    [data-theme="light"] svg circle[stroke="rgba(51,65,85,0.5)"] { stroke: #e2e8f0 !important; }
+
+    /* ===== Quiz Options ===== */
+    [data-theme="light"] .quiz-option {
+      background: var(--card-bg) !important;
+      border-color: var(--border-color) !important;
+    }
+    [data-theme="light"] .quiz-option:hover {
+      background: rgba(59,142,255,0.04) !important;
+      border-color: rgba(59,142,255,0.3) !important;
+    }
+    [data-theme="light"] .quiz-option .bg-surface-700 { background: #e2e8f0 !important; }
+    [data-theme="light"] .quiz-option .text-surface-300 { color: #475569 !important; }
+
+    /* ===== Chatbot Widget ===== */
+    [data-theme="light"] #chatbot-window .glass-card {
+      background: rgba(255,255,255,0.95) !important;
+      border-color: #e2e8f0 !important;
+    }
+    [data-theme="light"] .widget-bubble-ai {
+      background: #f1f5f9 !important;
+      color: #1e293b !important;
+    }
+    [data-theme="light"] #chatbot-window .bg-surface-900\/50 { background: rgba(248,250,252,0.95) !important; }
+    [data-theme="light"] #chatbot-window input { background: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; }
+    [data-theme="light"] .quick-chip {
+      background: rgba(241,245,249,0.8) !important;
+      color: #475569 !important;
+      border-color: #e2e8f0 !important;
+    }
+
+    /* ===== Glow effects — softer in light mode ===== */
+    [data-theme="light"] .glow-brand { box-shadow: 0 2px 8px rgba(59,142,255,0.08) !important; }
+    [data-theme="light"] .glow-success { box-shadow: 0 2px 8px rgba(34,197,94,0.08) !important; }
+    [data-theme="light"] .glow-danger { box-shadow: 0 2px 8px rgba(239,68,68,0.08) !important; }
+    [data-theme="light"] .glow-warning { box-shadow: 0 2px 8px rgba(245,158,11,0.08) !important; }
+
+    /* ===== Progress bars ===== */
+    [data-theme="light"] .bg-surface-700.rounded-full { background: #e2e8f0 !important; }
+
+    /* ===== Scrollbar ===== */
+    [data-theme="light"] ::-webkit-scrollbar-track { background: #f8fafc !important; }
+    [data-theme="light"] ::-webkit-scrollbar-thumb { background: #cbd5e1 !important; }
+    [data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #94a3b8 !important; }
+
+    /* ===== Flash Messages ===== */
+    [data-theme="light"] .flash-success { background: rgba(34,197,94,0.08) !important; border-color: rgba(34,197,94,0.2) !important; }
+    [data-theme="light"] .flash-error { background: rgba(239,68,68,0.08) !important; border-color: rgba(239,68,68,0.2) !important; }
+
+    /* ===== Auth Pages (Login/Register) ===== */
+    [data-theme="light"] .input-label { color: #334155 !important; }
+
+    /* ===== Mood Modal ===== */
+    [data-theme="light"] .mood-btn { border-color: #e2e8f0 !important; }
+    [data-theme="light"] .mood-btn:hover { background: rgba(241,245,249,0.8) !important; }
+
+    /* ===== Mobile sidebar toggle ===== */
+    [data-theme="light"] #sidebar-toggle {
+      background: rgba(255,255,255,0.8) !important;
+      border-color: #e2e8f0 !important;
+      color: #475569 !important;
+    }
+
+    /* ===== Calendar cells (analytics) ===== */
+    [data-theme="light"] .calendar-cell {
+      border-color: #e2e8f0 !important;
+    }
+
+    /* ===== Pomo overlay ===== */
+    [data-theme="light"] #pomo-overlay .glass-card {
+      background: rgba(255,255,255,0.95) !important;
+      border-color: #e2e8f0 !important;
+    }
+
+    /* ===== Landing Page (public) ===== */
+    [data-theme="light"] .bg-gradient-to-b.from-surface-950 { background: linear-gradient(to bottom, #f8fafc, #f1f5f9) !important; }
+  </style>
+</head>
+<body class="min-h-screen bg-surface-950 text-surface-100 font-sans mesh-gradient">
+
+  <%- include('../partials/flash') %>
+
+  <% if (typeof user !== 'undefined' && user) { %>
+    <!-- Authenticated layout with sidebar -->
+    <div class="page-container">
+      <%- include('../partials/sidebar') %>
+      <main class="main-content">
+        <%- include('../partials/navbar') %>
+        <div class="mt-6 animate-fade-in">
+          <%- body %>
+        </div>
+      </main>
+    </div>
+
+    <!-- Global Overlays -->
+    <%- include('../partials/mood-overlay') %>
+    <%- include('../partials/chatbot-widget') %>
+
+    <!-- Persistent Pomodoro Overlay -->
+    <div id="pomo-overlay" class="fixed bottom-20 right-6 z-40 hidden animate-scale-in">
+      <div class="glass-card p-4 shadow-2xl border border-brand-500/20 min-w-[200px]">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-surface-400" id="pomo-overlay-label">Pomodoro</span>
+          <button onclick="togglePomoOverlay(false)" class="text-surface-500 hover:text-surface-200">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+        <div class="text-2xl font-bold font-mono text-surface-50 text-center" id="pomo-overlay-time">25:00</div>
+        <div class="flex justify-center gap-2 mt-2">
+          <button onclick="window.pomoAction?.('pause')" class="btn-ghost btn-sm text-xs" id="pomo-overlay-pause">
+            <i data-lucide="pause" class="w-3 h-3"></i>
+          </button>
+          <button onclick="window.pomoAction?.('resume')" class="btn-primary btn-sm text-xs hidden" id="pomo-overlay-resume">
+            <i data-lucide="play" class="w-3 h-3"></i>
+          </button>
+          <button onclick="window.location='/pomodoro'" class="btn-ghost btn-sm text-xs">
+            <i data-lucide="maximize-2" class="w-3 h-3"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  <% } else { %>
+    <!-- Public layout -->
+    <main>
+      <%- body %>
+    </main>
+  <% } %>
+
+  <!-- Vite-bundled JavaScript (modules: toast, theme, i18n, dashboard, pomodoro-state) -->
+  <script type="module" src="/dist/js/main.js"></script>
+
+  <!-- Lucide Icons Init -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

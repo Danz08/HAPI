@@ -1,0 +1,16 @@
+<!-- Error Page -->
+<div class="min-h-screen flex items-center justify-center px-6">
+  <div class="text-center animate-slide-up">
+    <div class="text-8xl mb-6">🔍</div>
+    <h1 class="text-4xl font-bold font-display text-surface-50 mb-4"><%= typeof title !== 'undefined' ? title : 'Error' %></h1>
+    <p class="text-surface-400 mb-8 max-w-md mx-auto"><%= typeof message !== 'undefined' ? message : 'Terjadi kesalahan.' %></p>
+    <div class="flex gap-4 justify-center">
+      <a href="/" class="btn-primary">
+        <i data-lucide="home" class="w-4 h-4"></i> Kembali ke Beranda
+      </a>
+      <button onclick="history.back()" class="btn-secondary">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali
+      </button>
+    </div>
+  </div>
+</div>

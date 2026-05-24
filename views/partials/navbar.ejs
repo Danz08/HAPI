@@ -1,0 +1,33 @@
+<!-- Top Navbar -->
+<header class="flex items-center justify-between mb-2">
+  <div class="ml-12 lg:ml-0">
+    <h2 class="text-2xl font-bold font-display text-surface-50"><%= typeof title !== 'undefined' ? title.replace(' - HAPI', '') : 'Dashboard' %></h2>
+    <p class="text-sm text-surface-400 mt-0.5">
+      <% 
+        const now = new Date();
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu']; 
+        const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember']; 
+        // Timezone label (#7)
+        const tzLabel = tz.includes('Jakarta') ? 'WIB' : tz.includes('Makassar') ? 'WITA' : tz.includes('Jayapura') ? 'WIT' : tz;
+      %>
+      <%= days[now.getDay()] %>, <%= now.getDate() %> <%= months[now.getMonth()] %> <%= now.getFullYear() %>
+      <span class="text-surface-500 text-xs ml-1">(<%= tzLabel %>)</span>
+    </p>
+  </div>
+  <div class="flex items-center gap-2">
+    <!-- Mood Button (#11) -->
+    <button onclick="openMoodModal()" class="btn-secondary btn-sm" id="btn-quick-mood" title="Log Mood">
+      <i data-lucide="smile" class="w-4 h-4"></i>
+      <span class="hidden sm:inline" data-i18n="btn.mood">Mood</span>
+    </button>
+    <!-- Theme Toggle (#10) -->
+    <button onclick="toggleTheme()" class="btn-ghost btn-sm" id="btn-theme" data-i18n-title="btn.theme" title="Ganti Tema">
+      <i data-lucide="sun" class="w-4 h-4" id="theme-icon"></i>
+    </button>
+    <!-- Language Toggle (#10) -->
+    <button onclick="toggleLang()" class="btn-ghost btn-sm" id="btn-lang" data-i18n-title="btn.lang" title="Ganti Bahasa">
+      <span class="text-xs font-bold" id="lang-label">ID</span>
+    </button>
+  </div>
+</header>

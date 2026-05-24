@@ -1,0 +1,74 @@
+<!-- Sidebar Navigation -->
+<aside id="sidebar" class="fixed top-0 left-0 z-40 h-screen w-64 bg-surface-900/80 backdrop-blur-xl border-r border-surface-700/50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+  <!-- Logo -->
+  <div class="flex items-center gap-3 px-6 py-6 border-b border-surface-700/50">
+    <div class="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center shadow-lg shadow-brand-600/25">
+      <i data-lucide="brain" class="w-5 h-5 text-white"></i>
+    </div>
+    <div>
+      <h1 class="text-lg font-bold font-display text-surface-50">HAPI</h1>
+      <p class="text-[10px] text-surface-400 tracking-wider uppercase">Activity Intelligence</p>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="px-3 py-4 space-y-1 flex-1 overflow-y-auto" style="height: calc(100vh - 160px)">
+    <p class="px-4 py-2 text-[11px] font-semibold text-surface-500 uppercase tracking-wider" data-i18n="nav.main">Menu Utama</p>
+
+    <a href="/dashboard" class="nav-item <%= currentPath === '/dashboard' ? 'active' : '' %>" id="nav-dashboard">
+      <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+      <span class="font-medium" data-i18n="nav.dashboard">Dashboard</span>
+    </a>
+
+    <a href="/pomodoro" class="nav-item <%= currentPath === '/pomodoro' ? 'active' : '' %>" id="nav-pomodoro">
+      <i data-lucide="timer" class="w-5 h-5"></i>
+      <span class="font-medium" data-i18n="nav.pomodoro">Pomodoro</span>
+    </a>
+
+    <a href="/analytics" class="nav-item <%= currentPath === '/analytics' ? 'active' : '' %>" id="nav-analytics">
+      <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+      <span class="font-medium" data-i18n="nav.analytics">Analytics</span>
+    </a>
+
+    <p class="px-4 py-2 mt-4 text-[11px] font-semibold text-surface-500 uppercase tracking-wider" data-i18n="nav.monitoring">Monitoring</p>
+
+    <a href="/quiz" class="nav-item <%= currentPath === '/quiz' ? 'active' : '' %>" id="nav-quiz">
+      <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+      <span class="font-medium" data-i18n="nav.quiz">Fatigue Quiz</span>
+    </a>
+  </nav>
+
+  <!-- User Info -->
+  <div class="absolute bottom-0 left-0 right-0 px-4 py-4 border-t border-surface-700/50 bg-surface-900/90">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full gradient-accent flex items-center justify-center text-white text-sm font-bold">
+        <%= user && user.display_name ? user.display_name.charAt(0).toUpperCase() : 'U' %>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-surface-200 truncate"><%= user ? user.display_name : 'User' %></p>
+        <p class="text-xs text-surface-500 truncate"><%= user ? user.email : '' %></p>
+      </div>
+      <a href="/auth/logout" class="text-surface-400 hover:text-danger-400 transition-colors" title="Logout" id="btn-logout">
+        <i data-lucide="log-out" class="w-4 h-4"></i>
+      </a>
+    </div>
+  </div>
+</aside>
+
+<!-- Mobile sidebar toggle -->
+<button id="sidebar-toggle" class="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-xl bg-surface-800/80 backdrop-blur-lg border border-surface-700/50 text-surface-300 hover:text-surface-100 transition-colors">
+  <i data-lucide="menu" class="w-5 h-5"></i>
+</button>
+
+<!-- Overlay for mobile -->
+<div id="sidebar-overlay" class="lg:hidden fixed inset-0 bg-black/50 z-30 hidden" onclick="toggleSidebar()"></div>
+
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  }
+  document.getElementById('sidebar-toggle')?.addEventListener('click', toggleSidebar);
+</script>

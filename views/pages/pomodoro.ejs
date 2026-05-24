@@ -1,0 +1,371 @@
+<!-- Pomodoro Timer Page -->
+<div class="max-w-xl mx-auto">
+  <!-- Timer Card -->
+  <div class="glass-card p-8 text-center mb-6 glow-brand">
+    <!-- Mode Toggle -->
+    <div class="flex justify-center gap-2 mb-8">
+      <button id="mode-work" onclick="setMode('work')" class="btn-primary btn-sm" data-i18n="pomo.focus">Fokus</button>
+      <button id="mode-break" onclick="setMode('break')" class="btn-ghost btn-sm" data-i18n="pomo.shortBreak">Istirahat Singkat</button>
+      <button id="mode-long" onclick="setMode('long')" class="btn-ghost btn-sm" data-i18n="pomo.longBreak">Istirahat Panjang</button>
+    </div>
+
+    <!-- Timer Display -->
+    <div class="relative inline-block mb-8">
+      <svg class="w-64 h-64 transform -rotate-90" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(51,65,85,0.5)" stroke-width="6"/>
+        <circle id="timer-ring" cx="100" cy="100" r="90" fill="none" stroke="url(#timerGradient)" stroke-width="6" stroke-linecap="round"
+                stroke-dasharray="565.48" stroke-dashoffset="0" class="transition-all duration-1000"/>
+        <defs>
+          <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#3b8eff"/>
+            <stop offset="100%" stop-color="#a78bfa"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="absolute inset-0 flex flex-col items-center justify-center">
+        <div id="timer-display" class="pomodoro-display">25:00</div>
+        <p id="timer-label" class="text-sm text-surface-400 mt-2" data-i18n="pomo.focus">Fokus</p>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex justify-center gap-4">
+      <button id="btn-start" onclick="startTimer()" class="btn-primary btn-lg">
+        <i data-lucide="play" class="w-5 h-5"></i> <span id="action-text-start" data-i18n="pomo.start">Mulai</span>
+      </button>
+      <button id="btn-pause" onclick="pauseTimer()" class="btn-secondary btn-lg hidden">
+        <i data-lucide="pause" class="w-5 h-5"></i> <span id="action-text-pause" data-i18n="pomo.pause">Jeda</span>
+      </button>
+      <button id="btn-reset" onclick="resetTimer()" class="btn-ghost btn-lg">
+        <i data-lucide="rotate-ccw" class="w-5 h-5"></i> <span data-i18n="pomo.reset">Reset</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-3 gap-4 mb-6">
+    <div class="stat-card text-center">
+      <div class="stat-value text-xl" id="stat-cycles">0</div>
+      <div class="stat-label" data-i18n="pomo.cycles">Siklus</div>
+    </div>
+    <div class="stat-card text-center">
+      <div class="stat-value text-xl" id="stat-focus">0m</div>
+      <div class="stat-label" data-i18n="pomo.focusStat">Fokus</div>
+    </div>
+    <div class="stat-card text-center">
+      <div class="stat-value text-xl" id="stat-break">0m</div>
+      <div class="stat-label" data-i18n="pomo.breakStat">Istirahat Singkat</div>
+    </div>
+  </div>
+
+  <!-- Today's Calendar Events (#4) -->
+  <div class="glass-card p-6 mb-6" id="cal-events-section">
+    <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
+      <i data-lucide="calendar" class="w-5 h-5 inline text-brand-400 mr-1"></i> <span data-i18n="pomo.todaySchedule">Jadwal Hari Ini</span>
+    </h3>
+    <div id="cal-events-list">
+      <p class="text-sm text-surface-400 text-center py-2">Memuat jadwal...</p>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div class="glass-card p-6">
+    <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
+      <i data-lucide="settings" class="w-5 h-5 inline text-surface-400 mr-1"></i> <span data-i18n="pomo.settings">Pengaturan</span>
+    </h3>
+    <div class="grid grid-cols-3 gap-4">
+      <div>
+        <label class="input-label" data-i18n="pomo.focusMin">Fokus (menit)</label>
+        <input type="number" id="set-work" value="25" min="1" max="120" class="input-field text-center" onchange="updateSettings()">
+      </div>
+      <div>
+        <label class="input-label" data-i18n="pomo.shortBreakMin">Istirahat Singkat (menit)</label>
+        <input type="number" id="set-break" value="5" min="1" max="30" class="input-field text-center" onchange="updateSettings()">
+      </div>
+      <div>
+        <label class="input-label" data-i18n="pomo.longBreakLabel">Istirahat Panjang</label>
+        <input type="number" id="set-long" value="15" min="1" max="60" class="input-field text-center" onchange="updateSettings()">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let workDuration = 25, breakDuration = 5, longBreakDuration = 15;
+let timeLeft = workDuration * 60;
+let totalTime = workDuration * 60;
+let timerInterval = null;
+let isRunning = false;
+let currentMode = 'work'; // work, break, long
+let cyclesCompleted = 0;
+let totalFocusMinutes = 0;
+let totalBreakMinutes = 0;
+const CIRCUMFERENCE = 2 * Math.PI * 90; // 565.48
+
+// Restore state from localStorage (#3)
+function restorePomoState() {
+  const saved = JSON.parse(localStorage.getItem('hapi-pomo') || 'null');
+  if (!saved) return;
+
+  currentMode = saved.mode || 'work';
+  cyclesCompleted = saved.cycles || 0;
+  totalFocusMinutes = saved.totalFocus || 0;
+  totalBreakMinutes = saved.totalBreak || 0;
+  workDuration = saved.workDuration || 25;
+  breakDuration = saved.breakDuration || 5;
+  longBreakDuration = saved.longBreakDuration || 15;
+  totalTime = saved.totalSeconds || workDuration * 60;
+
+  document.getElementById('set-work').value = workDuration;
+  document.getElementById('set-break').value = breakDuration;
+  document.getElementById('set-long').value = longBreakDuration;
+
+  if (saved.running && saved.startedAt) {
+    const elapsed = Math.floor((Date.now() - saved.startedAt) / 1000);
+    timeLeft = Math.max(0, saved.totalSeconds - elapsed);
+    
+    if (timeLeft <= 0) {
+      // Timer completed while away
+      localStorage.removeItem('hapi-pomo');
+      onTimerComplete();
+      return;
+    }
+
+    // Resume timer
+    updateModeButtons();
+    updateDisplay();
+    updateStats();
+    startTimer();
+    return;
+  }
+
+  // Paused state
+  timeLeft = saved.remainingSeconds || totalTime;
+  updateModeButtons();
+  updateDisplay();
+  updateStats();
+}
+
+function savePomoState() {
+  const state = {
+    running: isRunning,
+    mode: currentMode,
+    label: currentMode === 'work' ? 'Fokus' : currentMode === 'break' ? 'Istirahat Singkat' : 'Istirahat Panjang',
+    totalSeconds: totalTime,
+    remainingSeconds: timeLeft,
+    startedAt: isRunning ? Date.now() - ((totalTime - timeLeft) * 1000) : null,
+    cycles: cyclesCompleted,
+    totalFocus: totalFocusMinutes,
+    totalBreak: totalBreakMinutes,
+    workDuration, breakDuration, longBreakDuration,
+  };
+  localStorage.setItem('hapi-pomo', JSON.stringify(state));
+  window.pomoState = state;
+}
+
+function updateDisplay() {
+  const mins = Math.floor(timeLeft / 60);
+  const secs = timeLeft % 60;
+  document.getElementById('timer-display').textContent =
+    String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+
+  const progress = (totalTime - timeLeft) / totalTime;
+  const offset = CIRCUMFERENCE * (1 - progress);
+  document.getElementById('timer-ring').setAttribute('stroke-dashoffset', offset);
+
+  document.title = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')} - Pomodoro | HAPI`;
+}
+
+function startTimer() {
+  if (isRunning) return;
+  isRunning = true;
+  document.getElementById('btn-start').classList.add('hidden');
+  document.getElementById('btn-pause').classList.remove('hidden');
+  savePomoState();
+
+  // Hide overlay on pomodoro page
+  window.togglePomoOverlay?.(false);
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      isRunning = false;
+      onTimerComplete();
+      return;
+    }
+    updateDisplay();
+    // Periodically save
+    if (timeLeft % 10 === 0) savePomoState();
+  }, 1000);
+}
+
+// Provide action handler for overlay buttons
+window.pomoAction = function(action) {
+  if (action === 'pause') pauseTimer();
+  if (action === 'resume') startTimer();
+};
+
+function pauseTimer() {
+  clearInterval(timerInterval);
+  isRunning = false;
+  document.getElementById('btn-start').classList.remove('hidden');
+  document.getElementById('btn-pause').classList.add('hidden');
+  savePomoState();
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  isRunning = false;
+  localStorage.removeItem('hapi-pomo');
+  window.pomoState = null;
+  window.togglePomoOverlay?.(false);
+  setMode(currentMode);
+  document.getElementById('btn-start').classList.remove('hidden');
+  document.getElementById('btn-pause').classList.add('hidden');
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  clearInterval(timerInterval);
+  isRunning = false;
+
+  const modes = { work: workDuration, break: breakDuration, long: longBreakDuration };
+  const labels = { work: 'Fokus', break: 'Istirahat Singkat', long: 'Istirahat Panjang' };
+
+  timeLeft = modes[mode] * 60;
+  totalTime = timeLeft;
+
+  document.getElementById('timer-label').textContent = labels[mode];
+  document.getElementById('btn-start').classList.remove('hidden');
+  document.getElementById('btn-pause').classList.add('hidden');
+
+  updateModeButtons();
+  updateDisplay();
+}
+
+function updateModeButtons() {
+  ['work','break','long'].forEach(m => {
+    const btn = document.getElementById('mode-' + m);
+    btn.className = m === currentMode ? 'btn-primary btn-sm' : 'btn-ghost btn-sm';
+  });
+}
+
+function onTimerComplete() {
+  // Play sound
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.value = 800; gain.gain.value = 0.3;
+    osc.start(); setTimeout(() => osc.stop(), 500);
+  } catch(e) {}
+
+  if (currentMode === 'work') {
+    cyclesCompleted++;
+    totalFocusMinutes += workDuration;
+    updateStats();
+    saveSession();
+
+    // Switch to break
+    if (cyclesCompleted % 4 === 0) {
+      setMode('long');
+    } else {
+      setMode('break');
+    }
+    startTimer();
+  } else {
+    totalBreakMinutes += currentMode === 'break' ? breakDuration : longBreakDuration;
+    updateStats();
+    setMode('work');
+    savePomoState();
+  }
+}
+
+function updateStats() {
+  document.getElementById('stat-cycles').textContent = cyclesCompleted;
+  document.getElementById('stat-focus').textContent = totalFocusMinutes + 'm';
+  document.getElementById('stat-break').textContent = totalBreakMinutes + 'm';
+}
+
+function updateSettings() {
+  workDuration = parseInt(document.getElementById('set-work').value) || 25;
+  breakDuration = parseInt(document.getElementById('set-break').value) || 5;
+  longBreakDuration = parseInt(document.getElementById('set-long').value) || 15;
+  if (!isRunning) setMode(currentMode);
+}
+
+async function saveSession() {
+  try {
+    await axios.post('/api/pomodoro/sessions', {
+      work_duration: workDuration,
+      break_duration: breakDuration,
+      cycles_completed: 1,
+      total_focus_minutes: workDuration,
+    });
+  } catch(e) {}
+}
+
+// Load today's calendar events and auto-set timers (#4)
+async function loadCalendarEvents() {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const res = await axios.get(`/api/analytics/day/${today}`);
+    const data = res.data;
+    const container = document.getElementById('cal-events-list');
+
+    if (!data.calEvents || data.calEvents.length === 0) {
+      container.innerHTML = '<p class="text-sm text-surface-500 text-center py-2">Tidak ada jadwal hari ini</p>';
+      return;
+    }
+
+    let html = '';
+    const now = new Date();
+    data.calEvents.forEach(ev => {
+      const start = new Date(ev.start_time);
+      const end = new Date(ev.end_time);
+      const durationMin = Math.round((end - start) / 60000);
+      const startStr = ev.start_time.includes('T') ? ev.start_time.substring(11, 16) : 'All day';
+      const endStr = ev.end_time.includes('T') ? ev.end_time.substring(11, 16) : '';
+      const isNow = now >= start && now <= end;
+      const isFuture = now < start;
+      const typeIcons = { meeting: '🤝', break: '☕', deadline: '⏰', event: '📌' };
+
+      html += `<div class="flex items-center justify-between p-2 rounded-lg ${isNow ? 'bg-brand-500/10 border border-brand-500/20' : 'bg-surface-800/30'} mb-1.5">`;
+      html += `<div class="flex items-center gap-2">`;
+      html += `<span class="text-xs">${typeIcons[ev.event_type] || '📌'}</span>`;
+      html += `<span class="text-xs font-mono text-surface-500">${startStr}–${endStr}</span>`;
+      html += `<span class="text-xs text-surface-200">${ev.title}</span>`;
+      if (isNow) html += `<span class="px-1.5 py-0.5 rounded text-[9px] bg-brand-500/20 text-brand-400 font-bold">SEKARANG</span>`;
+      html += `</div>`;
+      // Auto-set timer button for future events
+      if (isFuture || isNow) {
+        html += `<button onclick="setCalendarTimer(${durationMin}, '${ev.title.replace(/'/g, '')}')" class="btn-ghost text-[10px] px-2 py-1" title="Set timer ${durationMin}m">⏱️ ${durationMin}m</button>`;
+      }
+      html += `</div>`;
+    });
+    container.innerHTML = html;
+  } catch(e) {
+    document.getElementById('cal-events-list').innerHTML = '<p class="text-xs text-surface-500 text-center">Gagal memuat jadwal</p>';
+  }
+}
+
+// Set timer from calendar event (#4)
+window.setCalendarTimer = function(minutes, title) {
+  workDuration = minutes;
+  document.getElementById('set-work').value = minutes;
+  setMode('work');
+  document.getElementById('timer-label').textContent = title || `Meeting (${minutes}m)`;
+  startTimer();
+  window.showToast?.(`Timer ${minutes} menit dimulai untuk "${title}"`, 'success');
+};
+
+// Initialize
+restorePomoState();
+if (!isRunning) updateDisplay();
+// Load calendar events after axios is available (from Vite bundle)
+document.addEventListener('DOMContentLoaded', () => {
+  loadCalendarEvents();
+});
+</script>

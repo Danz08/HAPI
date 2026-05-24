@@ -1,0 +1,124 @@
+<!-- Curhat / Personal Chat Page -->
+<div class="max-w-3xl mx-auto flex flex-col" style="height: calc(100vh - 180px)">
+  <!-- Chat Header -->
+  <div class="glass-card p-4 mb-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full gradient-accent flex items-center justify-center">
+        <i data-lucide="bot" class="w-5 h-5 text-white"></i>
+      </div>
+      <div>
+        <p class="font-semibold text-surface-100">HAPI Assistant</p>
+        <p class="text-xs text-success-400 flex items-center gap-1"><span class="w-2 h-2 bg-success-400 rounded-full animate-pulse-soft"></span> Online</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="badge-<%= riskLevel.toLowerCase() %>">Fatigue: <%= riskLevel %></span>
+      <button onclick="clearChat()" class="btn-ghost btn-sm text-surface-400" title="Hapus chat">
+        <i data-lucide="trash-2" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Chat Messages -->
+  <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 px-2 mb-4">
+    <% if (messages.length === 0) { %>
+    <div class="text-center py-12">
+      <div class="text-5xl mb-4">💬</div>
+      <h3 class="text-lg font-bold text-surface-300 mb-2">Hai, apa kabar?</h3>
+      <p class="text-sm text-surface-500 max-w-sm mx-auto">Ceritakan perasaanmu, keluh kesahmu, atau apapun yang ada di pikiranmu. Aku di sini untuk mendengarkan.</p>
+    </div>
+    <% } else { %>
+      <% messages.forEach(function(msg) { %>
+        <div class="flex <%= msg.role === 'user' ? 'justify-end' : 'justify-start' %> animate-fade-in">
+          <% if (msg.role === 'ai') { %>
+          <div class="flex gap-2 max-w-[80%]">
+            <div class="w-7 h-7 rounded-full gradient-accent flex items-center justify-center flex-shrink-0 mt-1">
+              <i data-lucide="bot" class="w-3.5 h-3.5 text-white"></i>
+            </div>
+            <div class="chat-bubble-ai"><%= msg.message %></div>
+          </div>
+          <% } else { %>
+          <div class="chat-bubble-user"><%= msg.message %></div>
+          <% } %>
+        </div>
+      <% }) %>
+    <% } %>
+  </div>
+
+  <!-- Chat Input -->
+  <div class="glass-card p-4">
+    <form id="chat-form" class="flex gap-3">
+      <input type="text" id="chat-input" placeholder="Ceritakan perasaanmu..." class="input-field flex-1" autocomplete="off">
+      <button type="submit" class="btn-primary" id="btn-send-chat">
+        <i data-lucide="send" class="w-4 h-4"></i>
+      </button>
+    </form>
+    <p class="text-[10px] text-surface-500 mt-2 text-center">⚠️ Ini bukan konseling profesional. Jika butuh bantuan serius, hubungi psikolog.</p>
+  </div>
+</div>
+
+<script>
+const chatMessages = document.getElementById('chat-messages');
+chatMessages.scrollTop = chatMessages.scrollHeight;
+
+document.getElementById('chat-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  // Add user message
+  appendMessage('user', msg);
+  input.value = '';
+
+  // Show typing indicator
+  const typingId = showTyping();
+
+  try {
+    const res = await fetch('/curhat/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg }),
+    });
+    const data = await res.json();
+    removeTyping(typingId);
+    if (data.success) appendMessage('ai', data.response);
+  } catch(e) {
+    removeTyping(typingId);
+    appendMessage('ai', 'Maaf, terjadi kesalahan. Coba lagi ya.');
+  }
+});
+
+function appendMessage(role, text) {
+  const div = document.createElement('div');
+  div.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`;
+  if (role === 'ai') {
+    div.innerHTML = `<div class="flex gap-2 max-w-[80%]"><div class="w-7 h-7 rounded-full gradient-accent flex items-center justify-center flex-shrink-0 mt-1"><i data-lucide="bot" class="w-3.5 h-3.5 text-white"></i></div><div class="chat-bubble-ai">${text}</div></div>`;
+  } else {
+    div.innerHTML = `<div class="chat-bubble-user">${text}</div>`;
+  }
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  lucide.createIcons();
+}
+
+function showTyping() {
+  const id = 'typing-' + Date.now();
+  const div = document.createElement('div');
+  div.id = id;
+  div.className = 'flex justify-start animate-fade-in';
+  div.innerHTML = `<div class="flex gap-2"><div class="w-7 h-7 rounded-full gradient-accent flex items-center justify-center flex-shrink-0 mt-1"><i data-lucide="bot" class="w-3.5 h-3.5 text-white"></i></div><div class="chat-bubble-ai"><div class="flex gap-1"><span class="w-2 h-2 bg-surface-400 rounded-full animate-bounce" style="animation-delay:0s"></span><span class="w-2 h-2 bg-surface-400 rounded-full animate-bounce" style="animation-delay:0.2s"></span><span class="w-2 h-2 bg-surface-400 rounded-full animate-bounce" style="animation-delay:0.4s"></span></div></div></div>`;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  lucide.createIcons();
+  return id;
+}
+
+function removeTyping(id) { document.getElementById(id)?.remove(); }
+
+async function clearChat() {
+  if (!confirm('Hapus semua riwayat chat?')) return;
+  await fetch('/curhat/clear', { method: 'DELETE' });
+  location.reload();
+}
+</script>

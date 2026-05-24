@@ -1,0 +1,41 @@
+{
+  "name": "hapi",
+  "version": "1.0.0",
+  "description": "HAPI - Human Activity Pattern Intelligence: AI-powered fatigue monitoring & productivity app",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "npm run build:client && concurrently \"nodemon --ignore client/ --ignore public/dist/ server.js\" \"npx vite build --watch\"",
+    "build:client": "npx vite build",
+    "build:css": "npx tailwindcss -i ./public/css/input.css -o ./public/css/output.css --minify"
+  },
+  "keywords": [
+    "fatigue",
+    "productivity",
+    "pomodoro",
+    "ai",
+    "mental-health"
+  ],
+  "author": "HAPI Team",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.16.1",
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.9.1",
+    "connect-flash": "^0.1.1",
+    "dotenv": "^16.5.0",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-ejs-layouts": "^2.5.1",
+    "express-session": "^1.18.1",
+    "googleapis": "^171.4.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.10",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "vite": "^8.0.13"
+  }
+}
