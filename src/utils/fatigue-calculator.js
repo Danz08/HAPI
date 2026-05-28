@@ -1,39 +1,40 @@
-﻿
-// Quiz question weights (based on MBI dimensions)
+
+// MBI-SS Dimension Weights (Academic Burnout)
 const DIMENSION_WEIGHTS = {
-  emotional_exhaustion: 0.40,  // Kelelahan emosional
-  depersonalization: 0.25,     // Depersonalisasi
-  personal_accomplishment: 0.20, // Pencapaian pribadi (inverse)
-  work_pattern: 0.15,          // Pola kerja
+  emotional_exhaustion: 0.40,    // Exhaustion (5 items)
+  depersonalization: 0.30,       // Cynicism (4 items)
+  personal_accomplishment: 0.30, // Academic Efficacy (6 items, inverse)
 };
+
+// MBI-SS question mapping (15 questions, 0-6 scale)
+const QUESTION_MAPPING = [
+  // Exhaustion: Q1-Q5
+  'emotional_exhaustion', 'emotional_exhaustion', 'emotional_exhaustion',
+  'emotional_exhaustion', 'emotional_exhaustion',
+  // Cynicism: Q6-Q9
+  'depersonalization', 'depersonalization', 'depersonalization', 'depersonalization',
+  // Academic Efficacy: Q10-Q15 (inverse scored)
+  'personal_accomplishment', 'personal_accomplishment', 'personal_accomplishment',
+  'personal_accomplishment', 'personal_accomplishment', 'personal_accomplishment',
+];
 
 function calculateFatigueFromQuiz(answers) {
   if (!answers || answers.length === 0) {
     return { score: 0, riskLevel: 'Low', dimensions: {} };
   }
 
-  // Map answers to dimensions (questions are grouped by dimension)
+  // Map answers to dimensions
   const dimensionScores = {
     emotional_exhaustion: [],
     depersonalization: [],
     personal_accomplishment: [],
-    work_pattern: [],
   };
 
-  // Questions 1-3: Emotional Exhaustion
-  // Questions 4-5: Depersonalization
-  // Questions 6-7: Personal Accomplishment (inversed)
-  // Questions 8-10: Work Pattern
-  const mapping = [
-    'emotional_exhaustion', 'emotional_exhaustion', 'emotional_exhaustion',
-    'depersonalization', 'depersonalization',
-    'personal_accomplishment', 'personal_accomplishment',
-    'work_pattern', 'work_pattern', 'work_pattern',
-  ];
-
   answers.forEach((score, idx) => {
-    const dimension = mapping[idx] || 'work_pattern';
-    // Invert personal accomplishment (high score = low fatigue)
+    const dimension = QUESTION_MAPPING[idx];
+    if (!dimension) return;
+
+    // Invert Academic Efficacy (high score = low burnout)
     if (dimension === 'personal_accomplishment') {
       dimensionScores[dimension].push(6 - score);
     } else {
@@ -41,15 +42,16 @@ function calculateFatigueFromQuiz(answers) {
     }
   });
 
-  // Calculate average per dimension
+  // Calculate average per dimension and normalize to 0-100
   const dimensions = {};
   let weightedTotal = 0;
 
   for (const [dim, scores] of Object.entries(dimensionScores)) {
     if (scores.length > 0) {
       const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-      dimensions[dim] = Math.round(avg * 20); // Convert 1-5 to 0-100
-      weightedTotal += dimensions[dim] * DIMENSION_WEIGHTS[dim];
+      // MBI-SS scale 0-6 → normalize to 0-100
+      dimensions[dim] = Math.round((avg / 6) * 100);
+      weightedTotal += dimensions[dim] * (DIMENSION_WEIGHTS[dim] || 0);
     } else {
       dimensions[dim] = 0;
     }
@@ -58,13 +60,23 @@ function calculateFatigueFromQuiz(answers) {
   const score = Math.round(weightedTotal);
   const riskLevel = getRiskLevel(score);
 
-  return { score, riskLevel, dimensions };
+  // Also provide raw averages per dimension for detailed display
+  const dimensionAverages = {};
+  for (const [dim, scores] of Object.entries(dimensionScores)) {
+    if (scores.length > 0) {
+      dimensionAverages[dim] = Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 100) / 100;
+    } else {
+      dimensionAverages[dim] = 0;
+    }
+  }
+
+  return { score, riskLevel, dimensions, dimensionAverages };
 }
 
 function calculateComprehensiveFatigue(data) {
   const { quizScore = 50, avgMood = 3, workHoursToday = 0, breakMinutes = 0 } = data;
 
-  // Mood factor (1-5 â†’ weight: low mood increases fatigue)
+  // Mood factor (1-5 → weight: low mood increases fatigue)
   const moodFactor = ((6 - avgMood) / 5) * 100;
 
   // Work hours factor (more hours = more fatigue, exponential after 8h)
@@ -109,8 +121,8 @@ function calculateComprehensiveFatigue(data) {
 }
 
 function getRiskLevel(score) {
-  if (score <= 35) return 'Low';
-  if (score <= 65) return 'Medium';
+  if (score <= 33) return 'Low';
+  if (score <= 66) return 'Medium';
   return 'High';
 }
 

@@ -83,6 +83,7 @@ router.get('/callback', async (req, res) => {
         req.flash('success', 'Google Calendar terhubung!');
       }
 
+      req.session.user.login_method = 'google';
       return res.redirect('/analytics');
     }
 
@@ -124,6 +125,7 @@ router.get('/callback', async (req, res) => {
       email: user.email,
       display_name: user.display_name || user.username,
       is_onboarded: user.is_onboarded,
+      login_method: 'google',
     };
 
     // Sync calendar

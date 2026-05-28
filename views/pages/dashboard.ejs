@@ -23,7 +23,7 @@
           const score = fatigueData.score;
           const circumference = 2 * Math.PI * 70;
           const dashOffset = circumference - (score / 100) * circumference;
-          const gaugeColor = fatigueData.riskLevel === 'Low' ? '#22c55e' : fatigueData.riskLevel === 'High' ? '#ef4444' : '#C47B5A';
+          const gaugeColor = fatigueData.riskLevel === 'Low' ? '#22c55e' : fatigueData.riskLevel === 'High' ? '#ef4444' : '#A86240';
         %>
         <circle cx="80" cy="80" r="70" fill="none"
                 stroke="<%= gaugeColor %>" stroke-width="10"

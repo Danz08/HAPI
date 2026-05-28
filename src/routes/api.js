@@ -207,7 +207,7 @@ router.get('/pomodoro/stats', (req, res) => {
 // POST /api/quiz - Submit quiz answers
 router.post('/quiz', (req, res) => {
   const { answers } = req.body;
-  const QUIZ_QUESTION_COUNT = 10;
+  const QUIZ_QUESTION_COUNT = 15;
 
   if (!answers || !Array.isArray(answers) || answers.length !== QUIZ_QUESTION_COUNT) {
     return res.status(400).json({ error: 'Jawab semua pertanyaan terlebih dahulu.' });
@@ -237,6 +237,7 @@ router.post('/quiz', (req, res) => {
     riskLevel: result.riskLevel,
     riskColor,
     dimensions: result.dimensions,
+    dimensionAverages: result.dimensionAverages,
     recommendations,
   });
 });

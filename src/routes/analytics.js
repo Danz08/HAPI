@@ -164,7 +164,7 @@ router.get('/', (req, res) => {
   }
 
   const googleUser = db.prepare('SELECT google_connected FROM users WHERE id = ?').get(userId);
-  const isGoogleConnected = googleUser && googleUser.google_connected === 1;
+  const isGoogleConnected = googleUser && googleUser.google_connected === 1 && req.session.user.login_method === 'google';
 
   const calendarFeatures = db.prepare(`
     SELECT * FROM calendar_features

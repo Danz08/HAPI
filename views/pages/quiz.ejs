@@ -1,13 +1,13 @@
-<!-- Quiz Page - Akinator Style -->
+<!-- Quiz Page - MBI-SS Academic Burnout -->
 <div class="max-w-2xl mx-auto">
   <!-- Progress -->
-  <div class="glass-card p-4 mb-6">
+  <div class="glass-card p-4 mb-6" id="quiz-progress-bar">
     <div class="flex items-center justify-between mb-2">
       <span class="text-sm text-surface-400"><span data-i18n="quiz.question">Pertanyaan</span> <span id="q-current">1</span> <span data-i18n="quiz.of">dari</span> <span id="q-total"><%= questions.length %></span></span>
-      <span class="text-sm text-brand-400 font-semibold" id="q-dimension"></span>
+      <span class="text-sm font-semibold" id="q-dimension" style="color: #A86240"></span>
     </div>
     <div class="h-2 bg-surface-700 rounded-full overflow-hidden">
-      <div id="q-progress" class="h-full gradient-brand rounded-full transition-all duration-500" style="width: 10%"></div>
+      <div id="q-progress" class="h-full rounded-full transition-all duration-500 ease-out" style="width: 6.67%; background: linear-gradient(90deg, #A86240, #8c4e32)"></div>
     </div>
   </div>
 
@@ -18,16 +18,129 @@
       <div id="q-options" class="space-y-3"></div>
     </div>
 
-    <!-- Result (hidden initially) -->
-    <div id="quiz-result" class="hidden text-center">
-      <div id="result-icon" class="text-6xl mb-4"></div>
-      <h3 id="result-title" class="text-2xl font-bold font-display text-surface-50 mb-2"></h3>
-      <p id="result-score" class="text-4xl font-bold font-mono mb-2"></p>
-      <span id="result-badge" class="badge mb-6 inline-flex"></span>
-      <div id="result-recommendations" class="text-left mt-6 space-y-3"></div>
-      <div class="mt-8 flex gap-3 justify-center">
-        <a href="/dashboard" class="btn-secondary"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard</a>
-        <button onclick="restartQuiz()" class="btn-primary"><i data-lucide="refresh-cw" class="w-4 h-4"></i> <span data-i18n="quiz.restart">Ulangi Quiz</span></button>
+    <!-- Loading State -->
+    <div id="quiz-loading" class="hidden text-center py-12">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background: rgba(168,98,64,0.15)">
+        <svg class="animate-spin w-8 h-8" style="color: #A86240" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="31.4" stroke-dashoffset="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <p class="text-surface-300 font-medium">Menganalisis jawabanmu...</p>
+    </div>
+
+    <!-- Result -->
+    <div id="quiz-result" class="hidden">
+
+      <!-- Score Header -->
+      <div class="text-center mb-8">
+        <div class="relative inline-block mb-4">
+          <svg width="180" height="180" viewBox="0 0 180 180" id="result-gauge">
+            <circle cx="90" cy="90" r="78" fill="none" stroke="rgba(62,45,34,0.15)" stroke-width="12"/>
+            <circle id="gauge-circle" cx="90" cy="90" r="78" fill="none"
+                    stroke="#A86240" stroke-width="12"
+                    stroke-dasharray="490" stroke-dashoffset="490"
+                    stroke-linecap="round"
+                    transform="rotate(-90 90 90)"
+                    style="transition: stroke-dashoffset 1.5s ease-out, stroke 0.5s ease"/>
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span id="result-score" class="text-5xl font-bold font-display" style="color: #A86240">0</span>
+            <span class="text-xs text-surface-400 mt-1">/ 100</span>
+          </div>
+        </div>
+        <h3 id="result-title" class="text-2xl font-bold font-display text-surface-50 mb-2"></h3>
+        <span id="result-badge" class="badge mb-2 inline-flex"></span>
+        <p id="result-description" class="text-sm text-surface-400 mt-3 max-w-md mx-auto leading-relaxed"></p>
+      </div>
+
+      <!-- Dimension Breakdown -->
+      <div class="mb-8">
+        <h4 class="text-lg font-bold font-display text-surface-50 mb-4 flex items-center gap-2">
+          <i data-lucide="bar-chart-3" class="w-5 h-5" style="color: #A86240"></i>
+          <span data-i18n="quiz.dimensionBreakdown">Rincian Per Dimensi</span>
+        </h4>
+        <div class="space-y-4" id="dimension-bars">
+
+          <!-- Exhaustion -->
+          <div class="glass-card p-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background: rgba(239,68,68,0.12)">🔥</div>
+                <div>
+                  <p class="text-sm font-semibold text-surface-100" data-i18n="quiz.exhaustion">Kelelahan (Exhaustion)</p>
+                  <p class="text-[10px] text-surface-500" data-i18n="quiz.exhaustionDesc">Tingkat kelelahan fisik & emosional</p>
+                </div>
+              </div>
+              <span id="dim-exhaustion-val" class="text-lg font-bold font-mono text-surface-100">0%</span>
+            </div>
+            <div class="h-2.5 bg-surface-700 rounded-full overflow-hidden">
+              <div id="dim-exhaustion-bar" class="h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%; background: linear-gradient(90deg, #f87171, #ef4444)"></div>
+            </div>
+            <p id="dim-exhaustion-label" class="text-[11px] text-surface-400 mt-2"></p>
+          </div>
+
+          <!-- Cynicism -->
+          <div class="glass-card p-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background: rgba(168,98,64,0.12)">😔</div>
+                <div>
+                  <p class="text-sm font-semibold text-surface-100" data-i18n="quiz.cynicism">Sinisme (Cynicism)</p>
+                  <p class="text-[10px] text-surface-500" data-i18n="quiz.cynicismDesc">Sikap negatif terhadap studi</p>
+                </div>
+              </div>
+              <span id="dim-cynicism-val" class="text-lg font-bold font-mono text-surface-100">0%</span>
+            </div>
+            <div class="h-2.5 bg-surface-700 rounded-full overflow-hidden">
+              <div id="dim-cynicism-bar" class="h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%; background: linear-gradient(90deg, #8c4e32, #A86240)"></div>
+            </div>
+            <p id="dim-cynicism-label" class="text-[11px] text-surface-400 mt-2"></p>
+          </div>
+
+          <!-- Academic Efficacy (inverse) -->
+          <div class="glass-card p-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background: rgba(34,197,94,0.12)">📚</div>
+                <div>
+                  <p class="text-sm font-semibold text-surface-100" data-i18n="quiz.efficacy">Efikasi Akademik</p>
+                  <p class="text-[10px] text-surface-500" data-i18n="quiz.efficacyDesc">Keyakinan terhadap kemampuan akademik</p>
+                </div>
+              </div>
+              <span id="dim-efficacy-val" class="text-lg font-bold font-mono text-surface-100">0%</span>
+            </div>
+            <div class="h-2.5 bg-surface-700 rounded-full overflow-hidden">
+              <div id="dim-efficacy-bar" class="h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%; background: linear-gradient(90deg, #4ade80, #22c55e)"></div>
+            </div>
+            <p id="dim-efficacy-label" class="text-[11px] text-surface-400 mt-2"></p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="mb-6">
+        <h4 class="text-lg font-bold font-display text-surface-50 mb-4 flex items-center gap-2">
+          <i data-lucide="lightbulb" class="w-5 h-5 text-warning-400"></i>
+          <span data-i18n="quiz.recommendations">Rekomendasi</span>
+        </h4>
+        <div id="result-recommendations" class="space-y-3"></div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-3 justify-center pt-4 border-t border-surface-700/30">
+        <a href="/dashboard" class="btn-secondary">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span data-i18n="quiz.toDashboard">Dashboard</span>
+        </a>
+        <a href="/analytics" class="btn-secondary">
+          <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+          <span data-i18n="quiz.toAnalytics">Lihat Analitik</span>
+        </a>
+        <button onclick="restartQuiz()" class="btn-primary">
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          <span data-i18n="quiz.restart">Ulangi Quiz</span>
+        </button>
       </div>
     </div>
   </div>
@@ -42,15 +155,16 @@ const questions = <%- JSON.stringify(questions) %>;
 let currentQ = 0;
 let answers = [];
 
+const dimLabels = {
+  emotional_exhaustion: { id: 'Kelelahan', en: 'Exhaustion' },
+  depersonalization: { id: 'Sinisme', en: 'Cynicism' },
+  personal_accomplishment: { id: 'Efikasi Akademik', en: 'Academic Efficacy' },
+};
+
 function getDimLabel(dim) {
-  const t = window.t || (k => k);
-  const keys = {
-    emotional_exhaustion: 'quiz.dimEmotional',
-    depersonalization: 'quiz.dimDepersonalization',
-    personal_accomplishment: 'quiz.dimAccomplishment',
-    work_pattern: 'quiz.dimWorkPattern'
-  };
-  return t(keys[dim]) || dim;
+  const lang = window.getLang ? window.getLang() : 'id';
+  const labels = dimLabels[dim];
+  return labels ? (lang === 'en' ? labels.en : labels.id) : dim;
 }
 
 function showQuestion(idx) {
@@ -84,34 +198,163 @@ function selectAnswer(val) {
   showQuestion(currentQ);
 }
 
+function animateValue(el, start, end, duration) {
+  const startTime = performance.now();
+  const update = (now) => {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.round(start + (end - start) * eased);
+    el.textContent = current;
+    if (progress < 1) requestAnimationFrame(update);
+  };
+  requestAnimationFrame(update);
+}
+
+function getDimDescription(dim, percent) {
+  const lang = window.getLang ? window.getLang() : 'id';
+  if (dim === 'emotional_exhaustion') {
+    if (percent <= 33) return lang === 'en' ? 'Your exhaustion level is low. You still have good energy.' : 'Tingkat kelelahanmu rendah. Energimu masih terjaga baik.';
+    if (percent <= 66) return lang === 'en' ? 'You show moderate signs of exhaustion. Pay attention to rest patterns.' : 'Kamu menunjukkan tanda-tanda kelelahan sedang. Perhatikan pola istirahat.';
+    return lang === 'en' ? 'Your exhaustion is high. Prioritize rest and recovery immediately.' : 'Tingkat kelelahanmu tinggi. Prioritaskan istirahat dan pemulihan segera.';
+  }
+  if (dim === 'depersonalization') {
+    if (percent <= 33) return lang === 'en' ? 'You maintain positive attitudes toward your studies.' : 'Kamu masih memiliki sikap positif terhadap studi.';
+    if (percent <= 66) return lang === 'en' ? 'You show some cynical attitudes. Try to reconnect with your study goals.' : 'Ada tanda sikap sinis. Coba kembali ke tujuan belajarmu.';
+    return lang === 'en' ? 'High cynicism detected. Consider talking to a counselor or mentor.' : 'Sinisme tinggi terdeteksi. Pertimbangkan untuk bicara dengan konselor.';
+  }
+  // personal_accomplishment (already inverted in score, so high = low efficacy)
+  if (percent <= 33) return lang === 'en' ? 'You feel confident in your academic abilities. Great!' : 'Kamu merasa yakin dengan kemampuan akademikmu. Bagus!';
+  if (percent <= 66) return lang === 'en' ? 'Your academic confidence needs some boost. Celebrate small wins!' : 'Kepercayaan akademikmu perlu ditingkatkan. Rayakan pencapaian kecil!';
+  return lang === 'en' ? 'Your academic self-efficacy is low. Seek support and set smaller goals.' : 'Efikasi diri akademikmu rendah. Cari dukungan dan tetapkan target kecil.';
+}
+
 async function submitQuiz() {
+  // Show loading
   document.getElementById('quiz-question').classList.add('hidden');
-  document.getElementById('quiz-result').classList.remove('hidden');
+  document.getElementById('quiz-progress-bar').classList.add('hidden');
+  document.getElementById('quiz-loading').classList.remove('hidden');
 
   try {
     const res = await axios.post('/api/quiz', { answers });
     const data = res.data;
 
-    const t = window.t || (k => k);
-    const icons = { Low:'🟢', Medium:'⚠️', High:'🔴' };
-    const titleKeys = { Low:'quiz.lowRisk', Medium:'quiz.medRisk', High:'quiz.highRisk' };
+    // Hide loading, show result
+    document.getElementById('quiz-loading').classList.add('hidden');
+    document.getElementById('quiz-result').classList.remove('hidden');
 
-    document.getElementById('result-icon').textContent = icons[data.riskLevel] || '❓';
-    document.getElementById('result-title').textContent = t(titleKeys[data.riskLevel]);
-    document.getElementById('result-score').textContent = data.score;
-    document.getElementById('result-score').style.color = data.riskColor.text;
+    const lang = window.getLang ? window.getLang() : 'id';
+
+    // --- Score Gauge Animation ---
+    const score = data.score;
+    const circumference = 2 * Math.PI * 78; // ~490
+    const gaugeCircle = document.getElementById('gauge-circle');
+    const targetOffset = circumference - (score / 100) * circumference;
+
+    const riskColors = {
+      Low: '#22c55e',
+      Medium: '#A86240',
+      High: '#ef4444'
+    };
+    const gaugeColor = riskColors[data.riskLevel] || '#A86240';
+    gaugeCircle.setAttribute('stroke', gaugeColor);
+
+    setTimeout(() => {
+      gaugeCircle.style.strokeDashoffset = targetOffset;
+    }, 100);
+
+    // Animate score counter
+    const scoreEl = document.getElementById('result-score');
+    scoreEl.style.color = gaugeColor;
+    animateValue(scoreEl, 0, score, 1500);
+
+    // Title & Badge
+    const titles = {
+      Low:    { id: '✅ Risiko Rendah', en: '✅ Low Risk' },
+      Medium: { id: '⚠️ Risiko Sedang', en: '⚠️ Medium Risk' },
+      High:   { id: '🚨 Risiko Tinggi', en: '🚨 High Risk' }
+    };
+    const descriptions = {
+      Low:    { id: 'Tingkat kelelahan akademikmu masih rendah. Pertahankan ritme belajarmu dan tetap jaga keseimbangan!', en: 'Your academic burnout level is low. Keep up your study rhythm and maintain balance!' },
+      Medium: { id: 'Kamu menunjukkan tanda-tanda kelelahan akademik sedang. Mulailah memperhatikan pola istirahat dan keseimbangan aktivitas.', en: 'You show moderate signs of academic burnout. Start paying attention to rest patterns and activity balance.' },
+      High:   { id: 'Tingkat kelelahan akademikmu tinggi. Segera ambil langkah untuk beristirahat, kurangi beban, dan pertimbangkan bicara dengan konselor.', en: 'Your academic burnout level is high. Take immediate steps to rest, reduce workload, and consider speaking with a counselor.' }
+    };
+
+    const titleData = titles[data.riskLevel] || titles.Medium;
+    document.getElementById('result-title').textContent = lang === 'en' ? titleData.en : titleData.id;
+
+    const descData = descriptions[data.riskLevel] || descriptions.Medium;
+    document.getElementById('result-description').textContent = lang === 'en' ? descData.en : descData.id;
 
     const badge = document.getElementById('result-badge');
-    badge.textContent = data.riskLevel + ' Risk';
+    const badgeLabels = { Low: { id: 'Rendah', en: 'Low' }, Medium: { id: 'Sedang', en: 'Medium' }, High: { id: 'Tinggi', en: 'High' } };
+    const badgeLabel = badgeLabels[data.riskLevel] || badgeLabels.Medium;
+    badge.textContent = (lang === 'en' ? badgeLabel.en : badgeLabel.id) + ' Risk';
     badge.className = `badge badge-${data.riskLevel.toLowerCase()} inline-flex`;
 
+    // --- Dimension Bars ---
+    const dims = data.dimensions || {};
+    setTimeout(() => {
+      // Exhaustion
+      const exVal = dims.emotional_exhaustion || 0;
+      document.getElementById('dim-exhaustion-bar').style.width = exVal + '%';
+      document.getElementById('dim-exhaustion-val').textContent = exVal + '%';
+      document.getElementById('dim-exhaustion-label').textContent = getDimDescription('emotional_exhaustion', exVal);
+
+      // Cynicism
+      const cyVal = dims.depersonalization || 0;
+      document.getElementById('dim-cynicism-bar').style.width = cyVal + '%';
+      document.getElementById('dim-cynicism-val').textContent = cyVal + '%';
+      document.getElementById('dim-cynicism-label').textContent = getDimDescription('depersonalization', cyVal);
+
+      // Academic Efficacy (inverted display: high dimension score = low efficacy)
+      const paVal = dims.personal_accomplishment || 0;
+      // Show as "reduced efficacy" percentage
+      document.getElementById('dim-efficacy-bar').style.width = (100 - paVal) + '%';
+      document.getElementById('dim-efficacy-val').textContent = (100 - paVal) + '%';
+      document.getElementById('dim-efficacy-label').textContent = getDimDescription('personal_accomplishment', paVal);
+    }, 300);
+
+    // --- Recommendations ---
     const recContainer = document.getElementById('result-recommendations');
-    recContainer.innerHTML = '<h4 class="text-lg font-bold text-surface-50 mb-2" data-i18n="quiz.result">Rekomendasi:</h4>';
-    data.recommendations.activities.forEach(a => {
-      recContainer.innerHTML += `<div class="p-3 rounded-xl bg-surface-800/50 text-sm text-surface-300 flex gap-2"><span>•</span><span>${a}</span></div>`;
-    });
+    recContainer.innerHTML = '';
+
+    // Insights
+    if (data.recommendations && data.recommendations.insights) {
+      data.recommendations.insights.forEach(ins => {
+        const desc = (lang === 'en' && ins.description_en) ? ins.description_en : ins.description;
+        // Strip potentially corrupted emoji from title (first chars before first letter)
+        const cleanTitle = (ins.title || '').replace(/^[^\w\s]+\s*/u, '').trim();
+        recContainer.innerHTML += `
+          <div class="p-4 rounded-xl bg-surface-800/50 border-l-3 flex gap-3" style="border-left: 3px solid #A86240">
+            <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background: rgba(168,98,64,0.12)">💡</div>
+            <div>
+              <p class="text-sm font-semibold text-surface-100 mb-1">${cleanTitle}</p>
+              <p class="text-sm text-surface-300 leading-relaxed">${desc}</p>
+            </div>
+          </div>`;
+      });
+    }
+
+    // Activities
+    if (data.recommendations && data.recommendations.activities) {
+      data.recommendations.activities.forEach(a => {
+        recContainer.innerHTML += `
+          <div class="p-3 rounded-xl bg-surface-800/30 text-sm text-surface-300 flex items-start gap-3">
+            <span class="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5" style="background: rgba(168,98,64,0.15); color: #A86240">✓</span>
+            <span class="leading-relaxed">${a}</span>
+          </div>`;
+      });
+    }
+
+    // Re-init lucide icons for new elements
+    if (window.lucide) lucide.createIcons();
+
   } catch(e) {
-    document.getElementById('result-title').textContent = window.t ? window.t('quiz.error') : 'Error';
+    document.getElementById('quiz-loading').classList.add('hidden');
+    document.getElementById('quiz-result').classList.remove('hidden');
+    document.getElementById('result-title').textContent = window.t ? window.t('quiz.error') : 'Terjadi kesalahan. Coba lagi.';
+    document.getElementById('result-description').textContent = e?.response?.data?.error || e.message || '';
   }
 }
 
@@ -119,6 +362,20 @@ function restartQuiz() {
   currentQ = 0; answers = [];
   document.getElementById('quiz-question').classList.remove('hidden');
   document.getElementById('quiz-result').classList.add('hidden');
+  document.getElementById('quiz-loading').classList.add('hidden');
+  document.getElementById('quiz-progress-bar').classList.remove('hidden');
+
+  // Reset gauge
+  const gaugeCircle = document.getElementById('gauge-circle');
+  gaugeCircle.style.strokeDashoffset = '490';
+  gaugeCircle.setAttribute('stroke', '#A86240');
+
+  // Reset dimension bars
+  ['exhaustion', 'cynicism', 'efficacy'].forEach(d => {
+    const bar = document.getElementById(`dim-${d}-bar`);
+    if (bar) bar.style.width = '0%';
+  });
+
   showQuestion(0);
 }
 

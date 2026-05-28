@@ -48,9 +48,9 @@
     [data-theme="light"] body { background: var(--bg) !important; color: var(--text-secondary) !important; }
     [data-theme="light"] .mesh-gradient {
       background-image:
-        radial-gradient(at 40% 20%, rgba(196,123,90,0.06) 0px, transparent 50%),
+        radial-gradient(at 40% 20%, rgba(168,98,64,0.06) 0px, transparent 50%),
         radial-gradient(at 80% 0%, rgba(72,154,152,0.04) 0px, transparent 50%),
-        radial-gradient(at 0% 50%, rgba(196,123,90,0.03) 0px, transparent 50%) !important;
+        radial-gradient(at 0% 50%, rgba(168,98,64,0.03) 0px, transparent 50%) !important;
       background-color: var(--bg) !important;
     }
 
@@ -84,9 +84,9 @@
     [data-theme="light"] .nav-item { color: #7F7571 !important; }
     [data-theme="light"] .nav-item:hover { background: rgba(245,237,230,0.8) !important; color: #562f1f !important; }
     [data-theme="light"] .nav-item.active {
-      background: rgba(196,123,90,0.08) !important;
+      background: rgba(168,98,64,0.08) !important;
       color: #a86240 !important;
-      border-color: #C47B5A !important;
+      border-color: #A86240 !important;
     }
     [data-theme="light"] #sidebar .border-surface-700\/50 { border-color: var(--border-color) !important; }
     [data-theme="light"] .bg-surface-900\/90 {
@@ -96,6 +96,7 @@
     [data-theme="light"] .bg-surface-900\/80 { background: rgba(255,255,255,0.92) !important; }
 
     [data-theme="light"] .bg-surface-950 { background: var(--bg) !important; }
+    [data-theme="light"] .navbar-glass { background: rgba(245, 237, 230, 0.85) !important; border-bottom-color: var(--border-color) !important; }
     [data-theme="light"] .bg-surface-900 { background: var(--bg-secondary) !important; }
     [data-theme="light"] .bg-surface-800\/50,
     [data-theme="light"] .bg-surface-800\/60,
@@ -118,7 +119,7 @@
       border-color: #bfb0a2 !important;
       color: var(--text-primary) !important;
     }
-    [data-theme="light"] .input-field:focus { border-color: #C47B5A !important; }
+    [data-theme="light"] .input-field:focus { border-color: #A86240 !important; }
     [data-theme="light"] .input-field::placeholder { color: #B8A89E !important; }
     [data-theme="light"] select.input-field { background-color: #ffffff !important; }
 
@@ -147,8 +148,8 @@
       border-color: var(--border-color) !important;
     }
     [data-theme="light"] .quiz-option:hover {
-      background: rgba(196,123,90,0.04) !important;
-      border-color: rgba(196,123,90,0.3) !important;
+      background: rgba(168,98,64,0.04) !important;
+      border-color: rgba(168,98,64,0.3) !important;
     }
     [data-theme="light"] .quiz-option .bg-surface-700 { background: #ddd0c4 !important; }
     [data-theme="light"] .quiz-option .text-surface-300 { color: #7F7571 !important; }
@@ -166,7 +167,7 @@
       border-color: #ddd0c4 !important;
     }
 
-    [data-theme="light"] .glow-brand { box-shadow: 0 2px 8px rgba(196,123,90,0.1) !important; }
+    [data-theme="light"] .glow-brand { box-shadow: 0 2px 8px rgba(168,98,64,0.1) !important; }
     [data-theme="light"] .glow-success { box-shadow: 0 2px 8px rgba(34,197,94,0.08) !important; }
     [data-theme="light"] .glow-danger { box-shadow: 0 2px 8px rgba(239,68,68,0.08) !important; }
     [data-theme="light"] .glow-warning { box-shadow: 0 2px 8px rgba(245,158,11,0.08) !important; }
@@ -218,15 +219,15 @@
     /* ===== Dark Mode — Warm Charcoal ===== */
     [data-theme="dark"] .mesh-gradient {
       background-image:
-        radial-gradient(at 40% 20%, rgba(196,123,90,0.08) 0px, transparent 50%),
+        radial-gradient(at 40% 20%, rgba(168,98,64,0.08) 0px, transparent 50%),
         radial-gradient(at 80% 0%, rgba(72,154,152,0.06) 0px, transparent 50%),
-        radial-gradient(at 0% 50%, rgba(196,123,90,0.04) 0px, transparent 50%),
+        radial-gradient(at 0% 50%, rgba(168,98,64,0.04) 0px, transparent 50%),
         radial-gradient(at 80% 50%, rgba(72,154,152,0.04) 0px, transparent 50%),
-        radial-gradient(at 0% 100%, rgba(196,123,90,0.06) 0px, transparent 50%) !important;
+        radial-gradient(at 0% 100%, rgba(168,98,64,0.06) 0px, transparent 50%) !important;
     }
 
     [data-theme="dark"] .glow-brand {
-      box-shadow: 0 0 20px rgba(196,123,90,0.15), 0 0 60px rgba(196,123,90,0.05) !important;
+      box-shadow: 0 0 20px rgba(168,98,64,0.15), 0 0 60px rgba(168,98,64,0.05) !important;
     }
   </style>
 </head>
@@ -240,7 +241,7 @@
       <%- include('../partials/sidebar') %>
       <main class="main-content">
         <%- include('../partials/navbar') %>
-        <div class="mt-6 animate-fade-in">
+        <div class="mt-6 animate-fade-in px-4 lg:px-8 pb-8">
           <%- body %>
         </div>
       </main>

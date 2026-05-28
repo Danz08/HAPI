@@ -44,6 +44,7 @@ router.post('/login', redirectIfAuth, (req, res) => {
       email: user.email,
       display_name: user.display_name || user.username,
       is_onboarded: user.is_onboarded,
+      login_method: 'manual',
     };
 
     req.flash('success', `Selamat datang kembali, ${user.display_name || user.username}! 👋`);
@@ -112,6 +113,7 @@ router.post('/register', redirectIfAuth, (req, res) => {
       email: email,
       display_name: display_name,
       is_onboarded: 0,
+      login_method: 'manual',
     };
 
     req.flash('success', 'Akun berhasil dibuat! Silakan ikuti pengenalan fitur.');

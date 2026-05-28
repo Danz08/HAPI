@@ -40,12 +40,12 @@ export function initCharts() {
         {
           label: 'Jam Kerja',
           data: workData,
-          borderColor: '#C47B5A',
-          backgroundColor: 'rgba(196,123,90,0.1)',
+          borderColor: '#A86240',
+          backgroundColor: 'rgba(168,98,64,0.1)',
           fill: true,
           tension: 0.4,
           pointRadius: 4,
-          pointBackgroundColor: '#C47B5A',
+          pointBackgroundColor: '#A86240',
         },
         {
           label: 'Mood',

@@ -91,7 +91,7 @@ router.get('/', (req, res) => {
 
   // Get Google Calendar weekly data
   const googleUser = db.prepare('SELECT google_connected FROM users WHERE id = ?').get(userId);
-  const isGoogleConnected = googleUser && googleUser.google_connected === 1;
+  const isGoogleConnected = googleUser && googleUser.google_connected === 1 && req.session.user.login_method === 'google';
 
   // This week's calendar features
   const weekStart = new Date();
