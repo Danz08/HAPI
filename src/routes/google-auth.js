@@ -61,7 +61,7 @@ router.get('/callback', async (req, res) => {
     if (flowType === 'connect' && req.session.user) {
             const userId = req.session.user.id;
 
-      db.prepare(`
+      await db.prepare(`
         UPDATE users SET
           google_refresh_token = ?,
           google_access_token = ?,
@@ -91,20 +91,20 @@ router.get('/callback', async (req, res) => {
     const displayName = googleUser.name || email.split('@')[0];
     const username = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_');
 
-    let user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+    let user = await db.prepare('SELECT * FROM users WHERE email = ?').get(email);
 
     if (!user) {
       // Register new user
       const dummyPassword = bcrypt.hashSync(require('crypto').randomBytes(32).toString('hex'), 10);
-      const result = db.prepare(
-        'INSERT INTO users (username, email, password, display_name) VALUES (?, ?, ?, ?)'
+      const result = await db.prepare(
+        'INSERT INTO users (username, email, password, display_name) VALUES (?, ?, ?, ?) RETURNING id'
       ).run(username, email, dummyPassword, displayName);
 
       user = { id: result.lastInsertRowid, username, email, display_name: displayName, is_onboarded: 0 };
     }
 
     // Save Google tokens
-    db.prepare(`
+    await db.prepare(`
       UPDATE users SET
         google_refresh_token = COALESCE(?, google_refresh_token),
         google_access_token = ?,
@@ -149,10 +149,10 @@ router.get('/callback', async (req, res) => {
 });
 
 // GET /auth/google/disconnect - Disconnect Google Calendar
-router.get('/disconnect', requireAuth, (req, res) => {
+router.get('/disconnect', requireAuth, async (req, res) => {
   const db = getDb();
 
-  db.prepare(`
+  await db.prepare(`
     UPDATE users SET
       google_refresh_token = NULL,
       google_access_token = NULL,
@@ -161,8 +161,8 @@ router.get('/disconnect', requireAuth, (req, res) => {
     WHERE id = ?
   `).run(req.session.user.id);
 
-  db.prepare('DELETE FROM calendar_events WHERE user_id = ?').run(req.session.user.id);
-  db.prepare('DELETE FROM calendar_features WHERE user_id = ?').run(req.session.user.id);
+  await db.prepare('DELETE FROM calendar_events WHERE user_id = ?').run(req.session.user.id);
+  await db.prepare('DELETE FROM calendar_features WHERE user_id = ?').run(req.session.user.id);
 
   req.flash('success', 'Google Calendar berhasil diputuskan.');
   res.redirect('/analytics');
@@ -172,7 +172,7 @@ router.get('/disconnect', requireAuth, (req, res) => {
 router.post('/sync', requireAuth, async (req, res) => {
   const db = getDb();
   const userId = req.session.user.id;
-  const user = db.prepare('SELECT google_refresh_token, google_access_token, google_token_expiry FROM users WHERE id = ?').get(userId);
+  const user = await db.prepare('SELECT google_refresh_token, google_access_token, google_token_expiry FROM users WHERE id = ?').get(userId);
 
   if (!user || !user.google_refresh_token) {
     return res.status(400).json({ error: 'Google Calendar belum terhubung.' });
@@ -186,7 +186,7 @@ router.post('/sync', requireAuth, async (req, res) => {
       expiry_date: user.google_token_expiry,
     });
 
-    oauth2Client.on('tokens', (newTokens) => {
+    oauth2Client.on('tokens', async (newTokens) => {
       const updates = {};
       if (newTokens.access_token) updates.google_access_token = newTokens.access_token;
       if (newTokens.expiry_date) updates.google_token_expiry = newTokens.expiry_date;
@@ -194,7 +194,7 @@ router.post('/sync', requireAuth, async (req, res) => {
 
       const sets = Object.keys(updates).map(k => `${k} = ?`).join(', ');
       if (sets) {
-        db.prepare(`UPDATE users SET ${sets} WHERE id = ?`).run(...Object.values(updates), userId);
+        await db.prepare(`UPDATE users SET ${sets} WHERE id = ?`).run(...Object.values(updates), userId);
       }
     });
 
@@ -234,9 +234,9 @@ async function syncCalendarEvents(oauth2Client, userId, days = 30) {
 
   const startStr = startDate.toISOString().split('T')[0];
   const endStr = endDate.toISOString().split('T')[0];
-  db.prepare('DELETE FROM calendar_events WHERE user_id = ? AND date BETWEEN ? AND ?')
+  await db.prepare('DELETE FROM calendar_events WHERE user_id = ? AND date BETWEEN ? AND ?')
     .run(userId, startStr, endStr);
-  db.prepare('DELETE FROM calendar_features WHERE user_id = ? AND date BETWEEN ? AND ?')
+  await db.prepare('DELETE FROM calendar_features WHERE user_id = ? AND date BETWEEN ? AND ?')
     .run(userId, startStr, endStr);
 
   const eventsByDate = {};
@@ -247,9 +247,15 @@ async function syncCalendarEvents(oauth2Client, userId, days = 30) {
     if (!eventsByDate[dateStr]) eventsByDate[dateStr] = [];
     eventsByDate[dateStr].push(ev);
 
-    db.prepare(`
-      INSERT OR REPLACE INTO calendar_events (user_id, event_id, title, start_time, end_time, date, event_type)
+    await db.prepare(`
+      INSERT INTO calendar_events (user_id, event_id, title, start_time, end_time, date, event_type)
       VALUES (?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT (user_id, event_id) DO UPDATE SET
+        title = EXCLUDED.title,
+        start_time = EXCLUDED.start_time,
+        end_time = EXCLUDED.end_time,
+        date = EXCLUDED.date,
+        event_type = EXCLUDED.event_type
     `).run(
       userId,
       ev.id,
@@ -265,10 +271,17 @@ async function syncCalendarEvents(oauth2Client, userId, days = 30) {
     const features = extractCalendarFeatures(dayEvents);
     const burnout = calculateCalendarBurnoutScore(features);
 
-    db.prepare(`
-      INSERT OR REPLACE INTO calendar_features
+    await db.prepare(`
+      INSERT INTO calendar_features
         (user_id, date, meetings_count, work_hours, back_to_back_count, longest_block_minutes, avg_gap_minutes, calendar_burnout_score)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT (user_id, date) DO UPDATE SET
+        meetings_count = EXCLUDED.meetings_count,
+        work_hours = EXCLUDED.work_hours,
+        back_to_back_count = EXCLUDED.back_to_back_count,
+        longest_block_minutes = EXCLUDED.longest_block_minutes,
+        avg_gap_minutes = EXCLUDED.avg_gap_minutes,
+        calendar_burnout_score = EXCLUDED.calendar_burnout_score
     `).run(
       userId, dateStr,
       features.meetings_count, features.work_hours, features.back_to_back_count,

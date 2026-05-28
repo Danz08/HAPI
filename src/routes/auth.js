@@ -14,7 +14,7 @@ router.get('/login', redirectIfAuth, (req, res) => {
 });
 
 // POST /auth/login
-router.post('/login', redirectIfAuth, (req, res) => {
+router.post('/login', redirectIfAuth, async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -24,7 +24,7 @@ router.post('/login', redirectIfAuth, (req, res) => {
 
   try {
     const db = getDb();
-    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+    const user = await db.prepare('SELECT * FROM users WHERE email = ?').get(email);
 
     if (!user) {
       req.flash('error', 'Email atau password salah.');
@@ -69,7 +69,7 @@ router.get('/register', redirectIfAuth, (req, res) => {
 });
 
 // POST /auth/register
-router.post('/register', redirectIfAuth, (req, res) => {
+router.post('/register', redirectIfAuth, async (req, res) => {
   const { username, email, password, confirm_password, display_name } = req.body;
 
   // Validation
@@ -92,7 +92,7 @@ router.post('/register', redirectIfAuth, (req, res) => {
     const db = getDb();
 
     // Check existing user
-    const existing = db.prepare('SELECT id FROM users WHERE email = ? OR username = ?').get(email, username);
+    const existing = await db.prepare('SELECT id FROM users WHERE email = ? OR username = ?').get(email, username);
     if (existing) {
       req.flash('error', 'Email atau username sudah terdaftar.');
       return res.redirect('/auth/register');
@@ -102,8 +102,8 @@ router.post('/register', redirectIfAuth, (req, res) => {
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     // Insert user
-    const result = db.prepare(
-      'INSERT INTO users (username, email, password, display_name) VALUES (?, ?, ?, ?)'
+    const result = await db.prepare(
+      'INSERT INTO users (username, email, password, display_name) VALUES (?, ?, ?, ?) RETURNING id'
     ).run(username, email, hashedPassword, display_name || username);
 
     // Log the user in

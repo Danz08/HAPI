@@ -12,8 +12,8 @@
   ],
   "routes": [
     {
-      "src": "/dist/(.*)",
-      "dest": "/public/dist/$1"
+      "src": "/(css|js|images|dist)/(.*)",
+      "dest": "/public/$1/$2"
     },
     {
       "src": "/(.*)",

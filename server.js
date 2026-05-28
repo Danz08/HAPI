@@ -2,11 +2,12 @@ require('dotenv').config();
 
 const express = require('express');
 const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
 const flash = require('connect-flash');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 
-const { initDatabase } = require('./src/config/database');
+const { initDatabase, pool } = require('./src/config/database');
 
 // Route imports
 const indexRoutes = require('./src/routes/index');
@@ -21,7 +22,10 @@ const googleAuthRoutes = require('./src/routes/google-auth');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-initDatabase();
+initDatabase().catch(err => {
+  console.error('❌ Failed to initialize PostgreSQL database:', err);
+  process.exit(1);
+});
 
 // View engine
 app.set('view engine', 'ejs');
@@ -35,12 +39,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
+  store: new pgSession({
+    pool: pool,
+    tableName: 'session',
+    createTableIfMissing: false
+  }),
   secret: process.env.SESSION_SECRET || 'hapi-default-secret',
   resave: false,
   saveUninitialized: false,
   cookie: {
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000,
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   },
 }));
 
@@ -85,17 +94,19 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`
-  ╔═══════════════════════════════════════════════╗
-  ║                                               ║
-  ║   HAPI - Human Activity Pattern Intelligence  ║
-  ║                                               ║
-  ║   Server running on http://localhost:${PORT}      ║
-  ║   Environment: ${process.env.NODE_ENV || 'development'}                ║
-  ║                                               ║
-  ╚═══════════════════════════════════════════════╝
-  `);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`
+    ╔═══════════════════════════════════════════════╗
+    ║                                               ║
+    ║   HAPI - Human Activity Pattern Intelligence  ║
+    ║                                               ║
+    ║   Server running on http://localhost:${PORT}      ║
+    ║   Environment: ${process.env.NODE_ENV || 'development'}                ║
+    ║                                               ║
+    ╚═══════════════════════════════════════════════╝
+    `);
+  });
+}
 
 module.exports = app;

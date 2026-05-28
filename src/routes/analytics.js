@@ -8,7 +8,7 @@ const router = express.Router();
 router.use(requireAuth);
 router.use(requireOnboarded);
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const db = getDb();
   const userId = req.session.user.id;
   const month = parseInt(req.query.month) || new Date().getMonth() + 1;
@@ -22,34 +22,40 @@ router.get('/', (req, res) => {
   for (let day = 1; day <= daysInMonth; day++) {
     const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
-    const dayActivity = db.prepare(`
+    const dayActivity = await db.prepare(`
       SELECT COALESCE(SUM(duration_minutes), 0) as work_minutes,
              COALESCE(SUM(break_minutes), 0) as break_minutes,
              COUNT(*) as sessions
       FROM activities WHERE user_id = ? AND date = ?
     `).get(userId, dateStr);
 
-    const dayMood = db.prepare(`
+    const dayMood = await db.prepare(`
       SELECT AVG(mood_score) as avg_mood,
              AVG(energy_level) as avg_energy,
              AVG(stress_level) as avg_stress,
              COUNT(*) as mood_count
-      FROM mood_logs WHERE user_id = ? AND DATE(logged_at) = ?
+     FROM mood_logs WHERE user_id = ? AND DATE(logged_at) = DATE(?)
     `).get(userId, dateStr);
 
-    const dayPomodoro = db.prepare(`
+    const dayPomodoro = await db.prepare(`
       SELECT COALESCE(SUM(cycles_completed), 0) as cycles,
              COALESCE(SUM(total_focus_minutes), 0) as focus_minutes
-      FROM pomodoro_sessions WHERE user_id = ? AND DATE(started_at) = ?
+      FROM pomodoro_sessions WHERE user_id = ? AND DATE(started_at) = DATE(?)
     `).get(userId, dateStr);
 
-    const dayQuiz = db.prepare(`
+    const dayQuiz = await db.prepare(`
       SELECT fatigue_score, risk_level
-      FROM quiz_results WHERE user_id = ? AND DATE(taken_at) = ?
+      FROM quiz_results WHERE user_id = ? AND DATE(taken_at) = DATE(?)
       ORDER BY taken_at DESC LIMIT 1
     `).get(userId, dateStr);
 
-    const totalMinutes = dayActivity.work_minutes + (dayPomodoro.focus_minutes || 0);
+    // In postgres, SUM returns a string/BigInt sometimes, we need to ensure it's a number
+    const workMinutes = Number(dayActivity?.work_minutes) || 0;
+    const focusMinutes = Number(dayPomodoro?.focus_minutes) || 0;
+    const moodCount = Number(dayMood?.mood_count) || 0;
+    const cycles = Number(dayPomodoro?.cycles) || 0;
+
+    const totalMinutes = workMinutes + focusMinutes;
     let intensity = 0;
     if (totalMinutes > 0) intensity = 1;
     if (totalMinutes >= 60) intensity = 2;
@@ -60,80 +66,85 @@ router.get('/', (req, res) => {
       date: dateStr,
       day,
       dayOfWeek: new Date(dateStr).getDay(),
-      work_minutes: dayActivity.work_minutes,
-      break_minutes: dayActivity.break_minutes,
-      sessions: dayActivity.sessions,
-      avg_mood: dayMood.avg_mood ? Math.round(dayMood.avg_mood * 10) / 10 : null,
-      avg_energy: dayMood.avg_energy ? Math.round(dayMood.avg_energy * 10) / 10 : null,
-      avg_stress: dayMood.avg_stress ? Math.round(dayMood.avg_stress * 10) / 10 : null,
-      mood_count: dayMood.mood_count || 0,
-      pomodoro_cycles: dayPomodoro.cycles,
-      pomodoro_focus: dayPomodoro.focus_minutes,
-      quiz_score: dayQuiz ? Math.round(dayQuiz.fatigue_score) : null,
+      work_minutes: workMinutes,
+      break_minutes: Number(dayActivity?.break_minutes) || 0,
+      sessions: Number(dayActivity?.sessions) || 0,
+      avg_mood: dayMood?.avg_mood ? Math.round(Number(dayMood.avg_mood) * 10) / 10 : null,
+      avg_energy: dayMood?.avg_energy ? Math.round(Number(dayMood.avg_energy) * 10) / 10 : null,
+      avg_stress: dayMood?.avg_stress ? Math.round(Number(dayMood.avg_stress) * 10) / 10 : null,
+      mood_count: moodCount,
+      pomodoro_cycles: cycles,
+      pomodoro_focus: focusMinutes,
+      quiz_score: dayQuiz ? Math.round(Number(dayQuiz.fatigue_score)) : null,
       quiz_risk: dayQuiz ? dayQuiz.risk_level : null,
       intensity,
-      hasData: totalMinutes > 0 || dayMood.mood_count > 0 || dayPomodoro.cycles > 0 || dayQuiz !== undefined,
+      hasData: totalMinutes > 0 || moodCount > 0 || cycles > 0 || dayQuiz !== undefined,
     });
   }
 
-  const monthlyWork = db.prepare(`
+  const monthlyWork = await db.prepare(`
     SELECT COALESCE(SUM(duration_minutes), 0) as total,
            COALESCE(SUM(break_minutes), 0) as total_break,
            COUNT(*) as total_sessions
     FROM activities WHERE user_id = ? AND date BETWEEN ? AND ?
   `).get(userId, startDate, endDate);
 
-  const monthlyMood = db.prepare(`
+  const monthlyMood = await db.prepare(`
     SELECT COALESCE(AVG(mood_score), 0) as avg,
            COUNT(*) as count
-    FROM mood_logs WHERE user_id = ? AND DATE(logged_at) BETWEEN ? AND ?
+    FROM mood_logs WHERE user_id = ? AND DATE(logged_at) BETWEEN DATE(?) AND DATE(?)
   `).get(userId, startDate, endDate);
 
-  const monthlyPomodoro = db.prepare(`
+  const monthlyPomodoro = await db.prepare(`
     SELECT COALESCE(SUM(cycles_completed), 0) as cycles,
            COALESCE(SUM(total_focus_minutes), 0) as focus
-    FROM pomodoro_sessions WHERE user_id = ? AND DATE(started_at) BETWEEN ? AND ?
+    FROM pomodoro_sessions WHERE user_id = ? AND DATE(started_at) BETWEEN DATE(?) AND DATE(?)
   `).get(userId, startDate, endDate);
 
-  const monthlyQuiz = db.prepare(`
+  const monthlyQuiz = await db.prepare(`
     SELECT COUNT(*) as count, AVG(fatigue_score) as avg_score
-    FROM quiz_results WHERE user_id = ? AND DATE(taken_at) BETWEEN ? AND ?
+    FROM quiz_results WHERE user_id = ? AND DATE(taken_at) BETWEEN DATE(?) AND DATE(?)
   `).get(userId, startDate, endDate);
 
-  const activityTypes = db.prepare(`
+  const activityTypes = await db.prepare(`
     SELECT activity_type, COUNT(*) as count, SUM(duration_minutes) as total_minutes
     FROM activities WHERE user_id = ? AND date BETWEEN ? AND ?
     GROUP BY activity_type ORDER BY total_minutes DESC
   `).all(userId, startDate, endDate);
 
-  const moodTrend = db.prepare(`
+  const moodTrendRaw = await db.prepare(`
     SELECT DATE(logged_at) as date, AVG(mood_score) as score
-    FROM mood_logs WHERE user_id = ? AND DATE(logged_at) BETWEEN ? AND ?
+    FROM mood_logs WHERE user_id = ? AND DATE(logged_at) BETWEEN DATE(?) AND DATE(?)
     GROUP BY DATE(logged_at) ORDER BY date ASC
-  `).all(userId, startDate, endDate).map(r => ({
+  `).all(userId, startDate, endDate);
+  
+  const moodTrend = moodTrendRaw.map(r => ({
     date: r.date,
     label: formatDateShort(r.date),
-    score: Math.round(r.score * 10) / 10,
+    score: Math.round(Number(r.score) * 10) / 10,
   }));
 
-  const workTrend = db.prepare(`
+  const workTrendRaw = await db.prepare(`
     SELECT date, SUM(duration_minutes) as work, SUM(break_minutes) as breakMin
     FROM activities WHERE user_id = ? AND date BETWEEN ? AND ?
     GROUP BY date ORDER BY date ASC
-  `).all(userId, startDate, endDate).map(r => ({
+  `).all(userId, startDate, endDate);
+  
+  const workTrend = workTrendRaw.map(r => ({
     date: r.date,
     label: formatDateShort(r.date),
-    work: r.work,
-    breakMin: r.breakMin,
+    work: Number(r.work),
+    breakMin: Number(r.breakMin),
   }));
 
-  const calendarDays = db.prepare(`
+  const calendarDays = await db.prepare(`
     SELECT COUNT(DISTINCT date) as count FROM calendar_features 
     WHERE user_id = ? AND date BETWEEN ? AND ? AND meetings_count > 0
   `).get(userId, startDate, endDate);
+
   const activeDays = Math.max(
     calendarData.filter(d => d.hasData).length,
-    calendarDays ? calendarDays.count : 0
+    calendarDays ? Number(calendarDays.count) : 0
   );
 
   let streak = 0;
@@ -144,35 +155,35 @@ router.get('/', (req, res) => {
     checkDate.setDate(checkDate.getDate() - i);
     const dateStr = checkDate.toISOString().split('T')[0];
 
-    const hasActivity = db.prepare(`
+    const hasActivity = (await db.prepare(`
       SELECT COUNT(*) as c FROM activities WHERE user_id = ? AND date = ?
-    `).get(userId, dateStr).c > 0;
+    `).get(userId, dateStr)).c;
 
-    const hasMood = db.prepare(`
-      SELECT COUNT(*) as c FROM mood_logs WHERE user_id = ? AND DATE(logged_at) = ?
-    `).get(userId, dateStr).c > 0;
+    const hasMood = (await db.prepare(`
+      SELECT COUNT(*) as c FROM mood_logs WHERE user_id = ? AND DATE(logged_at) = DATE(?)
+    `).get(userId, dateStr)).c;
 
-    const hasPomodoro = db.prepare(`
-      SELECT COUNT(*) as c FROM pomodoro_sessions WHERE user_id = ? AND DATE(started_at) = ?
-    `).get(userId, dateStr).c > 0;
+    const hasPomodoro = (await db.prepare(`
+      SELECT COUNT(*) as c FROM pomodoro_sessions WHERE user_id = ? AND DATE(started_at) = DATE(?)
+    `).get(userId, dateStr)).c;
 
-    if (hasActivity || hasMood || hasPomodoro) {
+    if (Number(hasActivity) > 0 || Number(hasMood) > 0 || Number(hasPomodoro) > 0) {
       streak++;
     } else {
       break;
     }
   }
 
-  const googleUser = db.prepare('SELECT google_connected FROM users WHERE id = ?').get(userId);
+  const googleUser = await db.prepare('SELECT google_connected FROM users WHERE id = ?').get(userId);
   const isGoogleConnected = googleUser && googleUser.google_connected === 1 && req.session.user.login_method === 'google';
 
-  const calendarFeatures = db.prepare(`
+  const calendarFeatures = await db.prepare(`
     SELECT * FROM calendar_features
     WHERE user_id = ? AND date BETWEEN ? AND ?
     ORDER BY date ASC
   `).all(userId, startDate, endDate);
 
-  const monthlyCalendar = db.prepare(`
+  const monthlyCalendar = await db.prepare(`
     SELECT COALESCE(SUM(meetings_count), 0) as total_meetings,
            COALESCE(AVG(work_hours), 0) as avg_work_hours,
            COALESCE(SUM(back_to_back_count), 0) as total_b2b,
@@ -187,10 +198,10 @@ router.get('/', (req, res) => {
   calendarData.forEach(cd => {
     const cf = calFeatureMap[cd.date];
     if (cf) {
-      cd.cal_meetings = cf.meetings_count;
-      cd.cal_work_hours = cf.work_hours;
-      cd.cal_b2b = cf.back_to_back_count;
-      cd.cal_burnout = Math.round(cf.calendar_burnout_score);
+      cd.cal_meetings = Number(cf.meetings_count);
+      cd.cal_work_hours = Number(cf.work_hours);
+      cd.cal_b2b = Number(cf.back_to_back_count);
+      cd.cal_burnout = Math.round(Number(cf.calendar_burnout_score));
     } else {
       cd.cal_meetings = 0;
       cd.cal_work_hours = 0;
@@ -200,8 +211,19 @@ router.get('/', (req, res) => {
   });
 
   const insights = generateMonthlyInsights({
-    monthlyWork, monthlyMood, monthlyPomodoro, monthlyQuiz,
-    activeDays, daysInMonth, streak, activityTypes, monthlyCalendar, isGoogleConnected,
+    monthlyWork: { total: Number(monthlyWork?.total)||0, total_sessions: Number(monthlyWork?.total_sessions)||0 }, 
+    monthlyMood: { avg: Number(monthlyMood?.avg)||0, count: Number(monthlyMood?.count)||0 }, 
+    monthlyPomodoro: { cycles: Number(monthlyPomodoro?.cycles)||0, focus: Number(monthlyPomodoro?.focus)||0 }, 
+    monthlyQuiz: { count: Number(monthlyQuiz?.count)||0, avg_score: Number(monthlyQuiz?.avg_score)||0 }, 
+    activeDays, daysInMonth, streak, activityTypes, 
+    monthlyCalendar: {
+      days_with_events: Number(monthlyCalendar?.days_with_events)||0,
+      avg_burnout_score: Number(monthlyCalendar?.avg_burnout_score)||0,
+      total_meetings: Number(monthlyCalendar?.total_meetings)||0,
+      avg_work_hours: Number(monthlyCalendar?.avg_work_hours)||0,
+      total_b2b: Number(monthlyCalendar?.total_b2b)||0
+    }, 
+    isGoogleConnected,
   });
 
   const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -250,40 +272,40 @@ function generateMonthlyInsights({ monthlyWork, monthlyMood, monthlyPomodoro, mo
 
   const consistency = Math.round((activeDays / daysInMonth) * 100);
   if (consistency >= 80) {
-    insights.push({ icon: '\u{1F525}', title: 'Konsistensi Luar Biasa', title_en: 'Amazing Consistency', description: `${activeDays} dari ${daysInMonth} hari aktif (${consistency}%). Kamu sangat konsisten!`, desc_en: `${activeDays} of ${daysInMonth} active days (${consistency}%). You're very consistent!`, color: 'success' });
+    insights.push({ icon: '🔥', title: 'Konsistensi Luar Biasa', title_en: 'Amazing Consistency', description: `${activeDays} dari ${daysInMonth} hari aktif (${consistency}%). Kamu sangat konsisten!`, desc_en: `${activeDays} of ${daysInMonth} active days (${consistency}%). You're very consistent!`, color: 'success' });
   } else if (consistency >= 50) {
-    insights.push({ icon: '\u{1F4CA}', title: 'Konsistensi Baik', title_en: 'Good Consistency', description: `${activeDays} dari ${daysInMonth} hari aktif. Coba tingkatkan lagi ya!`, desc_en: `${activeDays} of ${daysInMonth} active days. Try to improve further!`, color: 'brand' });
+    insights.push({ icon: '📊', title: 'Konsistensi Baik', title_en: 'Good Consistency', description: `${activeDays} dari ${daysInMonth} hari aktif. Coba tingkatkan lagi ya!`, desc_en: `${activeDays} of ${daysInMonth} active days. Try to improve further!`, color: 'brand' });
   } else {
-    insights.push({ icon: '\u{1F4C8}', title: 'Tingkatkan Konsistensi', title_en: 'Improve Consistency', description: `Baru ${activeDays} hari aktif bulan ini. Coba rutin tracking setiap hari.`, desc_en: `Only ${activeDays} active days this month. Try tracking daily.`, color: 'warning' });
+    insights.push({ icon: '📉', title: 'Tingkatkan Konsistensi', title_en: 'Improve Consistency', description: `Baru ${activeDays} hari aktif bulan ini. Coba rutin tracking setiap hari.`, desc_en: `Only ${activeDays} active days this month. Try tracking daily.`, color: 'warning' });
   }
 
   if (streak >= 7) {
-    insights.push({ icon: '\u{1F525}', title: `Streak ${streak} Hari!`, title_en: `${streak}-Day Streak!`, description: 'Konsistensimu luar biasa! Terus pertahankan kebiasaan positif ini.', desc_en: 'Your consistency is amazing! Keep up the positive habits.', color: 'success' });
+    insights.push({ icon: '🔥', title: `Streak ${streak} Hari!`, title_en: `${streak}-Day Streak!`, description: 'Konsistensimu luar biasa! Terus pertahankan kebiasaan positif ini.', desc_en: 'Your consistency is amazing! Keep up the positive habits.', color: 'success' });
   } else if (streak >= 3) {
-    insights.push({ icon: '\u26A1', title: `Streak ${streak} Hari`, title_en: `${streak}-Day Streak`, description: 'Bagus! Terus jaga momentum harianmu.', desc_en: 'Good! Keep your daily momentum going.', color: 'brand' });
+    insights.push({ icon: '⚡', title: `Streak ${streak} Hari`, title_en: `${streak}-Day Streak`, description: 'Bagus! Terus jaga momentum harianmu.', desc_en: 'Good! Keep your daily momentum going.', color: 'brand' });
   }
 
   const totalHours = Math.round(monthlyWork.total / 60);
   const avgDailyWork = activeDays > 0 ? Math.round(monthlyWork.total / activeDays) : 0;
   if (totalHours > 0) {
-    insights.push({ icon: '\u{1F4BC}', title: `${totalHours} Jam Kerja`, title_en: `${totalHours} Work Hours`, description: `Total ${monthlyWork.total_sessions} sesi kerja. Rata-rata ${avgDailyWork} menit/hari aktif.`, desc_en: `Total ${monthlyWork.total_sessions} work sessions. Average ${avgDailyWork} min/active day.`, color: avgDailyWork > 480 ? 'danger' : 'brand' });
+    insights.push({ icon: '💼', title: `${totalHours} Jam Kerja`, title_en: `${totalHours} Work Hours`, description: `Total ${monthlyWork.total_sessions} sesi kerja. Rata-rata ${avgDailyWork} menit/hari aktif.`, desc_en: `Total ${monthlyWork.total_sessions} work sessions. Average ${avgDailyWork} min/active day.`, color: avgDailyWork > 480 ? 'danger' : 'brand' });
   }
 
   if (monthlyMood.count > 0) {
     const avgMood = Math.round(monthlyMood.avg * 10) / 10;
     const moodLabel = avgMood >= 4 ? 'Positif' : avgMood >= 3 ? 'Stabil' : 'Perlu Perhatian';
     const moodLabelEn = avgMood >= 4 ? 'Positive' : avgMood >= 3 ? 'Stable' : 'Needs Attention';
-    const moodIcon = avgMood >= 4 ? '\u{1F60A}' : avgMood >= 3 ? '\u{1F610}' : '\u{1F61F}';
+    const moodIcon = avgMood >= 4 ? '😊' : avgMood >= 3 ? '😐' : '😟';
     insights.push({ icon: moodIcon, title: `Mood ${moodLabel}`, title_en: `Mood: ${moodLabelEn}`, description: `Rata-rata mood ${avgMood}/5 dari ${monthlyMood.count} log.`, desc_en: `Average mood ${avgMood}/5 from ${monthlyMood.count} logs.`, color: avgMood >= 4 ? 'success' : avgMood >= 3 ? 'warning' : 'danger' });
   }
 
   if (monthlyPomodoro.cycles > 0) {
-    insights.push({ icon: '\u{1F3C5}', title: `${monthlyPomodoro.cycles} Siklus Pomodoro`, title_en: `${monthlyPomodoro.cycles} Pomodoro Cycles`, description: `Total ${monthlyPomodoro.focus} menit fokus melalui Pomodoro.`, desc_en: `Total ${monthlyPomodoro.focus} focus minutes via Pomodoro.`, color: 'success' });
+    insights.push({ icon: '🎖️', title: `${monthlyPomodoro.cycles} Siklus Pomodoro`, title_en: `${monthlyPomodoro.cycles} Pomodoro Cycles`, description: `Total ${monthlyPomodoro.focus} menit fokus melalui Pomodoro.`, desc_en: `Total ${monthlyPomodoro.focus} focus minutes via Pomodoro.`, color: 'success' });
   }
 
   if (monthlyQuiz.count > 0) {
     const avgScore = Math.round(monthlyQuiz.avg_score);
-    insights.push({ icon: '\u{1F4CB}', title: `${monthlyQuiz.count} Quiz Selesai`, title_en: `${monthlyQuiz.count} Quizzes Done`, description: `Rata-rata skor fatigue ${avgScore}%. ${avgScore > 65 ? 'Perhatikan kondisimu.' : 'Kondisi cukup baik.'}`, desc_en: `Average fatigue score ${avgScore}%. ${avgScore > 65 ? 'Pay attention to your condition.' : 'Condition is fairly good.'}`, color: avgScore > 65 ? 'danger' : avgScore > 35 ? 'warning' : 'success' });
+    insights.push({ icon: '📋', title: `${monthlyQuiz.count} Quiz Selesai`, title_en: `${monthlyQuiz.count} Quizzes Done`, description: `Rata-rata skor fatigue ${avgScore}%. ${avgScore > 65 ? 'Perhatikan kondisimu.' : 'Kondisi cukup baik.'}`, desc_en: `Average fatigue score ${avgScore}%. ${avgScore > 65 ? 'Pay attention to your condition.' : 'Condition is fairly good.'}`, color: avgScore > 65 ? 'danger' : avgScore > 35 ? 'warning' : 'success' });
   }
 
   if (isGoogleConnected && monthlyCalendar && monthlyCalendar.days_with_events > 0) {
@@ -292,17 +314,17 @@ function generateMonthlyInsights({ monthlyWork, monthlyMood, monthlyPomodoro, mo
     const avgWorkH = Math.round(monthlyCalendar.avg_work_hours * 10) / 10;
     const totalB2B = monthlyCalendar.total_b2b;
 
-    insights.push({ icon: '\u{1F4C5}', title: `${totalMeetings} Meeting (${monthlyCalendar.days_with_events} hari)`, title_en: `${totalMeetings} Meetings (${monthlyCalendar.days_with_events} days)`, description: `Rata-rata jadwal ${avgWorkH} jam/hari. ${totalB2B > 0 ? totalB2B + ' meeting back-to-back terdeteksi.' : 'Jarak antar meeting cukup baik.'}`, desc_en: `Average schedule ${avgWorkH} hours/day. ${totalB2B > 0 ? totalB2B + ' back-to-back meetings detected.' : 'Meeting spacing is good.'}`, color: avgBurnout > 65 ? 'danger' : avgBurnout > 35 ? 'warning' : 'success' });
+    insights.push({ icon: '📅', title: `${totalMeetings} Meeting (${monthlyCalendar.days_with_events} hari)`, title_en: `${totalMeetings} Meetings (${monthlyCalendar.days_with_events} days)`, description: `Rata-rata jadwal ${avgWorkH} jam/hari. ${totalB2B > 0 ? totalB2B + ' meeting back-to-back terdeteksi.' : 'Jarak antar meeting cukup baik.'}`, desc_en: `Average schedule ${avgWorkH} hours/day. ${totalB2B > 0 ? totalB2B + ' back-to-back meetings detected.' : 'Meeting spacing is good.'}`, color: avgBurnout > 65 ? 'danger' : avgBurnout > 35 ? 'warning' : 'success' });
 
     if (avgBurnout > 65) {
-      insights.push({ icon: '\u{1F525}', title: 'Risiko Burnout Tinggi (Kalender)', title_en: 'High Burnout Risk (Calendar)', description: `Skor burnout kalender ${avgBurnout}%. Jadwalmu terlalu padat, pertimbangkan mengurangi meeting.`, desc_en: `Calendar burnout score ${avgBurnout}%. Your schedule is too packed, consider reducing meetings.`, color: 'danger' });
+      insights.push({ icon: '🔥', title: 'Risiko Burnout Tinggi (Kalender)', title_en: 'High Burnout Risk (Calendar)', description: `Skor burnout kalender ${avgBurnout}%. Jadwalmu terlalu padat, pertimbangkan mengurangi meeting.`, desc_en: `Calendar burnout score ${avgBurnout}%. Your schedule is too packed, consider reducing meetings.`, color: 'danger' });
     } else if (avgBurnout > 35) {
-      insights.push({ icon: '\u26A0\uFE0F', title: 'Risiko Burnout Sedang (Kalender)', title_en: 'Moderate Burnout Risk (Calendar)', description: `Skor burnout kalender ${avgBurnout}%. Jadwalmu cukup padat. Pastikan ada waktu istirahat.`, desc_en: `Calendar burnout score ${avgBurnout}%. Your schedule is fairly packed. Ensure rest time.`, color: 'warning' });
+      insights.push({ icon: '⚠️', title: 'Risiko Burnout Sedang (Kalender)', title_en: 'Moderate Burnout Risk (Calendar)', description: `Skor burnout kalender ${avgBurnout}%. Jadwalmu cukup padat. Pastikan ada waktu istirahat.`, desc_en: `Calendar burnout score ${avgBurnout}%. Your schedule is fairly packed. Ensure rest time.`, color: 'warning' });
     }
   }
 
   if (insights.length === 0) {
-    insights.push({ icon: '\u{1F680}', title: 'Mulai Tracking', title_en: 'Start Tracking', description: 'Belum ada data bulan ini. Mulai log aktivitas, mood, dan ambil quiz!', desc_en: 'No data this month yet. Start logging activities, mood, and take quizzes!', color: 'brand' });
+    insights.push({ icon: '🚀', title: 'Mulai Tracking', title_en: 'Start Tracking', description: 'Belum ada data bulan ini. Mulai log aktivitas, mood, dan ambil quiz!', desc_en: 'No data this month yet. Start logging activities, mood, and take quizzes!', color: 'brand' });
   }
 
   return insights;

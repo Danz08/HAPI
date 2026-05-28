@@ -9,19 +9,19 @@ const router = express.Router();
 router.use(requireOnboarded);
 
 // GET /dashboard
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const db = getDb();
   const userId = req.session.user.id;
   const today = new Date().toISOString().split('T')[0];
   const days = parseInt(req.query.days) || 7;
 
   // Get today's activities
-  const todayActivities = db.prepare(
+  const todayActivities = await db.prepare(
     'SELECT * FROM activities WHERE user_id = ? AND date = ? ORDER BY created_at DESC'
   ).all(userId, today);
 
   // Get today's total work and break
-  const todayStats = db.prepare(`
+  const todayStats = await db.prepare(`
     SELECT
       COALESCE(SUM(duration_minutes), 0) as total_work,
       COALESCE(SUM(break_minutes), 0) as total_break,
@@ -30,12 +30,12 @@ router.get('/', (req, res) => {
   `).get(userId, today);
 
   // Get latest mood
-  const latestMood = db.prepare(
+  const latestMood = await db.prepare(
     'SELECT * FROM mood_logs WHERE user_id = ? ORDER BY logged_at DESC LIMIT 1'
   ).get(userId);
 
   // Get mood trend for selected days
-  const moodTrend = db.prepare(`
+  const moodTrend = await db.prepare(`
     SELECT mood_score, mood_label, energy_level, stress_level,
            DATE(logged_at) as log_date, TIME(logged_at) as log_time
     FROM mood_logs WHERE user_id = ? AND DATE(logged_at) >= DATE('now', '-' || ? || ' days')
@@ -43,18 +43,18 @@ router.get('/', (req, res) => {
   `).all(userId, days);
 
   // Get latest quiz result
-  const latestQuiz = db.prepare(
+  const latestQuiz = await db.prepare(
     'SELECT * FROM quiz_results WHERE user_id = ? ORDER BY taken_at DESC LIMIT 1'
   ).get(userId);
 
   // Get total quizzes taken today
-  const todayQuizCountQuery = db.prepare(
+  const todayQuizCountQuery = await db.prepare(
     'SELECT COUNT(*) as count FROM quiz_results WHERE user_id = ? AND DATE(taken_at) = ?'
   ).get(userId, today);
   const todayQuizCount = todayQuizCountQuery ? todayQuizCountQuery.count : 0;
 
   // Get pomodoro stats for today
-  const pomodoroToday = db.prepare(`
+  const pomodoroToday = await db.prepare(`
     SELECT COALESCE(SUM(cycles_completed), 0) as total_cycles,
            COALESCE(SUM(total_focus_minutes), 0) as total_focus
     FROM pomodoro_sessions
@@ -62,7 +62,7 @@ router.get('/', (req, res) => {
   `).get(userId, today);
 
   // Get recent activities for selected days
-  const recentActivities = db.prepare(`
+  const recentActivities = await db.prepare(`
     SELECT date,
            SUM(duration_minutes) as total_work,
            SUM(break_minutes) as total_break,
@@ -90,7 +90,7 @@ router.get('/', (req, res) => {
   );
 
   // Get Google Calendar weekly data
-  const googleUser = db.prepare('SELECT google_connected FROM users WHERE id = ?').get(userId);
+  const googleUser = await db.prepare('SELECT google_connected FROM users WHERE id = ?').get(userId);
   const isGoogleConnected = googleUser && googleUser.google_connected === 1 && req.session.user.login_method === 'google';
 
   // This week's calendar features
@@ -102,7 +102,7 @@ router.get('/', (req, res) => {
   const weekStartStr = weekStart.toISOString().split('T')[0];
   const weekEndStr = weekEnd.toISOString().split('T')[0];
 
-  const weeklyCalendar = db.prepare(`
+  const weeklyCalendar = await db.prepare(`
     SELECT COALESCE(SUM(meetings_count), 0) as total_meetings,
            COALESCE(AVG(work_hours), 0) as avg_work_hours,
            COALESCE(SUM(back_to_back_count), 0) as total_b2b,
@@ -112,11 +112,11 @@ router.get('/', (req, res) => {
   `).get(userId, weekStartStr, weekEndStr);
 
   // Today's calendar events
-  const todayCalEvents = db.prepare(`
+  const todayCalEvents = await db.prepare(`
     SELECT * FROM calendar_events WHERE user_id = ? AND date = ? ORDER BY start_time ASC
   `).all(userId, today);
 
-  const todayCalFeature = db.prepare(`
+  const todayCalFeature = await db.prepare(`
     SELECT * FROM calendar_features WHERE user_id = ? AND date = ?
   `).get(userId, today);
 

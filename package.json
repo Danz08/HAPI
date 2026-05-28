@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "npm run build:client && concurrently \"nodemon --ignore client/ --ignore public/dist/ server.js\" \"npx vite build --watch\"",
-    "build:client": "npx vite build"
+    "build:client": "npx vite build",
+    "build": "npm run build:client"
   },
   "keywords": [
     "fatigue",
@@ -20,14 +21,15 @@
   "dependencies": {
     "axios": "^1.16.1",
     "bcryptjs": "^2.4.3",
-    "better-sqlite3": "^11.9.1",
     "connect-flash": "^0.1.1",
+    "connect-pg-simple": "^10.0.0",
     "dotenv": "^16.5.0",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "express-ejs-layouts": "^2.5.1",
     "express-session": "^1.18.1",
-    "googleapis": "^171.4.0"
+    "googleapis": "^171.4.0",
+    "pg": "^8.21.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",

@@ -8,20 +8,20 @@ const router = express.Router();
 router.use(requireAuth);
 
 // POST /api/onboard - Complete onboarding
-router.post('/onboard', (req, res) => {
+router.post('/onboard', async (req, res) => {
   const db = getDb();
-  db.prepare('UPDATE users SET is_onboarded = 1 WHERE id = ?').run(req.session.user.id);
+  await db.prepare('UPDATE users SET is_onboarded = 1 WHERE id = ?').run(req.session.user.id);
   req.session.user.is_onboarded = 1;
   res.json({ success: true });
 });
 
 // POST /api/activities - Log a new activity
-router.post('/activities', (req, res) => {
+router.post('/activities', async (req, res) => {
   const { activity_type, description, duration_minutes, break_minutes } = req.body;
   const today = new Date().toISOString().split('T')[0];
 
   const db = getDb();
-  db.prepare(`
+  await db.prepare(`
     INSERT INTO activities (user_id, activity_type, description, duration_minutes, break_minutes, date)
     VALUES (?, ?, ?, ?, ?, ?)
   `).run(
@@ -37,11 +37,11 @@ router.post('/activities', (req, res) => {
 });
 
 // GET /api/activities - Get activities
-router.get('/activities', (req, res) => {
+router.get('/activities', async (req, res) => {
   const { days = 7 } = req.query;
   const db = getDb();
 
-  const activities = db.prepare(`
+  const activities = await db.prepare(`
     SELECT date,
            SUM(duration_minutes) as total_work,
            SUM(break_minutes) as total_break,
@@ -60,7 +60,7 @@ router.get('/activities', (req, res) => {
 
 
 // POST /api/mood - Log mood
-router.post('/mood', (req, res) => {
+router.post('/mood', async (req, res) => {
   const { mood_score, mood_label, energy_level, stress_level, notes } = req.body;
 
   if (!mood_score || mood_score < 1 || mood_score > 5) {
@@ -72,7 +72,7 @@ router.post('/mood', (req, res) => {
   };
 
   const db = getDb();
-  db.prepare(`
+  await db.prepare(`
     INSERT INTO mood_logs (user_id, mood_score, mood_label, energy_level, stress_level, notes)
     VALUES (?, ?, ?, ?, ?, ?)
   `).run(
@@ -88,11 +88,11 @@ router.post('/mood', (req, res) => {
 });
 
 // GET /api/mood - Get mood history
-router.get('/mood', (req, res) => {
+router.get('/mood', async (req, res) => {
   const { limit = 14 } = req.query;
   const db = getDb();
 
-  const moods = db.prepare(`
+  const moods = await db.prepare(`
     SELECT mood_score, mood_label, energy_level, stress_level, notes,
            DATE(logged_at) as log_date, TIME(logged_at) as log_time
     FROM mood_logs
@@ -109,26 +109,26 @@ router.get('/mood', (req, res) => {
 
 
 // GET /api/stats/overview
-router.get('/stats/overview', (req, res) => {
+router.get('/stats/overview', async (req, res) => {
   const db = getDb();
   const userId = req.session.user.id;
   const today = new Date().toISOString().split('T')[0];
 
-  const todayWork = db.prepare(`
+  const todayWork = await db.prepare(`
     SELECT COALESCE(SUM(duration_minutes), 0) as minutes
     FROM activities WHERE user_id = ? AND date = ?
   `).get(userId, today);
 
-  const weekWork = db.prepare(`
+  const weekWork = await db.prepare(`
     SELECT COALESCE(SUM(duration_minutes), 0) as minutes
     FROM activities WHERE user_id = ? AND date >= DATE('now', '-7 days')
   `).get(userId);
 
-  const totalQuizzes = db.prepare(
+  const totalQuizzes = await db.prepare(
     'SELECT COUNT(*) as count FROM quiz_results WHERE user_id = ?'
   ).get(userId);
 
-  const totalPomodoros = db.prepare(`
+  const totalPomodoros = await db.prepare(`
     SELECT COALESCE(SUM(cycles_completed), 0) as cycles
     FROM pomodoro_sessions WHERE user_id = ?
   `).get(userId);
@@ -146,11 +146,11 @@ router.get('/stats/overview', (req, res) => {
 
 
 // POST /api/pomodoro/sessions - Save completed pomodoro session
-router.post('/pomodoro/sessions', (req, res) => {
+router.post('/pomodoro/sessions', async (req, res) => {
   const { work_duration, break_duration, cycles_completed, total_focus_minutes } = req.body;
 
   const db = getDb();
-  db.prepare(`
+  await db.prepare(`
     INSERT INTO pomodoro_sessions (user_id, work_duration, break_duration, cycles_completed, total_focus_minutes, ended_at)
     VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
   `).run(
@@ -163,7 +163,7 @@ router.post('/pomodoro/sessions', (req, res) => {
 
   // Also log as activity
   const today = new Date().toISOString().split('T')[0];
-  db.prepare(`
+  await db.prepare(`
     INSERT INTO activities (user_id, activity_type, description, duration_minutes, break_minutes, date)
     VALUES (?, 'pomodoro', ?, ?, ?, ?)
   `).run(
@@ -178,19 +178,19 @@ router.post('/pomodoro/sessions', (req, res) => {
 });
 
 // GET /api/pomodoro/stats - Get pomodoro statistics
-router.get('/pomodoro/stats', (req, res) => {
+router.get('/pomodoro/stats', async (req, res) => {
   const db = getDb();
   const userId = req.session.user.id;
   const today = new Date().toISOString().split('T')[0];
 
-  const todayStats = db.prepare(`
+  const todayStats = await db.prepare(`
     SELECT COALESCE(SUM(cycles_completed), 0) as cycles,
            COALESCE(SUM(total_focus_minutes), 0) as focus_minutes
     FROM pomodoro_sessions
     WHERE user_id = ? AND DATE(started_at) = ?
   `).get(userId, today);
 
-  const weekStats = db.prepare(`
+  const weekStats = await db.prepare(`
     SELECT COALESCE(SUM(cycles_completed), 0) as cycles,
            COALESCE(SUM(total_focus_minutes), 0) as focus_minutes
     FROM pomodoro_sessions
@@ -205,7 +205,7 @@ router.get('/pomodoro/stats', (req, res) => {
 
 
 // POST /api/quiz - Submit quiz answers
-router.post('/quiz', (req, res) => {
+router.post('/quiz', async (req, res) => {
   const { answers } = req.body;
   const QUIZ_QUESTION_COUNT = 15;
 
@@ -220,7 +220,7 @@ router.post('/quiz', (req, res) => {
 
   // Save to database
   const db = getDb();
-  db.prepare(`
+  await db.prepare(`
     INSERT INTO quiz_results (user_id, answers, fatigue_score, risk_level, recommendations)
     VALUES (?, ?, ?, ?, ?)
   `).run(
@@ -243,9 +243,9 @@ router.post('/quiz', (req, res) => {
 });
 
 // GET /api/quiz/history - Get quiz history
-router.get('/quiz/history', (req, res) => {
+router.get('/quiz/history', async (req, res) => {
   const db = getDb();
-  const history = db.prepare(
+  const history = await db.prepare(
     'SELECT * FROM quiz_results WHERE user_id = ? ORDER BY taken_at DESC LIMIT 20'
   ).all(req.session.user.id);
 
@@ -274,9 +274,9 @@ router.post('/chat', (req, res) => {
 });
 
 // DELETE /api/chat - Clear all chat messages
-router.delete('/chat', (req, res) => {
+router.delete('/chat', async (req, res) => {
   const db = getDb();
-  db.prepare('DELETE FROM chat_messages WHERE user_id = ?').run(req.session.user.id);
+  await db.prepare('DELETE FROM chat_messages WHERE user_id = ?').run(req.session.user.id);
   res.json({ success: true });
 });
 
@@ -285,33 +285,33 @@ router.delete('/chat', (req, res) => {
 
 
 // GET /api/analytics/day/:date - Get details for a specific day (AJAX)
-router.get('/analytics/day/:date', (req, res) => {
+router.get('/analytics/day/:date', async (req, res) => {
   const db = getDb();
   const userId = req.session.user.id;
   const dateStr = req.params.date;
 
-  const activities = db.prepare(`
+  const activities = await db.prepare(`
     SELECT * FROM activities WHERE user_id = ? AND date = ? ORDER BY created_at DESC
   `).all(userId, dateStr);
 
-  const moods = db.prepare(`
+  const moods = await db.prepare(`
     SELECT * FROM mood_logs WHERE user_id = ? AND DATE(logged_at) = ? ORDER BY logged_at DESC
   `).all(userId, dateStr);
 
-  const pomodoros = db.prepare(`
+  const pomodoros = await db.prepare(`
     SELECT * FROM pomodoro_sessions WHERE user_id = ? AND DATE(started_at) = ? ORDER BY started_at DESC
   `).all(userId, dateStr);
 
-  const quiz = db.prepare(`
+  const quiz = await db.prepare(`
     SELECT * FROM quiz_results WHERE user_id = ? AND DATE(taken_at) = ? ORDER BY taken_at DESC LIMIT 1
   `).get(userId, dateStr);
 
   // Calendar events for this day
-  const calEvents = db.prepare(`
+  const calEvents = await db.prepare(`
     SELECT * FROM calendar_events WHERE user_id = ? AND date = ? ORDER BY start_time ASC
   `).all(userId, dateStr);
 
-  const calFeature = db.prepare(`
+  const calFeature = await db.prepare(`
     SELECT * FROM calendar_features WHERE user_id = ? AND date = ?
   `).get(userId, dateStr);
 
