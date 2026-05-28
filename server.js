@@ -42,7 +42,7 @@ app.use(session({
   store: new pgSession({
     pool: pool,
     tableName: 'session',
-    createTableIfMissing: false
+    createTableIfMissing: true
   }),
   secret: process.env.SESSION_SECRET || 'hapi-default-secret',
   resave: false,
