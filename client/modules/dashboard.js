@@ -106,7 +106,7 @@ export function initActivityForm() {
       const res = await logActivity(data);
       if (res.data.success) {
         form.reset();
-        showToast('Aktivitas berhasil disimpan! âœ…', 'success');
+        showToast('Aktivitas berhasil disimpan! ✅', 'success');
         setTimeout(() => location.reload(), 1200);
       }
     } catch (err) {
@@ -169,7 +169,7 @@ export function initMoodModal() {
       const res = await logMood(data);
       if (res.data.success) {
         closeMoodModal();
-        showToast('Mood berhasil disimpan! ðŸ˜Š', 'success');
+        showToast('Mood berhasil disimpan! 😊', 'success');
         setTimeout(() => location.reload(), 1200);
       }
     } catch (err) {

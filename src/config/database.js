@@ -41,9 +41,6 @@ function getDb() {
 }
 
 async function initDatabase() {
-  const db = getDb();
-
-  // We run queries directly using the pool for initialization
   // Users table
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
@@ -180,7 +177,7 @@ async function initDatabase() {
   `);
   await pool.query(`CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire");`);
 
-  console.log('  ✅ PostgreSQL Database initialized successfully');
+  console.log('   ✅ PostgreSQL Database initialized successfully');
 }
 
 module.exports = { getDb, initDatabase, pool };
