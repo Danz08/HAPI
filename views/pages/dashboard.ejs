@@ -48,7 +48,7 @@
         <span data-i18n="dashboard.fatigueRiskMed">Kelelahanmu mulai meningkat. Pertimbangkan istirahat singkat.</span>
       <% } %>
     </p>
-    <p class="text-[10px] text-surface-500 mt-3" data-i18n="dashboard.lastUpdated">Terakhir diperbarui: Hari ini, <%= new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) %></p>
+    <p class="text-[10px] text-surface-500 mt-3"><span data-i18n="dashboard.lastUpdated">Terakhir diperbarui</span>: <span class="live-time-display">--:--</span></p>
   </div>
 
   <!-- 7-Day Fatigue Trend -->
@@ -235,3 +235,64 @@
     </form>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const isFirstLogin = <%= isFirstLogin %>;
+    const showMoodReminderFlag = <%= showMoodReminder %>;
+    const isDarkMode = document.documentElement.getAttribute('data-theme') !== 'light';
+
+    if (isFirstLogin) {
+      const hour = new Date().getHours();
+      let greeting = 'Selamat Malam!';
+      if (hour >= 5 && hour < 12) greeting = 'Selamat Pagi!';
+      else if (hour >= 12 && hour < 15) greeting = 'Selamat Siang!';
+      else if (hour >= 15 && hour < 18) greeting = 'Selamat Sore!';
+
+      Swal.fire({
+        title: greeting,
+        text: 'Senang melihatmu di sini. Ayo mulai kelola produktivitas dan kesejahteraanmu.',
+        icon: 'success',
+        confirmButtonText: 'Mulai',
+        confirmButtonColor: '#A86240',
+        background: isDarkMode ? '#1e1611' : '#ffffff',
+        color: isDarkMode ? '#f8f4f0' : '#3a1e13',
+        backdrop: 'rgba(0,0,0,0.75)',
+        position: 'center',
+        customClass: {
+          container: 'z-[99999]'
+        }
+      }).then(() => {
+        if (showMoodReminderFlag) {
+          showMoodReminder(isDarkMode);
+        }
+      });
+    } else if (showMoodReminderFlag) {
+      showMoodReminder(isDarkMode);
+    }
+
+    function showMoodReminder(isDark) {
+      Swal.fire({
+        title: 'Bagaimana perasaanmu hari ini?',
+        text: 'Kamu belum mencatat mood hari ini. Catat sekarang untuk menjaga streakmu!',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Catat Mood Sekarang',
+        cancelButtonText: 'Nanti Saja',
+        confirmButtonColor: '#A86240',
+        cancelButtonColor: '#489A98',
+        background: isDark ? '#1e1611' : '#ffffff',
+        color: isDark ? '#f8f4f0' : '#3a1e13',
+        backdrop: 'rgba(0,0,0,0.75)',
+        position: 'center',
+        customClass: {
+          container: 'z-[99999]'
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          openMoodModal();
+        }
+      });
+    }
+  });
+</script>

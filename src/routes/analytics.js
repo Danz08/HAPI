@@ -4,6 +4,18 @@ const { requireAuth, requireOnboarded } = require('../middleware/auth');
 const { calculateComprehensiveFatigue } = require('../utils/fatigue-calculator');
 const { calculateCalendarBurnoutScore } = require('../utils/calendar');
 
+const getLocalToday = () => {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+
+const formatLocalDate = (d) => {
+  if (!d) return null;
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+
 const router = express.Router();
 router.use(requireAuth);
 router.use(requireOnboarded);
@@ -32,20 +44,22 @@ router.get('/', async (req, res) => {
     const dayMood = await db.prepare(`
       SELECT AVG(mood_score) as avg_mood,
              AVG(energy_level) as avg_energy,
-             AVG(stress_level) as avg_stress,
-             COUNT(*) as mood_count
-     FROM mood_logs WHERE user_id = ? AND DATE(logged_at) = DATE(?)
+             AVG(stress_level) as avg_stress
+     FROM mood_logs WHERE user_id = ? AND date = ?
     `).get(userId, dateStr);
+    const hasMood = (await db.prepare(`
+      SELECT COUNT(*) as c FROM mood_logs WHERE user_id = ? AND date = ?
+    `).get(userId, dateStr)).c;
 
     const dayPomodoro = await db.prepare(`
       SELECT COALESCE(SUM(cycles_completed), 0) as cycles,
              COALESCE(SUM(total_focus_minutes), 0) as focus_minutes
-      FROM pomodoro_sessions WHERE user_id = ? AND DATE(started_at) = DATE(?)
+      FROM pomodoro_sessions WHERE user_id = ? AND date = ?
     `).get(userId, dateStr);
 
     const dayQuiz = await db.prepare(`
       SELECT fatigue_score, risk_level
-      FROM quiz_results WHERE user_id = ? AND DATE(taken_at) = DATE(?)
+      FROM quiz_results WHERE user_id = ? AND date = ?
       ORDER BY taken_at DESC LIMIT 1
     `).get(userId, dateStr);
 
@@ -92,7 +106,7 @@ router.get('/', async (req, res) => {
   const monthlyMood = await db.prepare(`
     SELECT COALESCE(AVG(mood_score), 0) as avg,
            COUNT(*) as count
-    FROM mood_logs WHERE user_id = ? AND DATE(logged_at) BETWEEN DATE(?) AND DATE(?)
+    FROM mood_logs WHERE user_id = ? AND date BETWEEN ? AND ?
   `).get(userId, startDate, endDate);
 
   const monthlyPomodoro = await db.prepare(`
@@ -103,7 +117,7 @@ router.get('/', async (req, res) => {
 
   const monthlyQuiz = await db.prepare(`
     SELECT COUNT(*) as count, AVG(fatigue_score) as avg_score
-    FROM quiz_results WHERE user_id = ? AND DATE(taken_at) BETWEEN DATE(?) AND DATE(?)
+    FROM quiz_results WHERE user_id = ? AND date BETWEEN ? AND ?
   `).get(userId, startDate, endDate);
 
   const activityTypes = await db.prepare(`
@@ -113,9 +127,9 @@ router.get('/', async (req, res) => {
   `).all(userId, startDate, endDate);
 
   const moodTrendRaw = await db.prepare(`
-    SELECT DATE(logged_at) as date, AVG(mood_score) as score
-    FROM mood_logs WHERE user_id = ? AND DATE(logged_at) BETWEEN DATE(?) AND DATE(?)
-    GROUP BY DATE(logged_at) ORDER BY date ASC
+    SELECT date, AVG(mood_score) as score
+    FROM mood_logs WHERE user_id = ? AND date BETWEEN ? AND ?
+    GROUP BY date ORDER BY date ASC
   `).all(userId, startDate, endDate);
   
   const moodTrend = moodTrendRaw.map(r => ({
@@ -147,32 +161,8 @@ router.get('/', async (req, res) => {
     calendarDays ? Number(calendarDays.count) : 0
   );
 
-  let streak = 0;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  for (let i = 0; i < 365; i++) {
-    const checkDate = new Date(today);
-    checkDate.setDate(checkDate.getDate() - i);
-    const dateStr = checkDate.toISOString().split('T')[0];
-
-    const hasActivity = (await db.prepare(`
-      SELECT COUNT(*) as c FROM activities WHERE user_id = ? AND date = ?
-    `).get(userId, dateStr)).c;
-
-    const hasMood = (await db.prepare(`
-      SELECT COUNT(*) as c FROM mood_logs WHERE user_id = ? AND DATE(logged_at) = DATE(?)
-    `).get(userId, dateStr)).c;
-
-    const hasPomodoro = (await db.prepare(`
-      SELECT COUNT(*) as c FROM pomodoro_sessions WHERE user_id = ? AND DATE(started_at) = DATE(?)
-    `).get(userId, dateStr)).c;
-
-    if (Number(hasActivity) > 0 || Number(hasMood) > 0 || Number(hasPomodoro) > 0) {
-      streak++;
-    } else {
-      break;
-    }
-  }
+  const userRow = await db.prepare('SELECT current_streak FROM users WHERE id = ?').get(userId);
+  const streak = userRow ? userRow.current_streak : 0;
 
   const googleUser = await db.prepare('SELECT google_connected FROM users WHERE id = ?').get(userId);
   const isGoogleConnected = googleUser && googleUser.google_connected === 1 && req.session.user.login_method === 'google';

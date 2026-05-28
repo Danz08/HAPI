@@ -39,13 +39,14 @@ window.clearPomoState = clearPomoState;
 window.pomoState = getPomoState();
 
 function startClock() {
-  const dtEl = document.getElementById('live-datetime');
-  if (!dtEl) return;
   const update = () => {
+    const dtEls = document.querySelectorAll('.live-time-display');
+    if (!dtEls.length) return;
     const now = new Date();
     const lang = window.getLang() === 'en' ? 'en-US' : 'id-ID';
     const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-    dtEl.textContent = now.toLocaleString(lang, opts);
+    const timeString = now.toLocaleString(lang, opts);
+    dtEls.forEach(el => el.textContent = timeString);
   };
   update();
   setInterval(update, 1000);

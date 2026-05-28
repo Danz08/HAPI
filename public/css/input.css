@@ -189,7 +189,7 @@
 
   /* Page container */
   .page-container {
-    @apply min-h-screen flex w-full overflow-x-hidden;
+    @apply min-h-screen flex w-full;
   }
 
   .main-content {

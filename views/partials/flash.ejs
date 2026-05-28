@@ -1,50 +1,60 @@
-<!-- Flash Messages -->
-<div id="flash-container" class="fixed top-4 right-4 z-50 space-y-2 max-w-md">
-  <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
-    <% success.forEach(function(msg) { %>
-      <div class="flash-success animate-slide-down flex items-center gap-3" role="alert">
-        <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0"></i>
-        <span class="text-sm"><%= msg %></span>
-        <button onclick="this.parentElement.remove()" class="ml-auto text-success-400/60 hover:text-success-400">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-    <% }) %>
-  <% } %>
-
-  <% if (typeof error !== 'undefined' && error && error.length > 0) { %>
-    <% error.forEach(function(msg) { %>
-      <div class="flash-error animate-slide-down flex items-center gap-3" role="alert">
-        <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0"></i>
-        <span class="text-sm"><%= msg %></span>
-        <button onclick="this.parentElement.remove()" class="ml-auto text-danger-400/60 hover:text-danger-400">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-    <% }) %>
-  <% } %>
-
-  <% if (typeof warning !== 'undefined' && warning && warning.length > 0) { %>
-    <% warning.forEach(function(msg) { %>
-      <div class="flash-warning animate-slide-down flex items-center gap-3" role="alert">
-        <i data-lucide="alert-triangle" class="w-5 h-5 flex-shrink-0"></i>
-        <span class="text-sm"><%= msg %></span>
-        <button onclick="this.parentElement.remove()" class="ml-auto text-warning-400/60 hover:text-warning-400">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-    <% }) %>
-  <% } %>
-</div>
-
+<!-- Flash Messages via SweetAlert -->
 <script>
-  // Auto-dismiss flash messages
-  setTimeout(() => {
-    document.querySelectorAll('#flash-container > div').forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateX(100px)';
-      el.style.transition = 'all 0.5s ease';
-      setTimeout(() => el.remove(), 500);
-    });
-  }, 4000);
+  document.addEventListener('DOMContentLoaded', () => {
+    const isDarkMode = document.documentElement.getAttribute('data-theme') !== 'light';
+    const bg = isDarkMode ? '#1e1611' : '#ffffff';
+    const color = isDarkMode ? '#f8f4f0' : '#3a1e13';
+    const backdrop = 'rgba(0,0,0,0.75)';
+
+    <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+      <% success.forEach(function(msg) { %>
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            title: 'Sukses',
+            text: "<%= msg %>",
+            icon: 'success',
+            background: bg,
+            color: color,
+            backdrop: backdrop,
+            confirmButtonColor: '#A86240',
+            customClass: { container: 'z-[99999]' }
+          });
+        }
+      <% }) %>
+    <% } %>
+
+    <% if (typeof error !== 'undefined' && error && error.length > 0) { %>
+      <% error.forEach(function(msg) { %>
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            title: 'Error',
+            text: "<%= msg %>",
+            icon: 'error',
+            background: bg,
+            color: color,
+            backdrop: backdrop,
+            confirmButtonColor: '#ef4444',
+            customClass: { container: 'z-[99999]' }
+          });
+        }
+      <% }) %>
+    <% } %>
+
+    <% if (typeof warning !== 'undefined' && warning && warning.length > 0) { %>
+      <% warning.forEach(function(msg) { %>
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            title: 'Peringatan',
+            text: "<%= msg %>",
+            icon: 'warning',
+            background: bg,
+            color: color,
+            backdrop: backdrop,
+            confirmButtonColor: '#f59e0b',
+            customClass: { container: 'z-[99999]' }
+          });
+        }
+      <% }) %>
+    <% } %>
+  });
 </script>

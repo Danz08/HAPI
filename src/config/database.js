@@ -61,6 +61,10 @@ async function initDatabase() {
     )
   `);
 
+  // Alter users table to add streak columns if they don't exist
+  await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS current_streak INTEGER DEFAULT 0`);
+  await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS last_streak_date VARCHAR(20)`);
+
   // Activity logs
   await pool.query(`
     CREATE TABLE IF NOT EXISTS activities (
@@ -85,9 +89,11 @@ async function initDatabase() {
       energy_level INTEGER CHECK(energy_level BETWEEN 1 AND 5),
       stress_level INTEGER CHECK(stress_level BETWEEN 1 AND 5),
       notes TEXT,
+      date VARCHAR(20),
       logged_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
+  await pool.query(`ALTER TABLE mood_logs ADD COLUMN IF NOT EXISTS date VARCHAR(20)`);
 
   // Quiz results
   await pool.query(`
@@ -98,9 +104,11 @@ async function initDatabase() {
       fatigue_score REAL NOT NULL,
       risk_level VARCHAR(20) NOT NULL CHECK(risk_level IN ('Low', 'Medium', 'High')),
       recommendations TEXT,
+      date VARCHAR(20),
       taken_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
+  await pool.query(`ALTER TABLE quiz_results ADD COLUMN IF NOT EXISTS date VARCHAR(20)`);
 
   // Curhat / chat messages
   await pool.query(`
@@ -124,10 +132,12 @@ async function initDatabase() {
       cycles_completed INTEGER NOT NULL DEFAULT 0,
       total_focus_minutes INTEGER NOT NULL DEFAULT 0,
       status VARCHAR(50) NOT NULL DEFAULT 'completed',
+      date VARCHAR(20),
       started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       ended_at TIMESTAMP
     )
   `);
+  await pool.query(`ALTER TABLE pomodoro_sessions ADD COLUMN IF NOT EXISTS date VARCHAR(20)`);
 
   // Google Calendar: individual events
   await pool.query(`

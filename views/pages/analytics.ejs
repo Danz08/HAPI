@@ -110,7 +110,10 @@
               'bg-brand-400 border-brand-300/50 shadow-md shadow-brand-400/20'
             ];
             const cls = intensityClasses[cd.intensity];
-            const isToday = cd.date === new Date().toISOString().split('T')[0];
+            const pad = (n) => String(n).padStart(2, '0');
+            const _d = new Date();
+            const localToday = `${_d.getFullYear()}-${pad(_d.getMonth() + 1)}-${pad(_d.getDate())}`;
+            const isToday = cd.date === localToday;
             const moodEmojis = { 1:'😞', 2:'😕', 3:'😐', 4:'😊', 5:'😄' };
             const moodEmoji = cd.avg_mood ? moodEmojis[Math.round(cd.avg_mood)] || '' : '';
           %>
@@ -519,6 +522,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Auto-load today's detail if available
+  setTimeout(() => {
+    const todayCell = document.querySelector('.calendar-cell.ring-brand-400');
+    if (todayCell) {
+      const todayDate = todayCell.getAttribute('data-date');
+      if (todayDate) {
+        showDayDetail(todayDate);
+      }
+    }
+  }, 100);
 });
 </script>
 

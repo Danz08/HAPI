@@ -4,6 +4,12 @@ const { requireAuth } = require('../middleware/auth');
 const { calculateFatigueFromQuiz, getRiskColor } = require('../utils/fatigue-calculator');
 const { getRecommendations } = require('../utils/recommendations');
 
+const getLocalToday = () => {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+
 const router = express.Router();
 router.use(requireAuth);
 
@@ -18,7 +24,7 @@ router.post('/onboard', async (req, res) => {
 // POST /api/activities - Log a new activity
 router.post('/activities', async (req, res) => {
   const { activity_type, description, duration_minutes, break_minutes } = req.body;
-  const today = new Date().toISOString().split('T')[0];
+  const today = getLocalToday();
 
   const db = getDb();
   await db.prepare(`
@@ -71,20 +77,43 @@ router.post('/mood', async (req, res) => {
     1: 'Sangat Buruk', 2: 'Buruk', 3: 'Biasa', 4: 'Baik', 5: 'Sangat Baik'
   };
 
+  const today = getLocalToday();
+
   const db = getDb();
   await db.prepare(`
-    INSERT INTO mood_logs (user_id, mood_score, mood_label, energy_level, stress_level, notes)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO mood_logs (user_id, mood_score, mood_label, energy_level, stress_level, notes, date)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `).run(
     req.session.user.id,
     mood_score,
     mood_label || labels[mood_score] || 'Biasa',
     energy_level || null,
     stress_level || null,
-    notes || null
+    notes || null,
+    today
   );
+  
+  // Calculate streak
+  const user = await db.prepare('SELECT current_streak, last_streak_date FROM users WHERE id = ?').get(req.session.user.id);
+  let streak = user.current_streak || 0;
+  let lastDate = user.last_streak_date;
+  let streakUpdated = false;
 
-  res.json({ success: true });
+  if (lastDate !== today) {
+    if (lastDate) {
+      const last = new Date(lastDate);
+      const curr = new Date(today);
+      const diff = Math.floor((curr - last) / (1000 * 60 * 60 * 24));
+      if (diff === 1) streak += 1;
+      else if (diff > 1) streak = 1;
+    } else {
+      streak = 1;
+    }
+    await db.prepare('UPDATE users SET current_streak = ?, last_streak_date = ? WHERE id = ?').run(streak, today, req.session.user.id);
+    streakUpdated = true;
+  }
+
+  res.json({ success: true, streak, streakUpdated });
 });
 
 // GET /api/mood - Get mood history
@@ -94,7 +123,7 @@ router.get('/mood', async (req, res) => {
 
   const moods = await db.prepare(`
     SELECT mood_score, mood_label, energy_level, stress_level, notes,
-           DATE(logged_at) as log_date, TIME(logged_at) as log_time
+           date as log_date, logged_at::time as log_time
     FROM mood_logs
     WHERE user_id = ?
     ORDER BY logged_at DESC
@@ -112,7 +141,7 @@ router.get('/mood', async (req, res) => {
 router.get('/stats/overview', async (req, res) => {
   const db = getDb();
   const userId = req.session.user.id;
-  const today = new Date().toISOString().split('T')[0];
+  const today = getLocalToday();
 
   const todayWork = await db.prepare(`
     SELECT COALESCE(SUM(duration_minutes), 0) as minutes
@@ -149,20 +178,21 @@ router.get('/stats/overview', async (req, res) => {
 router.post('/pomodoro/sessions', async (req, res) => {
   const { work_duration, break_duration, cycles_completed, total_focus_minutes } = req.body;
 
+  const today = getLocalToday();
   const db = getDb();
   await db.prepare(`
-    INSERT INTO pomodoro_sessions (user_id, work_duration, break_duration, cycles_completed, total_focus_minutes, ended_at)
-    VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    INSERT INTO pomodoro_sessions (user_id, work_duration, break_duration, cycles_completed, total_focus_minutes, date, ended_at)
+    VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
   `).run(
     req.session.user.id,
     work_duration || 25,
     break_duration || 5,
     cycles_completed || 1,
-    total_focus_minutes || 25
+    total_focus_minutes || 25,
+    today
   );
 
   // Also log as activity
-  const today = new Date().toISOString().split('T')[0];
   await db.prepare(`
     INSERT INTO activities (user_id, activity_type, description, duration_minutes, break_minutes, date)
     VALUES (?, 'pomodoro', ?, ?, ?, ?)
@@ -181,13 +211,13 @@ router.post('/pomodoro/sessions', async (req, res) => {
 router.get('/pomodoro/stats', async (req, res) => {
   const db = getDb();
   const userId = req.session.user.id;
-  const today = new Date().toISOString().split('T')[0];
+  const today = getLocalToday();
 
   const todayStats = await db.prepare(`
     SELECT COALESCE(SUM(cycles_completed), 0) as cycles,
            COALESCE(SUM(total_focus_minutes), 0) as focus_minutes
     FROM pomodoro_sessions
-    WHERE user_id = ? AND DATE(started_at) = ?
+    WHERE user_id = ? AND date = ?
   `).get(userId, today);
 
   const weekStats = await db.prepare(`
@@ -218,18 +248,41 @@ router.post('/quiz', async (req, res) => {
   const riskColor = getRiskColor(result.riskLevel);
   const recommendations = getRecommendations(result.riskLevel);
 
+  const today = getLocalToday();
+
   // Save to database
   const db = getDb();
   await db.prepare(`
-    INSERT INTO quiz_results (user_id, answers, fatigue_score, risk_level, recommendations)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO quiz_results (user_id, answers, fatigue_score, risk_level, recommendations, date)
+    VALUES (?, ?, ?, ?, ?, ?)
   `).run(
     req.session.user.id,
     JSON.stringify(numericAnswers),
     result.score,
     result.riskLevel,
-    JSON.stringify(recommendations)
+    JSON.stringify(recommendations),
+    today
   );
+  
+  // Calculate streak
+  const user = await db.prepare('SELECT current_streak, last_streak_date FROM users WHERE id = ?').get(req.session.user.id);
+  let streak = user.current_streak || 0;
+  let lastDate = user.last_streak_date;
+  let streakUpdated = false;
+
+  if (lastDate !== today) {
+    if (lastDate) {
+      const last = new Date(lastDate);
+      const curr = new Date(today);
+      const diff = Math.floor((curr - last) / (1000 * 60 * 60 * 24));
+      if (diff === 1) streak += 1;
+      else if (diff > 1) streak = 1;
+    } else {
+      streak = 1;
+    }
+    await db.prepare('UPDATE users SET current_streak = ?, last_streak_date = ? WHERE id = ?').run(streak, today, req.session.user.id);
+    streakUpdated = true;
+  }
 
   res.json({
     success: true,
@@ -239,6 +292,8 @@ router.post('/quiz', async (req, res) => {
     dimensions: result.dimensions,
     dimensionAverages: result.dimensionAverages,
     recommendations,
+    streak,
+    streakUpdated
   });
 });
 
@@ -295,15 +350,15 @@ router.get('/analytics/day/:date', async (req, res) => {
   `).all(userId, dateStr);
 
   const moods = await db.prepare(`
-    SELECT * FROM mood_logs WHERE user_id = ? AND DATE(logged_at) = ? ORDER BY logged_at DESC
+    SELECT * FROM mood_logs WHERE user_id = ? AND date = ? ORDER BY logged_at DESC
   `).all(userId, dateStr);
 
   const pomodoros = await db.prepare(`
-    SELECT * FROM pomodoro_sessions WHERE user_id = ? AND DATE(started_at) = ? ORDER BY started_at DESC
+    SELECT * FROM pomodoro_sessions WHERE user_id = ? AND date = ? ORDER BY started_at DESC
   `).all(userId, dateStr);
 
   const quiz = await db.prepare(`
-    SELECT * FROM quiz_results WHERE user_id = ? AND DATE(taken_at) = ? ORDER BY taken_at DESC LIMIT 1
+    SELECT * FROM quiz_results WHERE user_id = ? AND date = ? ORDER BY taken_at DESC LIMIT 1
   `).get(userId, dateStr);
 
   // Calendar events for this day

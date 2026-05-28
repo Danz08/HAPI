@@ -244,6 +244,20 @@ async function submitQuiz() {
     document.getElementById('quiz-result').classList.remove('hidden');
 
     const lang = window.getLang ? window.getLang() : 'id';
+    
+    // Streak Alert
+    if (data.streakUpdated) {
+      const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+      Swal.fire({
+        title: 'Streak Aktif! 🔥',
+        text: `Hebat! Kamu memiliki streak ${data.streak} hari berturut-turut.`,
+        icon: 'success',
+        confirmButtonColor: '#A86240',
+        background: isDark ? 'rgba(30,22,17,0.95)' : 'rgba(255,255,255,0.95)',
+        color: isDark ? '#f8f4f0' : '#3a1e13',
+        backdrop: 'rgba(0,0,0,0.4)',
+      });
+    }
 
     // --- Score Gauge Animation ---
     const score = data.score;

@@ -4,6 +4,12 @@ const { requireOnboarded } = require('../middleware/auth');
 const { calculateComprehensiveFatigue, getRiskColor } = require('../utils/fatigue-calculator');
 const { getRecommendations } = require('../utils/recommendations');
 
+const formatLocalDate = (d) => {
+  if (!d) return null;
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+
 const router = express.Router();
 
 router.use(requireOnboarded);
@@ -12,7 +18,7 @@ router.use(requireOnboarded);
 router.get('/', async (req, res) => {
   const db = getDb();
   const userId = req.session.user.id;
-  const today = new Date().toISOString().split('T')[0];
+  const today = formatLocalDate(new Date());
   const days = parseInt(req.query.days) || 7;
 
   try {
@@ -36,19 +42,18 @@ router.get('/', async (req, res) => {
       'SELECT * FROM mood_logs WHERE user_id = ? ORDER BY logged_at DESC LIMIT 1'
     ).get(userId);
 
-    // Get mood trend for selected days
     const moodTrendQuery = await db.prepare(`
       SELECT mood_score, mood_label, energy_level, stress_level,
-             logged_at::date as log_date, logged_at::time as log_time
+             date as log_date, logged_at::time as log_time
       FROM mood_logs 
-      WHERE user_id = ? AND logged_at::date >= CURRENT_DATE - ?::integer
+      WHERE user_id = ? AND date >= $2
       ORDER BY logged_at ASC
-    `).all(userId, days);
+    `).all(userId, formatLocalDate(new Date(Date.now() - days * 24 * 60 * 60 * 1000)));
     
     // Format dates to string so the frontend chart can read them correctly
     const moodTrend = moodTrendQuery.map(row => ({
       ...row,
-      log_date: row.log_date ? new Date(row.log_date).toISOString().split('T')[0] : null
+      log_date: row.log_date ? formatLocalDate(new Date(row.log_date)) : null
     }));
 
     // Get latest quiz result
@@ -58,7 +63,7 @@ router.get('/', async (req, res) => {
 
     // Get total quizzes taken today
     const todayQuizCountQuery = await db.prepare(
-      'SELECT COUNT(*)::integer as count FROM quiz_results WHERE user_id = ? AND taken_at::date = ?::date'
+      'SELECT COUNT(*)::integer as count FROM quiz_results WHERE user_id = ? AND date = ?'
     ).get(userId, today);
     const todayQuizCount = todayQuizCountQuery ? todayQuizCountQuery.count : 0;
 
@@ -78,10 +83,10 @@ router.get('/', async (req, res) => {
              SUM(break_minutes)::integer as total_break,
              COUNT(*)::integer as sessions
       FROM activities
-      WHERE user_id = ? AND date::date >= CURRENT_DATE - ?::integer
+      WHERE user_id = ? AND date >= $2
       GROUP BY date
       ORDER BY date ASC
-    `).all(userId, days);
+    `).all(userId, formatLocalDate(new Date(Date.now() - days * 24 * 60 * 60 * 1000)));
 
     // Calculate comprehensive fatigue score
     const fatigueData = calculateComprehensiveFatigue({
@@ -92,6 +97,22 @@ router.get('/', async (req, res) => {
     });
 
     const riskColor = getRiskColor(fatigueData.riskLevel);
+
+    // Global alerts logic
+    let needsMoodLog = true;
+    if (latestMood) {
+      if (latestMood.date === today) {
+        needsMoodLog = false;
+      }
+    }
+    const isFirstLogin = req.session.isFirstLogin || false;
+    if (isFirstLogin) req.session.isFirstLogin = false; // consume the flag
+    
+    let showMoodReminder = false;
+    if (needsMoodLog && !req.session.hasSeenMoodReminder) {
+      showMoodReminder = true;
+      req.session.hasSeenMoodReminder = true;
+    }
 
     // Get recommendations
     const recommendations = getRecommendations(
@@ -109,8 +130,8 @@ router.get('/', async (req, res) => {
     weekStart.setHours(0, 0, 0, 0);
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekEnd.getDate() + 6);
-    const weekStartStr = weekStart.toISOString().split('T')[0];
-    const weekEndStr = weekEnd.toISOString().split('T')[0];
+    const weekStartStr = formatLocalDate(weekStart);
+    const weekEndStr = formatLocalDate(weekEnd);
 
     const weeklyCalendarQuery = await db.prepare(`
       SELECT COALESCE(SUM(meetings_count), 0)::integer as total_meetings,
@@ -146,6 +167,9 @@ router.get('/', async (req, res) => {
       recentActivities,
       fatigueData,
       riskColor,
+      needsMoodLog,
+      showMoodReminder,
+      isFirstLogin,
       recommendations,
       today,
       isGoogleConnected,

@@ -46,6 +46,7 @@ router.post('/login', redirectIfAuth, async (req, res) => {
       is_onboarded: user.is_onboarded,
       login_method: 'manual',
     };
+    req.session.isFirstLogin = true;
 
     req.flash('success', `Selamat datang kembali, ${user.display_name || user.username}! 👋`);
     if (!user.is_onboarded) {

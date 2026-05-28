@@ -5,6 +5,12 @@ const { getDb } = require('../config/database');
 const { requireAuth } = require('../middleware/auth');
 const { extractCalendarFeatures, calculateCalendarBurnoutScore } = require('../utils/calendar');
 
+const formatLocalDate = (d) => {
+  if (!d) return null;
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+
 const router = express.Router();
 
 function getOAuth2Client() {
@@ -127,6 +133,7 @@ router.get('/callback', async (req, res) => {
       is_onboarded: user.is_onboarded,
       login_method: 'google',
     };
+    req.session.isFirstLogin = true;
 
     // Sync calendar
     try {
@@ -232,8 +239,8 @@ async function syncCalendarEvents(oauth2Client, userId, days = 30) {
 
   const events = response.data.items || [];
 
-  const startStr = startDate.toISOString().split('T')[0];
-  const endStr = endDate.toISOString().split('T')[0];
+  const startStr = formatLocalDate(startDate);
+  const endStr = formatLocalDate(endDate);
   await db.prepare('DELETE FROM calendar_events WHERE user_id = ? AND date BETWEEN ? AND ?')
     .run(userId, startStr, endStr);
   await db.prepare('DELETE FROM calendar_features WHERE user_id = ? AND date BETWEEN ? AND ?')
