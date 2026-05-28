@@ -3,7 +3,7 @@
   <!-- Timer Card -->
   <div class="glass-card p-8 text-center mb-6 glow-brand">
     <!-- Mode Toggle -->
-    <div class="flex justify-center gap-2 mb-8">
+    <div class="flex flex-wrap justify-center gap-2 mb-8">
       <button id="mode-work" onclick="setMode('work')" class="btn-primary btn-sm" data-i18n="pomo.focus">Fokus</button>
       <button id="mode-break" onclick="setMode('break')" class="btn-ghost btn-sm" data-i18n="pomo.shortBreak">Istirahat Singkat</button>
       <button id="mode-long" onclick="setMode('long')" class="btn-ghost btn-sm" data-i18n="pomo.longBreak">Istirahat Panjang</button>
@@ -11,7 +11,7 @@
 
     <!-- Timer Display -->
     <div class="relative inline-block mb-8">
-      <svg class="w-64 h-64 transform -rotate-90" viewBox="0 0 200 200">
+      <svg class="w-52 h-52 md:w-64 md:h-64 transform -rotate-90" viewBox="0 0 200 200">
         <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(51,65,85,0.5)" stroke-width="6"/>
         <circle id="timer-ring" cx="100" cy="100" r="90" fill="none" stroke="url(#timerGradient)" stroke-width="6" stroke-linecap="round"
                 stroke-dasharray="565.48" stroke-dashoffset="0" class="transition-all duration-1000"/>

@@ -189,11 +189,11 @@
 
   /* Page container */
   .page-container {
-    @apply min-h-screen flex;
+    @apply min-h-screen flex w-full overflow-x-hidden;
   }
 
   .main-content {
-    @apply flex-1 ml-0 lg:ml-64;
+    @apply flex-1 ml-0 lg:ml-64 w-full min-w-0;
   }
 
   /* Chat bubble */
@@ -207,7 +207,7 @@
 
   /* Pomodoro */
   .pomodoro-display {
-    @apply text-7xl font-mono font-bold text-surface-50 tracking-wider;
+    @apply text-5xl md:text-7xl font-mono font-bold text-surface-50 tracking-wider;
   }
 
   /* Quiz option */
