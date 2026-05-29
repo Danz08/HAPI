@@ -117,14 +117,42 @@ const quizQuestions = [
   }
 ];
 
+const getLocalToday = () => {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+};
+
 // GET /quiz - Render quiz page
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+  const db = getDb();
+  const today = getLocalToday();
+  const userId = req.session.user.id;
+
+  // Check if user already took quiz today
+  const todayQuiz = await db.prepare(
+    'SELECT * FROM quiz_results WHERE user_id = ? AND date = ? ORDER BY taken_at DESC LIMIT 1'
+  ).get(userId, today);
+
+  let todayResult = null;
+  if (todayQuiz) {
+    const riskColor = getRiskColor(todayQuiz.risk_level);
+    let recommendations = {};
+    try { recommendations = JSON.parse(todayQuiz.recommendations || '{}'); } catch(e) {}
+    todayResult = {
+      score: todayQuiz.fatigue_score,
+      riskLevel: todayQuiz.risk_level,
+      riskColor,
+      recommendations,
+      taken_at: todayQuiz.taken_at,
+    };
+  }
+
   res.render('pages/quiz', {
     title: 'Fatigue Quiz - HAPI',
     layout: 'layouts/main',
-    pageTitle: 'Quiz Kelelahan Akademik', // Sedikit disesuaikan untuk konteks akademik
+    pageTitle: 'Quiz Kelelahan Akademik',
     pageKey: 'page.quiz',
     questions: quizQuestions,
+    todayResult,
   });
 });
 

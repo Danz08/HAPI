@@ -235,40 +235,10 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const isFirstLogin = <%= isFirstLogin %>;
     const showMoodReminderFlag = <%= showMoodReminder %>;
     const isDarkMode = document.documentElement.getAttribute('data-theme') !== 'light';
 
-    if (isFirstLogin) {
-      const hour = new Date().getHours();
-      let greeting = 'Selamat Malam!';
-      if (hour >= 5 && hour < 12) greeting = 'Selamat Pagi!';
-      else if (hour >= 12 && hour < 15) greeting = 'Selamat Siang!';
-      else if (hour >= 15 && hour < 18) greeting = 'Selamat Sore!';
-
-      Swal.fire({
-        title: greeting,
-        text: 'Senang melihatmu di sini. Ayo mulai kelola produktivitas dan kesejahteraanmu.',
-        icon: 'success',
-        confirmButtonText: 'Mulai',
-        confirmButtonColor: '#A86240',
-        background: isDarkMode ? '#1e1611' : '#ffffff',
-        color: isDarkMode ? '#f8f4f0' : '#3a1e13',
-        backdrop: 'rgba(0,0,0,0.75)',
-        position: 'center',
-        customClass: {
-          container: 'z-[99999]'
-        }
-      }).then(() => {
-        if (showMoodReminderFlag) {
-          showMoodReminder(isDarkMode);
-        }
-      });
-    } else if (showMoodReminderFlag) {
-      showMoodReminder(isDarkMode);
-    }
-
-    function showMoodReminder(isDark) {
+    if (showMoodReminderFlag) {
       Swal.fire({
         title: 'Bagaimana perasaanmu hari ini?',
         text: 'Kamu belum mencatat mood hari ini. Catat sekarang untuk menjaga streakmu!',
@@ -278,8 +248,8 @@
         cancelButtonText: 'Nanti Saja',
         confirmButtonColor: '#A86240',
         cancelButtonColor: '#489A98',
-        background: isDark ? '#1e1611' : '#ffffff',
-        color: isDark ? '#f8f4f0' : '#3a1e13',
+        background: isDarkMode ? '#1e1611' : '#ffffff',
+        color: isDarkMode ? '#f8f4f0' : '#3a1e13',
         backdrop: 'rgba(0,0,0,0.75)',
         position: 'center',
         customClass: {

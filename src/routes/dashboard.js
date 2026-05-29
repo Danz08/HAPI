@@ -101,15 +101,13 @@ router.get('/', async (req, res) => {
 
     const riskColor = getRiskColor(fatigueData.riskLevel);
 
-    // Global alerts logic
+    // Global alerts logic — mood reminder only
     let needsMoodLog = true;
     if (latestMood) {
       if (latestMood.date === today) {
         needsMoodLog = false;
       }
     }
-    const isFirstLogin = req.session.isFirstLogin || false;
-    if (isFirstLogin) req.session.isFirstLogin = false; // consume the flag
     
     let showMoodReminder = false;
     if (needsMoodLog && !req.session.hasSeenMoodReminder) {
@@ -172,7 +170,6 @@ router.get('/', async (req, res) => {
       riskColor,
       needsMoodLog,
       showMoodReminder,
-      isFirstLogin,
       recommendations,
       today,
       isGoogleConnected,

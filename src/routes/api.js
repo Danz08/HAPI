@@ -78,6 +78,16 @@ router.post('/mood', async (req, res) => {
   const today = getLocalToday();
 
   const db = getDb();
+
+  // Check if already logged mood today
+  const existingMood = await db.prepare(
+    'SELECT id FROM mood_logs WHERE user_id = ? AND date = ? LIMIT 1'
+  ).get(req.session.user.id, today);
+
+  if (existingMood) {
+    return res.status(400).json({ error: 'Kamu sudah mencatat mood hari ini. Coba lagi besok!', alreadyLogged: true });
+  }
+
   await db.prepare(`
     INSERT INTO mood_logs (user_id, mood_score, mood_label, energy_level, stress_level, notes, date)
     VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -247,9 +257,18 @@ router.post('/quiz', async (req, res) => {
   const recommendations = getRecommendations(result.riskLevel);
 
   const today = getLocalToday();
+  const db = getDb();
+
+  // Check if already took quiz today
+  const existingQuiz = await db.prepare(
+    'SELECT id FROM quiz_results WHERE user_id = ? AND date = ? LIMIT 1'
+  ).get(req.session.user.id, today);
+
+  if (existingQuiz) {
+    return res.status(400).json({ error: 'Kamu sudah mengisi quiz hari ini. Coba lagi besok!' });
+  }
 
   // Save to database
-  const db = getDb();
   await db.prepare(`
     INSERT INTO quiz_results (user_id, answers, fatigue_score, risk_level, recommendations, date)
     VALUES (?, ?, ?, ?, ?, ?)
