@@ -157,7 +157,7 @@
           <% insights.forEach(function(ins) { %>
           <% const borderColorClass = ins.color === 'brand' ? 'border-brand-500/50' : ins.color === 'success' ? 'border-success-500/50' : ins.color === 'warning' ? 'border-warning-500/50' : 'border-danger-500/50'; %>
           <div class="p-3 rounded-xl bg-surface-800/50 border-l-2 <%= borderColorClass %>">
-            <p class="text-sm font-semibold text-surface-200 mb-1 insight-title" data-title-id="<%= ins.title %>" data-title-en="<%= ins.title_en || ins.title %>"><%= ins.icon %> <span><%= ins.title %></span></p>
+            <p class="text-sm font-semibold text-surface-200 mb-1 insight-title" data-title-id="<%= ins.title %>" data-title-en="<%= ins.title_en || ins.title %>"><%- ins.icon %> <span><%= ins.title %></span></p>
             <p class="text-xs text-surface-400 insight-desc" data-desc-id="<%= ins.description %>" data-desc-en="<%= ins.desc_en || ins.description %>"><%= ins.description %></p>
           </div>
           <% }) %>

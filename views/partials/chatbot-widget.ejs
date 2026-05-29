@@ -220,20 +220,40 @@ function generatePlaceholderResponse(message) {
 }
 
 async function clearWidgetChat() {
-  if (!confirm('Hapus semua riwayat chat?')) return;
-  try {
-    // TODO: Uncomment when API is integrated
-    // await axios.delete('/api/chat');
-    const container = document.getElementById('widget-chat-messages');
-    if (container) {
-      container.innerHTML = `<div class="flex justify-start animate-fade-in"><div class="flex gap-2.5 max-w-[85%]"><div class="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="bot" class="w-3.5 h-3.5 text-white"></i></div><div class="widget-bubble-ai"><p class="text-sm leading-relaxed">Percakapan telah dibersihkan! ✨ Ada yang bisa kubantu?</p></div></div></div>`;
-      lucide.createIcons();
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  Swal.fire({
+    title: 'Hapus Riwayat?',
+    text: 'Semua riwayat chat akan dihapus.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Ya, hapus!',
+    cancelButtonText: 'Batal',
+    confirmButtonColor: '#A86240',
+    cancelButtonColor: '#489A98',
+    background: isDark ? '#1e1611' : '#ffffff',
+    color: isDark ? '#f8f4f0' : '#3a1e13',
+    backdrop: 'rgba(0,0,0,0.75)',
+    position: 'center',
+    customClass: {
+      container: 'z-[99999]'
     }
-    const qa = document.getElementById('chatbot-quick-actions');
-    if (qa) qa.style.display = '';
-  } catch(err) {
-    // Silently fail
-  }
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        // TODO: Uncomment when API is integrated
+        // await axios.delete('/api/chat');
+        const container = document.getElementById('widget-chat-messages');
+        if (container) {
+          container.innerHTML = `<div class="flex justify-start animate-fade-in"><div class="flex gap-2.5 max-w-[85%]"><div class="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="bot" class="w-3.5 h-3.5 text-white"></i></div><div class="widget-bubble-ai"><p class="text-sm leading-relaxed">Percakapan telah dibersihkan! ✨ Ada yang bisa kubantu?</p></div></div></div>`;
+          lucide.createIcons();
+        }
+        const qa = document.getElementById('chatbot-quick-actions');
+        if (qa) qa.style.display = '';
+      } catch(err) {
+        // Silently fail
+      }
+    }
+  });
 }
 
 // Auto show badge after 10 seconds if not opened

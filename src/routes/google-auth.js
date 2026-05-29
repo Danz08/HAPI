@@ -7,8 +7,7 @@ const { extractCalendarFeatures, calculateCalendarBurnoutScore } = require('../u
 
 const formatLocalDate = (d) => {
   if (!d) return null;
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date(d));
 };
 
 const router = express.Router();

@@ -5,9 +5,7 @@ const { calculateFatigueFromQuiz, getRiskColor } = require('../utils/fatigue-cal
 const { getRecommendations } = require('../utils/recommendations');
 
 const getLocalToday = () => {
-  const d = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
 };
 
 const router = express.Router();

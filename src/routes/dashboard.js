@@ -4,10 +4,13 @@ const { requireOnboarded } = require('../middleware/auth');
 const { calculateComprehensiveFatigue, getRiskColor } = require('../utils/fatigue-calculator');
 const { getRecommendations } = require('../utils/recommendations');
 
+const getLocalToday = () => {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+};
+
 const formatLocalDate = (d) => {
   if (!d) return null;
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date(d));
 };
 
 const router = express.Router();

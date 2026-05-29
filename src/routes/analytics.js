@@ -5,15 +5,12 @@ const { calculateComprehensiveFatigue } = require('../utils/fatigue-calculator')
 const { calculateCalendarBurnoutScore } = require('../utils/calendar');
 
 const getLocalToday = () => {
-  const d = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
 };
 
 const formatLocalDate = (d) => {
   if (!d) return null;
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date(d));
 };
 
 const router = express.Router();
@@ -262,40 +259,40 @@ function generateMonthlyInsights({ monthlyWork, monthlyMood, monthlyPomodoro, mo
 
   const consistency = Math.round((activeDays / daysInMonth) * 100);
   if (consistency >= 80) {
-    insights.push({ icon: '🔥', title: 'Konsistensi Luar Biasa', title_en: 'Amazing Consistency', description: `${activeDays} dari ${daysInMonth} hari aktif (${consistency}%). Kamu sangat konsisten!`, desc_en: `${activeDays} of ${daysInMonth} active days (${consistency}%). You're very consistent!`, color: 'success' });
+    insights.push({ icon: '<i data-lucide="flame" class="w-5 h-5 text-success-500"></i>', title: 'Konsistensi Luar Biasa', title_en: 'Amazing Consistency', description: `${activeDays} dari ${daysInMonth} hari aktif (${consistency}%). Kamu sangat konsisten!`, desc_en: `${activeDays} of ${daysInMonth} active days (${consistency}%). You're very consistent!`, color: 'success' });
   } else if (consistency >= 50) {
-    insights.push({ icon: '📊', title: 'Konsistensi Baik', title_en: 'Good Consistency', description: `${activeDays} dari ${daysInMonth} hari aktif. Coba tingkatkan lagi ya!`, desc_en: `${activeDays} of ${daysInMonth} active days. Try to improve further!`, color: 'brand' });
+    insights.push({ icon: '<i data-lucide="bar-chart-2" class="w-5 h-5 text-brand-500"></i>', title: 'Konsistensi Baik', title_en: 'Good Consistency', description: `${activeDays} dari ${daysInMonth} hari aktif. Coba tingkatkan lagi ya!`, desc_en: `${activeDays} of ${daysInMonth} active days. Try to improve further!`, color: 'brand' });
   } else {
-    insights.push({ icon: '📉', title: 'Tingkatkan Konsistensi', title_en: 'Improve Consistency', description: `Baru ${activeDays} hari aktif bulan ini. Coba rutin tracking setiap hari.`, desc_en: `Only ${activeDays} active days this month. Try tracking daily.`, color: 'warning' });
+    insights.push({ icon: '<i data-lucide="trending-down" class="w-5 h-5 text-warning-500"></i>', title: 'Tingkatkan Konsistensi', title_en: 'Improve Consistency', description: `Baru ${activeDays} hari aktif bulan ini. Coba rutin tracking setiap hari.`, desc_en: `Only ${activeDays} active days this month. Try tracking daily.`, color: 'warning' });
   }
 
   if (streak >= 7) {
-    insights.push({ icon: '🔥', title: `Streak ${streak} Hari!`, title_en: `${streak}-Day Streak!`, description: 'Konsistensimu luar biasa! Terus pertahankan kebiasaan positif ini.', desc_en: 'Your consistency is amazing! Keep up the positive habits.', color: 'success' });
+    insights.push({ icon: '<i data-lucide="zap" class="w-5 h-5 text-success-500"></i>', title: `Streak ${streak} Hari!`, title_en: `${streak}-Day Streak!`, description: 'Konsistensimu luar biasa! Terus pertahankan kebiasaan positif ini.', desc_en: 'Your consistency is amazing! Keep up the positive habits.', color: 'success' });
   } else if (streak >= 3) {
-    insights.push({ icon: '⚡', title: `Streak ${streak} Hari`, title_en: `${streak}-Day Streak`, description: 'Bagus! Terus jaga momentum harianmu.', desc_en: 'Good! Keep your daily momentum going.', color: 'brand' });
+    insights.push({ icon: '<i data-lucide="activity" class="w-5 h-5 text-brand-500"></i>', title: `Streak ${streak} Hari`, title_en: `${streak}-Day Streak`, description: 'Bagus! Terus jaga momentum harianmu.', desc_en: 'Good! Keep your daily momentum going.', color: 'brand' });
   }
 
   const totalHours = Math.round(monthlyWork.total / 60);
   const avgDailyWork = activeDays > 0 ? Math.round(monthlyWork.total / activeDays) : 0;
   if (totalHours > 0) {
-    insights.push({ icon: '💼', title: `${totalHours} Jam Kerja`, title_en: `${totalHours} Work Hours`, description: `Total ${monthlyWork.total_sessions} sesi kerja. Rata-rata ${avgDailyWork} menit/hari aktif.`, desc_en: `Total ${monthlyWork.total_sessions} work sessions. Average ${avgDailyWork} min/active day.`, color: avgDailyWork > 480 ? 'danger' : 'brand' });
+    insights.push({ icon: '<i data-lucide="briefcase" class="w-5 h-5 text-brand-500"></i>', title: `${totalHours} Jam Kerja`, title_en: `${totalHours} Work Hours`, description: `Total ${monthlyWork.total_sessions} sesi kerja. Rata-rata ${avgDailyWork} menit/hari aktif.`, desc_en: `Total ${monthlyWork.total_sessions} work sessions. Average ${avgDailyWork} min/active day.`, color: avgDailyWork > 480 ? 'danger' : 'brand' });
   }
 
   if (monthlyMood.count > 0) {
     const avgMood = Math.round(monthlyMood.avg * 10) / 10;
     const moodLabel = avgMood >= 4 ? 'Positif' : avgMood >= 3 ? 'Stabil' : 'Perlu Perhatian';
     const moodLabelEn = avgMood >= 4 ? 'Positive' : avgMood >= 3 ? 'Stable' : 'Needs Attention';
-    const moodIcon = avgMood >= 4 ? '😊' : avgMood >= 3 ? '😐' : '😟';
+    const moodIcon = avgMood >= 4 ? '<i data-lucide="smile" class="w-5 h-5 text-success-500"></i>' : avgMood >= 3 ? '<i data-lucide="meh" class="w-5 h-5 text-warning-500"></i>' : '<i data-lucide="frown" class="w-5 h-5 text-danger-500"></i>';
     insights.push({ icon: moodIcon, title: `Mood ${moodLabel}`, title_en: `Mood: ${moodLabelEn}`, description: `Rata-rata mood ${avgMood}/5 dari ${monthlyMood.count} log.`, desc_en: `Average mood ${avgMood}/5 from ${monthlyMood.count} logs.`, color: avgMood >= 4 ? 'success' : avgMood >= 3 ? 'warning' : 'danger' });
   }
 
   if (monthlyPomodoro.cycles > 0) {
-    insights.push({ icon: '🎖️', title: `${monthlyPomodoro.cycles} Siklus Pomodoro`, title_en: `${monthlyPomodoro.cycles} Pomodoro Cycles`, description: `Total ${monthlyPomodoro.focus} menit fokus melalui Pomodoro.`, desc_en: `Total ${monthlyPomodoro.focus} focus minutes via Pomodoro.`, color: 'success' });
+    insights.push({ icon: '<i data-lucide="award" class="w-5 h-5 text-success-500"></i>', title: `${monthlyPomodoro.cycles} Siklus Pomodoro`, title_en: `${monthlyPomodoro.cycles} Pomodoro Cycles`, description: `Total ${monthlyPomodoro.focus} menit fokus melalui Pomodoro.`, desc_en: `Total ${monthlyPomodoro.focus} focus minutes via Pomodoro.`, color: 'success' });
   }
 
   if (monthlyQuiz.count > 0) {
     const avgScore = Math.round(monthlyQuiz.avg_score);
-    insights.push({ icon: '📋', title: `${monthlyQuiz.count} Quiz Selesai`, title_en: `${monthlyQuiz.count} Quizzes Done`, description: `Rata-rata skor fatigue ${avgScore}%. ${avgScore > 65 ? 'Perhatikan kondisimu.' : 'Kondisi cukup baik.'}`, desc_en: `Average fatigue score ${avgScore}%. ${avgScore > 65 ? 'Pay attention to your condition.' : 'Condition is fairly good.'}`, color: avgScore > 65 ? 'danger' : avgScore > 35 ? 'warning' : 'success' });
+    insights.push({ icon: '<i data-lucide="clipboard-list" class="w-5 h-5 text-brand-500"></i>', title: `${monthlyQuiz.count} Quiz Selesai`, title_en: `${monthlyQuiz.count} Quizzes Done`, description: `Rata-rata skor fatigue ${avgScore}%. ${avgScore > 65 ? 'Perhatikan kondisimu.' : 'Kondisi cukup baik.'}`, desc_en: `Average fatigue score ${avgScore}%. ${avgScore > 65 ? 'Pay attention to your condition.' : 'Condition is fairly good.'}`, color: avgScore > 65 ? 'danger' : avgScore > 35 ? 'warning' : 'success' });
   }
 
   if (isGoogleConnected && monthlyCalendar && monthlyCalendar.days_with_events > 0) {
@@ -304,17 +301,17 @@ function generateMonthlyInsights({ monthlyWork, monthlyMood, monthlyPomodoro, mo
     const avgWorkH = Math.round(monthlyCalendar.avg_work_hours * 10) / 10;
     const totalB2B = monthlyCalendar.total_b2b;
 
-    insights.push({ icon: '📅', title: `${totalMeetings} Meeting (${monthlyCalendar.days_with_events} hari)`, title_en: `${totalMeetings} Meetings (${monthlyCalendar.days_with_events} days)`, description: `Rata-rata jadwal ${avgWorkH} jam/hari. ${totalB2B > 0 ? totalB2B + ' meeting back-to-back terdeteksi.' : 'Jarak antar meeting cukup baik.'}`, desc_en: `Average schedule ${avgWorkH} hours/day. ${totalB2B > 0 ? totalB2B + ' back-to-back meetings detected.' : 'Meeting spacing is good.'}`, color: avgBurnout > 65 ? 'danger' : avgBurnout > 35 ? 'warning' : 'success' });
+    insights.push({ icon: '<i data-lucide="calendar" class="w-5 h-5 text-brand-500"></i>', title: `${totalMeetings} Meeting (${monthlyCalendar.days_with_events} hari)`, title_en: `${totalMeetings} Meetings (${monthlyCalendar.days_with_events} days)`, description: `Rata-rata jadwal ${avgWorkH} jam/hari. ${totalB2B > 0 ? totalB2B + ' meeting back-to-back terdeteksi.' : 'Jarak antar meeting cukup baik.'}`, desc_en: `Average schedule ${avgWorkH} hours/day. ${totalB2B > 0 ? totalB2B + ' back-to-back meetings detected.' : 'Meeting spacing is good.'}`, color: avgBurnout > 65 ? 'danger' : avgBurnout > 35 ? 'warning' : 'success' });
 
     if (avgBurnout > 65) {
-      insights.push({ icon: '🔥', title: 'Risiko Burnout Tinggi (Kalender)', title_en: 'High Burnout Risk (Calendar)', description: `Skor burnout kalender ${avgBurnout}%. Jadwalmu terlalu padat, pertimbangkan mengurangi meeting.`, desc_en: `Calendar burnout score ${avgBurnout}%. Your schedule is too packed, consider reducing meetings.`, color: 'danger' });
+      insights.push({ icon: '<i data-lucide="alert-triangle" class="w-5 h-5 text-danger-500"></i>', title: 'Risiko Burnout Tinggi (Kalender)', title_en: 'High Burnout Risk (Calendar)', description: `Skor burnout kalender ${avgBurnout}%. Jadwalmu terlalu padat, pertimbangkan mengurangi meeting.`, desc_en: `Calendar burnout score ${avgBurnout}%. Your schedule is too packed, consider reducing meetings.`, color: 'danger' });
     } else if (avgBurnout > 35) {
-      insights.push({ icon: '⚠️', title: 'Risiko Burnout Sedang (Kalender)', title_en: 'Moderate Burnout Risk (Calendar)', description: `Skor burnout kalender ${avgBurnout}%. Jadwalmu cukup padat. Pastikan ada waktu istirahat.`, desc_en: `Calendar burnout score ${avgBurnout}%. Your schedule is fairly packed. Ensure rest time.`, color: 'warning' });
+      insights.push({ icon: '<i data-lucide="alert-circle" class="w-5 h-5 text-warning-500"></i>', title: 'Risiko Burnout Sedang (Kalender)', title_en: 'Moderate Burnout Risk (Calendar)', description: `Skor burnout kalender ${avgBurnout}%. Jadwalmu cukup padat. Pastikan ada waktu istirahat.`, desc_en: `Calendar burnout score ${avgBurnout}%. Your schedule is fairly packed. Ensure rest time.`, color: 'warning' });
     }
   }
 
   if (insights.length === 0) {
-    insights.push({ icon: '🚀', title: 'Mulai Tracking', title_en: 'Start Tracking', description: 'Belum ada data bulan ini. Mulai log aktivitas, mood, dan ambil quiz!', desc_en: 'No data this month yet. Start logging activities, mood, and take quizzes!', color: 'brand' });
+    insights.push({ icon: '<i data-lucide="rocket" class="w-5 h-5 text-brand-500"></i>', title: 'Mulai Tracking', title_en: 'Start Tracking', description: 'Belum ada data bulan ini. Mulai log aktivitas, mood, dan ambil quiz!', desc_en: 'No data this month yet. Start logging activities, mood, and take quizzes!', color: 'brand' });
   }
 
   return insights;
