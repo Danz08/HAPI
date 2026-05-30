@@ -100,28 +100,8 @@ router.post('/mood', async (req, res) => {
     notes || null,
     today
   );
-  
-  // Calculate streak
-  const user = await db.prepare('SELECT current_streak, last_streak_date FROM users WHERE id = ?').get(req.session.user.id);
-  let streak = user.current_streak || 0;
-  let lastDate = user.last_streak_date;
-  let streakUpdated = false;
 
-  if (lastDate !== today) {
-    if (lastDate) {
-      const last = new Date(lastDate);
-      const curr = new Date(today);
-      const diff = Math.floor((curr - last) / (1000 * 60 * 60 * 24));
-      if (diff === 1) streak += 1;
-      else if (diff > 1) streak = 1;
-    } else {
-      streak = 1;
-    }
-    await db.prepare('UPDATE users SET current_streak = ?, last_streak_date = ? WHERE id = ?').run(streak, today, req.session.user.id);
-    streakUpdated = true;
-  }
-
-  res.json({ success: true, streak, streakUpdated });
+  res.json({ success: true });
 });
 
 // GET /api/mood - Get mood history

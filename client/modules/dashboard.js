@@ -170,24 +170,9 @@ export function initMoodModal() {
       const res = await logMood(data);
       if (res.data.success) {
         closeMoodModal();
-        if (res.data.streakUpdated) {
-          const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-          Swal.fire({
-            title: 'Streak Aktif! 🔥',
-            text: `Hebat! Kamu memiliki streak ${res.data.streak} hari berturut-turut.`,
-            icon: 'success',
-            confirmButtonColor: '#A86240',
-            background: isDark ? 'rgba(30,22,17,0.95)' : 'rgba(255,255,255,0.95)',
-            color: isDark ? '#f8f4f0' : '#3a1e13',
-            backdrop: 'rgba(0,0,0,0.4)',
-          }).then(() => {
-            location.reload();
-          });
-        } else {
-          showToast('Mood berhasil disimpan! 😊', 'success').then(() => {
-            location.reload();
-          });
-        }
+        showToast('Mood berhasil disimpan! 😊', 'success').then(() => {
+          location.reload();
+        });
       }
     } catch (err) {
       showToast('Gagal menyimpan mood.', 'error');

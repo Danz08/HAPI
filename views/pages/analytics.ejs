@@ -85,6 +85,11 @@
           <div class="w-4 h-4 rounded bg-brand-400 shadow-lg shadow-brand-400/30"></div>
           <span data-i18n="analytics.legend.max">Maksimal</span>
         </div>
+        <span class="text-surface-600">|</span>
+        <div class="flex items-center gap-1">
+          <span class="text-sm">🔥</span>
+          <span>Streak Quiz</span>
+        </div>
       </div>
 
       <!-- Calendar Grid -->
@@ -126,6 +131,7 @@
             <span class="font-bold <%= isToday ? 'text-brand-300' : cd.hasData ? 'text-surface-200' : 'text-surface-500' %>"><%= cd.day %></span>
             <% if (cd.hasData) { %>
               <div class="flex items-center gap-0.5 mt-0.5">
+                <% if (cd.quiz_score !== null) { %><span class="text-[9px]" title="Streak Quiz 🔥">🔥</span><% } %>
                 <% if (moodEmoji) { %><span class="text-[9px]"><%= moodEmoji %></span><% } %>
                 <% if (cd.pomodoro_cycles > 0) { %><span class="text-[9px]">🍅</span><% } %>
                 <% if (cd.quiz_score !== null) { %><span class="text-[9px]">📋</span><% } %>
