@@ -262,8 +262,9 @@ router.post('/quiz', async (req, res) => {
   );
   
   // Calculate streak
-  const user = await db.prepare('SELECT current_streak, last_streak_date FROM users WHERE id = ?').get(req.session.user.id);
+  const user = await db.prepare('SELECT current_streak, longest_streak, last_streak_date FROM users WHERE id = ?').get(req.session.user.id);
   let streak = user.current_streak || 0;
+  let longest = user.longest_streak || 0;
   let lastDate = user.last_streak_date;
   let streakUpdated = false;
 
@@ -277,7 +278,12 @@ router.post('/quiz', async (req, res) => {
     } else {
       streak = 1;
     }
-    await db.prepare('UPDATE users SET current_streak = ?, last_streak_date = ? WHERE id = ?').run(streak, today, req.session.user.id);
+    
+    if (streak > longest) {
+      longest = streak;
+    }
+    
+    await db.prepare('UPDATE users SET current_streak = ?, longest_streak = ?, last_streak_date = ? WHERE id = ?').run(streak, longest, today, req.session.user.id);
     streakUpdated = true;
   }
 

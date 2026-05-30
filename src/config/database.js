@@ -63,6 +63,7 @@ async function initDatabase() {
 
   // Alter users table to add streak columns if they don't exist
   await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS current_streak INTEGER DEFAULT 0`);
+  await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS longest_streak INTEGER DEFAULT 0`);
   await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS last_streak_date VARCHAR(20)`);
 
   // Activity logs

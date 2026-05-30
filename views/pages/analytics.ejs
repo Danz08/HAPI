@@ -50,8 +50,8 @@
       <div class="w-9 h-9 rounded-xl bg-warning-500/15 flex items-center justify-center mb-2">
         <i data-lucide="flame" class="w-5 h-5 text-warning-400"></i>
       </div>
-      <div class="stat-value text-xl"><%= streak %></div>
-      <div class="stat-label" data-i18n="analytics.streak">Streak Hari</div>
+      <div class="stat-value text-xl"><%= streak %> <span class="text-xs text-surface-400 font-normal">/ Max <%= typeof longest_streak !== 'undefined' ? longest_streak : 0 %></span></div>
+      <div class="stat-label" data-i18n="analytics.streak">Streak Hari Ini</div>
     </div>
   </div>
 

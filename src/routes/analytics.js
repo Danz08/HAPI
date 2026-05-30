@@ -158,8 +158,9 @@ router.get('/', async (req, res) => {
     calendarDays ? Number(calendarDays.count) : 0
   );
 
-  const userRow = await db.prepare('SELECT current_streak FROM users WHERE id = ?').get(userId);
+  const userRow = await db.prepare('SELECT current_streak, longest_streak FROM users WHERE id = ?').get(userId);
   const streak = userRow ? userRow.current_streak : 0;
+  const longest_streak = userRow ? userRow.longest_streak : 0;
 
   const googleUser = await db.prepare('SELECT google_connected FROM users WHERE id = ?').get(userId);
   const isGoogleConnected = googleUser && googleUser.google_connected === 1 && req.session.user.login_method === 'google';
@@ -239,6 +240,7 @@ router.get('/', async (req, res) => {
     activeDays,
     daysInMonth,
     streak,
+    longest_streak,
     insights,
     month, year, monthName,
     prevMonth, prevYear, nextMonth, nextYear,

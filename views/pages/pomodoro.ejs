@@ -312,10 +312,12 @@ async function saveSession() {
 }
 
 // Load today's calendar events and auto-set timers (#4)
-async function loadCalendarEvents() {
-  try {
-    const today = new Date().toISOString().split('T')[0];
-    const res = await axios.get(`/api/analytics/day/${today}`);
+  async function loadCalendarEvents() {
+    try {
+      const d = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const today = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+      const res = await axios.get(`/api/analytics/day/${today}`);
     const data = res.data;
     const container = document.getElementById('cal-events-list');
 

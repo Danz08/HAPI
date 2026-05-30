@@ -327,7 +327,7 @@ async function submitQuiz() {
 
     const lang = window.getLang ? window.getLang() : 'id';
     
-    if (data.streakUpdated) {
+    if (data.streak !== undefined) {
       const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
       Swal.fire({
         title: '🔥 Streak Aktif!',

@@ -19,10 +19,11 @@ export function initCharts() {
   const moodData = [];
   const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
 
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const dateStr = d.toISOString().split('T')[0];
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const pad = (n) => String(n).padStart(2, '0');
+      const dateStr = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
     labels.push(days <= 7 ? dayNames[d.getDay()] : `${d.getDate()}/${d.getMonth()+1}`);
 
     const activity = data.recentActivities.find(a => a.date === dateStr);

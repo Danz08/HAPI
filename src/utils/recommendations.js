@@ -23,7 +23,7 @@ const recommendationPool = {
     ],
     activities: [
       'Lanjutkan sesi Pomodoro dengan target 4-6 siklus hari ini',
-      'Dokumentasikan progress kerjamu â€” ini membantu tracking pencapaian',
+      'Dokumentasikan progress kerjamu — ini membantu tracking pencapaian',
       'Jangan lupa minum air putih minimal 8 gelas per hari',
       'Luangkan 10 menit untuk stretching ringan setiap 2 jam',
     ],
@@ -44,14 +44,14 @@ const recommendationPool = {
       },
       {
         title: 'ðŸ“‹ Prioritaskan Tugasmu',
-        description: 'Gunakan metode Eisenhower Matrix â€” fokus pada yang penting dan mendesak terlebih dahulu.',
+        description: 'Gunakan metode Eisenhower Matrix — fokus pada yang penting dan mendesak terlebih dahulu.',
         category: 'productivity',
       },
     ],
     activities: [
       'Kurangi durasi kerja menjadi 20-25 menit per sesi Pomodoro',
       'Ambil break 10-15 menit setiap selesai 2 sesi kerja',
-      'Hindari multitasking â€” fokus pada satu task di satu waktu',
+      'Hindari multitasking — fokus pada satu task di satu waktu',
       'Pertimbangkan untuk jalan kaki ringan 15 menit di luar ruangan',
       'Batasi konsumsi kafein setelah jam 2 siang',
       'Coba dengarkan musik instrumental saat bekerja',
@@ -81,7 +81,7 @@ const recommendationPool = {
     activities: [
       'STOP bekerja dan ambil istirahat panjang minimal 30 menit',
       'Lakukan progressive muscle relaxation untuk melepas ketegangan',
-      'Makan makanan bergizi â€” hindari junk food dan gula berlebih',
+      'Makan makanan bergizi — hindari junk food dan gula berlebih',
       'Matikan notifikasi yang tidak penting selama 1 jam',
       'Pertimbangkan untuk tidak lembur hari ini',
       'Tulis 3 hal yang kamu syukuri hari ini (gratitude journaling)',
@@ -160,15 +160,15 @@ function generateCurhatResponse(message, riskLevel = 'Medium') {
     ],
     lelah: [
       'Kelelahan yang berkepanjangan bisa berdampak pada kesehatan fisik dan mentalmu. Apakah kamu sudah tidur cukup belakangan ini?',
-      'Aku dengar kamu, dan perasaanmu valid. Kelelahan bisa datang dari banyak faktor â€” fisik, mental, atau emosional. Mari kita cari tahu bersama apa yang bisa membantumu.',
+      'Aku dengar kamu, dan perasaanmu valid. Kelelahan bisa datang dari banyak faktor — fisik, mental, atau emosional. Mari kita cari tahu bersama apa yang bisa membantumu.',
     ],
     senang: [
       'Senang mendengar kamu dalam mood yang baik! ðŸ˜Š Manfaatkan energi positif ini untuk hal-hal produktif. Apa yang membuatmu senang hari ini?',
       'Mood positif seperti ini sangat berharga! Coba catat apa yang membuatmu merasa baik, supaya bisa kamu ulangi di lain waktu.',
     ],
     malas: [
-      'Rasa malas kadang datang karena otak kita butuh stimulasi baru. Coba mulai dari task yang paling kecil dan mudah dulu â€” kadang momentum datang setelah langkah pertama.',
-      'Semua orang pernah merasa malas. Yang membedakan adalah bagaimana kita meresponsnya. Coba teknik "2-minute rule" â€” kerjakan sesuatu selama 2 menit saja, dan lihat apakah kamu ingin melanjutkan.',
+      'Rasa malas kadang datang karena otak kita butuh stimulasi baru. Coba mulai dari task yang paling kecil dan mudah dulu — kadang momentum datang setelah langkah pertama.',
+      'Semua orang pernah merasa malas. Yang membedakan adalah bagaimana kita meresponsnya. Coba teknik "2-minute rule" — kerjakan sesuatu selama 2 menit saja, dan lihat apakah kamu ingin melanjutkan.',
     ],
     sedih: [
       'Perasaan sedih itu valid dan kamu berhak merasakannya. Tidak perlu terburu-buru untuk "baik-baik saja". Ceritakan apa yang membuatmu sedih?',
@@ -176,7 +176,7 @@ function generateCurhatResponse(message, riskLevel = 'Medium') {
     ],
     deadline: [
       'Deadline memang bisa sangat menekan. Coba breakdown tugas besar menjadi bagian-bagian kecil, lalu selesaikan satu per satu. Kamu pasti bisa!',
-      'Saat dikejar deadline, prioritaskan yang paling penting. Gunakan Pomodoro timer untuk menjaga fokus â€” 25 menit kerja, 5 menit istirahat.',
+      'Saat dikejar deadline, prioritaskan yang paling penting. Gunakan Pomodoro timer untuk menjaga fokus — 25 menit kerja, 5 menit istirahat.',
     ],
   };
 
