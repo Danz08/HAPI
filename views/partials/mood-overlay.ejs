@@ -84,8 +84,27 @@
 
 <script>
 let globalSelectedMood = null;
+const __moodLoggedToday = <%= typeof moodLoggedToday !== 'undefined' ? moodLoggedToday : false %>;
 
 function openGlobalMood() {
+  if (__moodLoggedToday) {
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    const lang = window.getLang ? window.getLang() : 'id';
+    Swal.fire({
+      title: lang === 'en' ? 'Already Recorded!' : 'Sudah Tercatat!',
+      text: lang === 'en' 
+        ? 'You have already logged your mood today. Come back tomorrow!' 
+        : 'Kamu sudah mencatat mood hari ini. Coba lagi besok ya!',
+      icon: 'info',
+      confirmButtonColor: '#A86240',
+      background: isDark ? '#1e1611' : '#ffffff',
+      color: isDark ? '#f8f4f0' : '#3a1e13',
+      backdrop: 'rgba(0,0,0,0.75)',
+      position: 'center',
+      customClass: { container: 'z-[99999]' }
+    });
+    return;
+  }
   const modal = document.getElementById('global-mood-overlay');
   if (modal) {
     modal.classList.remove('hidden');

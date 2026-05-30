@@ -58,12 +58,29 @@ app.use(session({
 app.use(flash());
 
 // Global template vars
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   res.locals.user = req.session.user || null;
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   res.locals.warning = req.flash('warning');
   res.locals.currentPath = req.path;
+
+  // Check if mood already logged today (for navbar mood button)
+  res.locals.moodLoggedToday = false;
+  if (req.session.user) {
+    try {
+      const { getDb } = require('./src/config/database');
+      const db = getDb();
+      const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+      const existingMood = await db.prepare(
+        'SELECT id FROM mood_logs WHERE user_id = ? AND date = ? LIMIT 1'
+      ).get(req.session.user.id, today);
+      res.locals.moodLoggedToday = !!existingMood;
+    } catch (e) {
+      // Silently fail - don't block page load
+    }
+  }
+
   next();
 });
 
