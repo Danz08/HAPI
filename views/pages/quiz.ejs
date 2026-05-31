@@ -8,8 +8,8 @@
       <div class="w-16 h-16 rounded-2xl bg-success-500/15 flex items-center justify-center mx-auto mb-4">
         <i data-lucide="check-circle" class="w-8 h-8 text-success-400"></i>
       </div>
-      <h3 class="text-2xl font-bold font-display text-surface-50 mb-2">Quiz Hari Ini Sudah Selesai</h3>
-      <p class="text-sm text-surface-400">Kamu sudah mengisi quiz kelelahan hari ini. Berikut hasil terakhirmu:</p>
+      <h3 class="text-2xl font-bold font-display text-surface-50 mb-2" data-i18n="quiz.alreadyDoneTitle">Quiz Hari Ini Sudah Selesai</h3>
+      <p class="text-sm text-surface-400" data-i18n="quiz.alreadyDoneDesc">Kamu sudah mengisi quiz kelelahan hari ini. Berikut hasil terakhirmu:</p>
     </div>
 
     <!-- Score Gauge -->
@@ -38,11 +38,11 @@
 
       <% const trTitles = { Low: 'Risiko Rendah', Medium: 'Risiko Sedang', High: 'Risiko Tinggi' }; %>
       <% const trBadgeColors = { Low: 'success', Medium: 'warning', High: 'danger' }; %>
-      <h3 class="text-2xl font-bold font-display text-surface-50 mb-2"><%= trTitles[todayResult.riskLevel] || 'Risiko Sedang' %></h3>
+      <h3 class="text-2xl font-bold font-display text-surface-50 mb-2" data-i18n="quiz.<%= todayResult.riskLevel === 'Low' ? 'lowRisk' : todayResult.riskLevel === 'High' ? 'highRisk' : 'medRisk' %>"><%= trTitles[todayResult.riskLevel] || 'Risiko Sedang' %></h3>
       <span class="badge badge-<%= (todayResult.riskLevel || 'medium').toLowerCase() %> inline-flex"><%= todayResult.riskLevel %> Risk</span>
 
       <% const trDescs = { Low: 'Tingkat kelelahan akademikmu masih rendah. Pertahankan ritme belajarmu!', Medium: 'Kamu menunjukkan tanda-tanda kelelahan sedang. Perhatikan pola istirahat.', High: 'Tingkat kelelahanmu tinggi. Segera ambil langkah untuk beristirahat.' }; %>
-      <p class="text-sm text-surface-400 mt-3 max-w-md mx-auto leading-relaxed"><%= trDescs[todayResult.riskLevel] || trDescs.Medium %></p>
+      <p class="text-sm text-surface-400 mt-3 max-w-md mx-auto leading-relaxed" id="quiz-done-risk-desc"><%= trDescs[todayResult.riskLevel] || trDescs.Medium %></p>
     </div>
 
     <!-- Recommendations from saved result -->
@@ -50,7 +50,7 @@
     <div class="mb-6">
       <h4 class="text-lg font-bold font-display text-surface-50 mb-4 flex items-center gap-2">
         <i data-lucide="lightbulb" class="w-5 h-5 text-warning-400"></i>
-        <span>Rekomendasi</span>
+        <span data-i18n="quiz.result">Rekomendasi</span>
       </h4>
       <div class="space-y-3">
         <% todayResult.recommendations.insights.forEach(function(ins) { %>
@@ -72,17 +72,17 @@
     <div class="flex flex-col sm:flex-row gap-3 justify-center pt-4 border-t border-surface-700/30">
       <a href="/dashboard" class="btn-secondary">
         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-        <span>Dashboard</span>
+        <span data-i18n="nav.dashboard">Dashboard</span>
       </a>
       <a href="/analytics" class="btn-secondary">
         <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-        <span>Lihat Analitik</span>
+        <span data-i18n="nav.analytics">Lihat Analitik</span>
       </a>
     </div>
   </div>
 
   <div class="mt-4 text-center">
-    <p class="text-xs text-surface-500">Quiz dapat diisi kembali besok. Hasil ini berlaku untuk hari ini.</p>
+    <p class="text-xs text-surface-500 mb-12 sm:mb-0" data-i18n="quiz.alreadyDoneFooter">Quiz dapat diisi kembali besok. Hasil ini berlaku untuk hari ini.</p>
   </div>
 
 <% } else { %>

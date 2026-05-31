@@ -104,6 +104,12 @@ export const translations = {
     'analytics.syncCalendar': 'Sinkronkan Kalender',
 
     // Quiz
+    'quiz.alreadyDoneTitle': 'Quiz Hari Ini Sudah Selesai',
+    'quiz.alreadyDoneDesc': 'Kamu sudah mengisi quiz kelelahan hari ini. Berikut hasil terakhirmu:',
+    'quiz.alreadyDoneFooter': 'Quiz dapat diisi kembali besok. Hasil ini berlaku untuk hari ini.',
+    'quiz.descLow': 'Tingkat kelelahan akademikmu masih rendah. Pertahankan ritme belajarmu!',
+    'quiz.descMedium': 'Kamu menunjukkan tanda-tanda kelelahan sedang. Perhatikan pola istirahat.',
+    'quiz.descHigh': 'Tingkat kelelahanmu tinggi. Segera ambil langkah untuk beristirahat.',
     'quiz.title': 'Quiz Kelelahan',
     'quiz.subtitle': 'Ukur tingkat kelelahan berdasarkan pola kerjamu',
     'quiz.question': 'Pertanyaan',
@@ -441,6 +447,12 @@ export const translations = {
     'analytics.syncCalendar': 'Sync Calendar',
 
     // Quiz
+    'quiz.alreadyDoneTitle': 'Today\'s Quiz Completed',
+    'quiz.alreadyDoneDesc': 'You have already taken the fatigue quiz today. Here is your latest result:',
+    'quiz.alreadyDoneFooter': 'The quiz can be retaken tomorrow. This result is valid for today.',
+    'quiz.descLow': 'Your academic fatigue level is low. Keep up your learning rhythm!',
+    'quiz.descMedium': 'You are showing signs of moderate fatigue. Pay attention to your rest patterns.',
+    'quiz.descHigh': 'Your fatigue level is high. Take steps to rest immediately.',
     'quiz.title': 'Fatigue Quiz',
     'quiz.subtitle': 'Measure your fatigue level based on work patterns',
     'quiz.question': 'Question',

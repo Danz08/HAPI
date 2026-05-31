@@ -31,7 +31,7 @@ const recommendationPool = {
   Medium: {
     general: [
       {
-        title: 'âš ï¸ Waspada Kelelahan',
+        title: '⚠️ Waspada Kelelahan',
         description: 'Tubuhmu mulai menunjukkan tanda-tanda fatigue. Saatnya untuk lebih memperhatikan pola istirahat.',
         description_en: 'Your body is starting to show signs of fatigue. It\'s time to pay more attention to your rest patterns.',
         category: 'warning',
@@ -72,7 +72,7 @@ const recommendationPool = {
         category: 'health',
       },
       {
-        title: 'ðŸ—£ï¸ Jangan Ragu Bercerita',
+        title: '🗣️ Jangan Ragu Bercerita',
         description: 'Bicarakan perasaanmu dengan orang terdekat, teman, atau mentor. Kamu tidak harus menanggung semuanya sendiri.',
         description_en: 'Talk about your feelings with those closest to you, friends, or a mentor. You don\'t have to bear it all alone.',
         category: 'social',
