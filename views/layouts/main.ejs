@@ -32,6 +32,14 @@
       document.documentElement.setAttribute('data-theme', t);
       if (t === 'light') document.documentElement.classList.remove('dark');
       else document.documentElement.classList.add('dark');
+      
+      // Auto-set timezone cookie for server
+      try {
+        var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (tz && document.cookie.indexOf('hapi_tz=' + encodeURIComponent(tz)) === -1) {
+          document.cookie = 'hapi_tz=' + encodeURIComponent(tz) + '; path=/; max-age=31536000';
+        }
+      } catch (e) {}
     })();
   </script>
   <style>

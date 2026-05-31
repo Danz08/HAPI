@@ -4,13 +4,13 @@ const { requireOnboarded } = require('../middleware/auth');
 const { calculateComprehensiveFatigue, getRiskColor } = require('../utils/fatigue-calculator');
 const { getRecommendations } = require('../utils/recommendations');
 
-const getLocalToday = () => {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+const getLocalToday = (tz = 'Asia/Jakarta') => {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date());
 };
 
-const formatLocalDate = (d) => {
+const formatLocalDate = (d, tz = 'Asia/Jakarta') => {
   if (!d) return null;
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date(d));
+  return new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date(d));
 };
 
 const router = express.Router();
@@ -21,7 +21,7 @@ router.use(requireOnboarded);
 router.get('/', async (req, res) => {
   const db = getDb();
   const userId = req.session.user.id;
-  const today = formatLocalDate(new Date());
+  const today = getLocalToday(req.userTz);
   const days = parseInt(req.query.days) || 7;
 
   try {
@@ -51,12 +51,12 @@ router.get('/', async (req, res) => {
       FROM mood_logs 
       WHERE user_id = ? AND date >= $2
       ORDER BY logged_at ASC
-    `).all(userId, formatLocalDate(new Date(Date.now() - days * 24 * 60 * 60 * 1000)));
+    `).all(userId, formatLocalDate(new Date(Date.now() - days * 24 * 60 * 60 * 1000), req.userTz));
     
     // Format dates to string so the frontend chart can read them correctly
     const moodTrend = moodTrendQuery.map(row => ({
       ...row,
-      log_date: row.log_date ? formatLocalDate(new Date(row.log_date)) : null
+      log_date: row.log_date ? formatLocalDate(new Date(row.log_date), req.userTz) : null
     }));
 
     // Get latest quiz result
@@ -89,7 +89,7 @@ router.get('/', async (req, res) => {
       WHERE user_id = ? AND date >= $2
       GROUP BY date
       ORDER BY date ASC
-    `).all(userId, formatLocalDate(new Date(Date.now() - days * 24 * 60 * 60 * 1000)));
+    `).all(userId, formatLocalDate(new Date(Date.now() - days * 24 * 60 * 60 * 1000), req.userTz));
 
     // Calculate comprehensive fatigue score
     const fatigueData = calculateComprehensiveFatigue({
@@ -108,19 +108,8 @@ router.get('/', async (req, res) => {
         needsMoodLog = false;
       }
     }
-    
-    let showMoodReminder = false;
-    if (needsMoodLog && !req.session.hasSeenMoodReminder) {
-      showMoodReminder = true;
-      req.session.hasSeenMoodReminder = true;
-    }
-
-    let needsQuizLog = todayQuizCount === 0;
-    let showQuizReminder = false;
-    if (needsQuizLog && !req.session.hasSeenQuizReminder) {
-      showQuizReminder = true;
-      req.session.hasSeenQuizReminder = true;
-    }
+    let showMoodReminder = needsMoodLog;
+    let showQuizReminder = needsQuizLog;
 
     // Get recommendations
     const recommendations = getRecommendations(
@@ -138,8 +127,8 @@ router.get('/', async (req, res) => {
     weekStart.setHours(0, 0, 0, 0);
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekEnd.getDate() + 6);
-    const weekStartStr = formatLocalDate(weekStart);
-    const weekEndStr = formatLocalDate(weekEnd);
+    const weekStartStr = formatLocalDate(weekStart, req.userTz);
+    const weekEndStr = formatLocalDate(weekEnd, req.userTz);
 
     const weeklyCalendarQuery = await db.prepare(`
       SELECT COALESCE(SUM(meetings_count), 0)::integer as total_meetings,

@@ -5,9 +5,9 @@ const { getDb } = require('../config/database');
 const { requireAuth } = require('../middleware/auth');
 const { extractCalendarFeatures, calculateCalendarBurnoutScore } = require('../utils/calendar');
 
-const formatLocalDate = (d) => {
+const formatLocalDate = (d, tz = 'Asia/Jakarta') => {
   if (!d) return null;
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date(d));
+  return new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date(d));
 };
 
 const router = express.Router();
@@ -238,8 +238,8 @@ async function syncCalendarEvents(oauth2Client, userId, days = 30) {
 
   const events = response.data.items || [];
 
-  const startStr = formatLocalDate(startDate);
-  const endStr = formatLocalDate(endDate);
+  const startStr = formatLocalDate(startDate, req.userTz);
+  const endStr = formatLocalDate(endDate, req.userTz);
   await db.prepare('DELETE FROM calendar_events WHERE user_id = ? AND date BETWEEN ? AND ?')
     .run(userId, startStr, endStr);
   await db.prepare('DELETE FROM calendar_features WHERE user_id = ? AND date BETWEEN ? AND ?')

@@ -8,6 +8,21 @@
   </div>
 </div>
 
+<% if (typeof showQuizReminder !== 'undefined' && showQuizReminder) { %>
+<div class="mb-6 bg-danger-500/10 border border-danger-500/30 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in" id="quiz-warning-banner" style="display: none;">
+  <div class="flex items-start sm:items-center gap-3">
+    <div class="w-10 h-10 rounded-full bg-danger-500/20 flex items-center justify-center shrink-0">
+      <i data-lucide="alert-circle" class="w-5 h-5 text-danger-400"></i>
+    </div>
+    <div>
+      <h4 class="text-surface-50 font-semibold" data-i18n="dashboard.quizWarningTitle">Quiz Belum Diisi!</h4>
+      <p class="text-sm text-surface-300" data-i18n="dashboard.quizWarningDesc">Kamu belum mengisi quiz hari ini. Streakmu terancam padam jika tidak diisi sebelum berganti hari!</p>
+    </div>
+  </div>
+  <a href="/quiz" class="btn-primary btn-sm shrink-0 whitespace-nowrap"><i data-lucide="edit-3" class="w-4 h-4 mr-2"></i> <span data-i18n="dashboard.fillQuizNow">Isi Quiz Sekarang</span></a>
+</div>
+<% } %>
+
 <!-- Top Row: Current Risk + 7-Day Fatigue Trend -->
 <div class="grid lg:grid-cols-2 gap-6 mb-6">
 
@@ -134,7 +149,7 @@
   <div class="glass-card p-6">
     <div class="flex items-center justify-between mb-5">
       <h3 class="text-lg font-bold font-display text-surface-50" data-i18n="dashboard.moodHistory">Riwayat Mood</h3>
-      <button onclick="openMoodModal()" class="text-surface-400 hover:text-surface-200 transition-colors">
+      <button onclick="openGlobalMood()" class="text-surface-400 hover:text-surface-200 transition-colors">
         <i data-lucide="plus-circle" class="w-4 h-4"></i>
       </button>
     </div>
@@ -153,7 +168,7 @@
     <div class="text-center py-8">
       <i data-lucide="smile" class="w-8 h-8 text-surface-500 mx-auto mb-2"></i>
       <p class="text-sm text-surface-400" data-i18n="dashboard.noMoodYet">Belum ada catatan mood.</p>
-      <button onclick="openMoodModal()" class="text-xs text-brand-500 hover:underline mt-1 inline-block" data-i18n="dashboard.startWriting">Mulai catat →</button>
+      <button onclick="openGlobalMood()" class="text-xs text-brand-500 hover:underline mt-1 inline-block" data-i18n="dashboard.startWriting">Mulai catat →</button>
     </div>
     <% } %>
   </div>
@@ -235,12 +250,17 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const showMoodReminderFlag = <%= showMoodReminder %>;
-    const showQuizReminderFlag = <%= typeof showQuizReminder !== 'undefined' ? showQuizReminder : false %>;
     const isDarkMode = document.documentElement.getAttribute('data-theme') !== 'light';
+    const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    const todayStr = new Intl.DateTimeFormat('en-CA', { timeZone: userTz }).format(new Date());
+    
+    const showMoodReminderFlag = <%= showMoodReminder %> && (localStorage.getItem('moodReminderSeenDate') !== todayStr);
+    const showQuizReminderFlag = <%= typeof showQuizReminder !== 'undefined' ? showQuizReminder : false %> && (localStorage.getItem('quizReminderSeenDate') !== todayStr);
 
     const checkQuizReminder = () => {
+      const banner = document.getElementById('quiz-warning-banner');
       if (showQuizReminderFlag) {
+        localStorage.setItem('quizReminderSeenDate', todayStr);
         Swal.fire({
           title: 'Jangan lupa isi Quiz hari ini!',
           text: 'Isi quiz sekarang untuk melihat tingkat kelelahanmu dan menjaga streak tetap menyala!',
@@ -260,12 +280,17 @@
         }).then((result) => {
           if (result.isConfirmed) {
             window.location.href = '/quiz';
+          } else {
+            if (banner) banner.style.display = 'flex';
           }
         });
+      } else if (<%= typeof showQuizReminder !== 'undefined' ? showQuizReminder : false %>) {
+        if (banner) banner.style.display = 'flex';
       }
     };
 
     if (showMoodReminderFlag) {
+      localStorage.setItem('moodReminderSeenDate', todayStr);
       Swal.fire({
         title: 'Bagaimana perasaanmu hari ini?',
         text: 'Kamu belum mencatat mood hari ini. Catat sekarang untuk menjaga streakmu!',
@@ -284,11 +309,7 @@
         }
       }).then((result) => {
         if (result.isConfirmed) {
-          openMoodModal();
-          // We don't chain checkQuizReminder here directly because mood modal opens,
-          // user might want to fill quiz after. But we can just show it after modal closes.
-          // For simplicity, we just show quiz reminder if they cancel.
-          // But wait, if they fill mood, the page reloads anyway, so it will show quiz reminder after reload!
+          openGlobalMood();
         } else {
           checkQuizReminder();
         }

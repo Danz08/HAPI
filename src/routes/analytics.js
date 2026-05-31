@@ -4,13 +4,13 @@ const { requireAuth, requireOnboarded } = require('../middleware/auth');
 const { calculateComprehensiveFatigue } = require('../utils/fatigue-calculator');
 const { calculateCalendarBurnoutScore } = require('../utils/calendar');
 
-const getLocalToday = () => {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+const getLocalToday = (tz = 'Asia/Jakarta') => {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date());
 };
 
-const formatLocalDate = (d) => {
+const formatLocalDate = (d, tz = 'Asia/Jakarta') => {
   if (!d) return null;
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date(d));
+  return new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date(d));
 };
 
 const router = express.Router();
@@ -20,8 +20,10 @@ router.use(requireOnboarded);
 router.get('/', async (req, res) => {
   const db = getDb();
   const userId = req.session.user.id;
-  const month = parseInt(req.query.month) || new Date().getMonth() + 1;
-  const year = parseInt(req.query.year) || new Date().getFullYear();
+  const localTodayStr = getLocalToday(req.userTz);
+  const [localYear, localMonth] = localTodayStr.split('-');
+  const month = parseInt(req.query.month) || parseInt(localMonth);
+  const year = parseInt(req.query.year) || parseInt(localYear);
 
   const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
   const daysInMonth = new Date(year, month, 0).getDate();
@@ -162,7 +164,7 @@ router.get('/', async (req, res) => {
   let streak = userRow ? userRow.current_streak : 0;
   const longest_streak = userRow ? userRow.longest_streak : 0;
   
-  const todayDate = getLocalToday();
+  const todayDate = getLocalToday(req.userTz);
   if (userRow && userRow.last_streak_date) {
     const lastDate = new Date(userRow.last_streak_date);
     const currDate = new Date(todayDate);

@@ -52,9 +52,25 @@ app.use(session({
   rolling: true,
   cookie: {
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 20 * 60 * 60 * 1000, // 20 hours inactivity timeout
+    httpOnly: true,
+    sameSite: 'lax',
+    maxAge: 20 * 60 * 60 * 1000 // 20 hours
   },
 }));
+
+// Timezone extraction middleware
+app.use((req, res, next) => {
+  let tz = 'Asia/Jakarta'; // Fallback
+  if (req.headers.cookie) {
+    const match = req.headers.cookie.match(/(?:^|;\s*)hapi_tz=([^;]+)/);
+    if (match) {
+      try { tz = decodeURIComponent(match[1]); } catch (e) {}
+    }
+  }
+  req.userTz = tz;
+  res.locals.userTz = tz;
+  next();
+});
 
 app.use(flash());
 
@@ -70,9 +86,8 @@ app.use(async (req, res, next) => {
   res.locals.moodLoggedToday = false;
   if (req.session.user) {
     try {
-      const { getDb } = require('./src/config/database');
-      const db = getDb();
-      const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+      const db = require('./src/config/database').getDb();
+      const today = new Intl.DateTimeFormat('en-CA', { timeZone: req.userTz }).format(new Date());
       const existingMood = await db.prepare(
         'SELECT id FROM mood_logs WHERE user_id = ? AND date = ? LIMIT 1'
       ).get(req.session.user.id, today);

@@ -4,8 +4,8 @@ const { requireAuth } = require('../middleware/auth');
 const { calculateFatigueFromQuiz, getRiskColor } = require('../utils/fatigue-calculator');
 const { getRecommendations } = require('../utils/recommendations');
 
-const getLocalToday = () => {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+const getLocalToday = (req) => {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: req.userTz || 'Asia/Jakarta' }).format(new Date());
 };
 
 const router = express.Router();
@@ -22,7 +22,7 @@ router.post('/onboard', async (req, res) => {
 // POST /api/activities - Log a new activity
 router.post('/activities', async (req, res) => {
   const { activity_type, description, duration_minutes, break_minutes } = req.body;
-  const today = getLocalToday();
+  const today = getLocalToday(req);
 
   const db = getDb();
   await db.prepare(`
@@ -75,7 +75,7 @@ router.post('/mood', async (req, res) => {
     1: 'Sangat Buruk', 2: 'Buruk', 3: 'Biasa', 4: 'Baik', 5: 'Sangat Baik'
   };
 
-  const today = getLocalToday();
+  const today = getLocalToday(req);
 
   const db = getDb();
 
@@ -129,7 +129,7 @@ router.get('/mood', async (req, res) => {
 router.get('/stats/overview', async (req, res) => {
   const db = getDb();
   const userId = req.session.user.id;
-  const today = getLocalToday();
+  const today = getLocalToday(req);
 
   const todayWork = await db.prepare(`
     SELECT COALESCE(SUM(duration_minutes), 0) as minutes
@@ -166,7 +166,7 @@ router.get('/stats/overview', async (req, res) => {
 router.post('/pomodoro/sessions', async (req, res) => {
   const { work_duration, break_duration, cycles_completed, total_focus_minutes } = req.body;
 
-  const today = getLocalToday();
+  const today = getLocalToday(req);
   const db = getDb();
   await db.prepare(`
     INSERT INTO pomodoro_sessions (user_id, work_duration, break_duration, cycles_completed, total_focus_minutes, date, ended_at)
@@ -199,7 +199,7 @@ router.post('/pomodoro/sessions', async (req, res) => {
 router.get('/pomodoro/stats', async (req, res) => {
   const db = getDb();
   const userId = req.session.user.id;
-  const today = getLocalToday();
+  const today = getLocalToday(req);
 
   const todayStats = await db.prepare(`
     SELECT COALESCE(SUM(cycles_completed), 0) as cycles,
@@ -236,7 +236,7 @@ router.post('/quiz', async (req, res) => {
   const riskColor = getRiskColor(result.riskLevel);
   const recommendations = getRecommendations(result.riskLevel);
 
-  const today = getLocalToday();
+  const today = getLocalToday(req);
   const db = getDb();
 
   // Check if already took quiz today

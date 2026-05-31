@@ -117,14 +117,14 @@ const quizQuestions = [
   }
 ];
 
-const getLocalToday = () => {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+const getLocalToday = (req) => {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: req.userTz || 'Asia/Jakarta' }).format(new Date());
 };
 
 // GET /quiz - Render quiz page
 router.get('/', async (req, res) => {
   const db = getDb();
-  const today = getLocalToday();
+  const today = getLocalToday(req);
   const userId = req.session.user.id;
 
   // Check if user already took quiz today

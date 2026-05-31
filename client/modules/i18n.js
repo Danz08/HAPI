@@ -45,6 +45,9 @@ export const translations = {
     'dashboard.minutes': 'menit',
     'dashboard.hours': 'jam',
     'dashboard.noActivity': 'Belum ada aktivitas hari ini.',
+    'dashboard.quizWarningTitle': 'Quiz Belum Diisi!',
+    'dashboard.quizWarningDesc': 'Kamu belum mengisi quiz hari ini. Streakmu terancam padam jika tidak diisi sebelum berganti hari!',
+    'dashboard.fillQuizNow': 'Isi Quiz Sekarang',
 
     // Activity form
     'form.work': 'Kerja',
@@ -379,6 +382,9 @@ export const translations = {
     'dashboard.minutes': 'minutes',
     'dashboard.hours': 'hours',
     'dashboard.noActivity': 'No activity today yet.',
+    'dashboard.quizWarningTitle': 'Quiz Not Completed!',
+    'dashboard.quizWarningDesc': 'You haven\'t completed the quiz today. Your streak is at risk of being lost if not completed before tomorrow!',
+    'dashboard.fillQuizNow': 'Take Quiz Now',
 
     // Activity form
     'form.work': 'Work',
