@@ -108,6 +108,7 @@ router.get('/', async (req, res) => {
         needsMoodLog = false;
       }
     }
+    let needsQuizLog = todayQuizCount === 0;
     let showMoodReminder = needsMoodLog;
     let showQuizReminder = needsQuizLog;
 

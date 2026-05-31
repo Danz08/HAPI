@@ -63,8 +63,17 @@ app.use((req, res, next) => {
   let tz = 'Asia/Jakarta'; // Fallback
   if (req.headers.cookie) {
     const match = req.headers.cookie.match(/(?:^|;\s*)hapi_tz=([^;]+)/);
-    if (match) {
-      try { tz = decodeURIComponent(match[1]); } catch (e) {}
+    if (match && match[1]) {
+      try { 
+        const decoded = decodeURIComponent(match[1]); 
+        if (decoded && decoded !== 'undefined' && decoded !== 'null' && decoded.trim() !== '') {
+          // Validate timezone
+          Intl.DateTimeFormat(undefined, { timeZone: decoded });
+          tz = decoded; 
+        }
+      } catch (e) {
+        // Ignore invalid timezone
+      }
     }
   }
   req.userTz = tz;
