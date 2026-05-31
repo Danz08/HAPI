@@ -50,8 +50,9 @@
       <div class="w-9 h-9 rounded-xl bg-warning-500/15 flex items-center justify-center mb-2">
         <i data-lucide="flame" class="w-5 h-5 text-warning-400"></i>
       </div>
-      <div class="stat-value text-xl"><%= streak %> <span class="text-xs text-surface-400 font-normal">/ Max <%= typeof longest_streak !== 'undefined' ? longest_streak : 0 %></span></div>
-      <div class="stat-label" data-i18n="analytics.streak">Streak Hari Ini</div>
+      <div class="stat-value text-xl"><%= streak %></div>
+      <div class="text-[10px] text-surface-400 font-normal mt-1">Streak terlama: <%= typeof longest_streak !== 'undefined' ? longest_streak : 0 %></div>
+      <div class="stat-label mt-1" data-i18n="analytics.streak">Streak Hari Ini</div>
     </div>
   </div>
 
@@ -221,7 +222,7 @@
 
   <!-- Google Calendar Integration Section -->
   <div class="glass-card p-6">
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
       <h3 class="text-lg font-bold font-display text-surface-50">
         <i data-lucide="calendar-sync" class="w-5 h-5 inline text-brand-400 mr-2"></i>Google Calendar & Burnout Analysis
       </h3>

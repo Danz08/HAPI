@@ -101,7 +101,7 @@ router.get('/', async (req, res) => {
 
     const riskColor = getRiskColor(fatigueData.riskLevel);
 
-    // Global alerts logic — mood reminder only
+    // Global alerts logic
     let needsMoodLog = true;
     if (latestMood) {
       if (latestMood.date === today) {
@@ -113,6 +113,13 @@ router.get('/', async (req, res) => {
     if (needsMoodLog && !req.session.hasSeenMoodReminder) {
       showMoodReminder = true;
       req.session.hasSeenMoodReminder = true;
+    }
+
+    let needsQuizLog = todayQuizCount === 0;
+    let showQuizReminder = false;
+    if (needsQuizLog && !req.session.hasSeenQuizReminder) {
+      showQuizReminder = true;
+      req.session.hasSeenQuizReminder = true;
     }
 
     // Get recommendations
@@ -170,6 +177,7 @@ router.get('/', async (req, res) => {
       riskColor,
       needsMoodLog,
       showMoodReminder,
+      showQuizReminder,
       recommendations,
       today,
       isGoogleConnected,

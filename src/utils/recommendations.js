@@ -3,19 +3,19 @@ const recommendationPool = {
   Low: {
     general: [
       {
-        title: 'âœ¨ Pertahankan Ritme Kerjamu!',
+        title: '✨ Pertahankan Ritme Kerjamu!',
         description: 'Kondisimu saat ini sangat baik. Terus jaga keseimbangan antara kerja dan istirahat.',
         description_en: 'Your current condition is very good. Keep maintaining a balance between work and rest.',
         category: 'motivation',
       },
       {
-        title: 'ðŸŽ¯ Tetap Produktif',
+        title: '🎯 Tetap Produktif',
         description: 'Manfaatkan momentum positif ini. Coba selesaikan task yang paling challenging saat energimu masih tinggi.',
         description_en: 'Take advantage of this positive momentum. Try to complete the most challenging tasks while your energy is still high.',
         category: 'productivity',
       },
       {
-        title: 'ðŸ’ª Challenge Yourself',
+        title: '💪 Challenge Yourself',
         description: 'Saat kondisi mental baik, ini waktu yang tepat untuk belajar skill baru atau mengambil proyek menantang.',
         description_en: 'When your mental condition is good, it\'s the perfect time to learn new skills or take on challenging projects.',
         category: 'growth',
@@ -37,13 +37,13 @@ const recommendationPool = {
         category: 'warning',
       },
       {
-        title: 'ðŸ§˜ Istirahat Berkualitas',
+        title: '🧘 Istirahat Berkualitas',
         description: 'Cobalah teknik deep breathing 4-7-8: tarik nafas 4 detik, tahan 7 detik, hembuskan 8 detik.',
         description_en: 'Try the 4-7-8 deep breathing technique: inhale for 4 seconds, hold for 7 seconds, exhale for 8 seconds.',
         category: 'wellness',
       },
       {
-        title: 'ðŸ“‹ Prioritaskan Tugasmu',
+        title: '📋 Prioritaskan Tugasmu',
         description: 'Gunakan metode Eisenhower Matrix — fokus pada yang penting dan mendesak terlebih dahulu.',
         category: 'productivity',
       },
@@ -60,13 +60,13 @@ const recommendationPool = {
   High: {
     general: [
       {
-        title: 'ðŸš¨ Tingkat Fatigue Tinggi',
+        title: '🚨 Tingkat Fatigue Tinggi',
         description: 'Kamu perlu segera beristirahat. Fatigue yang berkepanjangan dapat berdampak serius pada kesehatan fisik dan mental.',
         description_en: 'You need to rest immediately. Prolonged fatigue can have a serious impact on your physical and mental health.',
         category: 'critical',
       },
       {
-        title: 'ðŸ’¤ Prioritaskan Tidur',
+        title: '💤 Prioritaskan Tidur',
         description: 'Pastikan kamu tidur 7-9 jam malam ini. Kurang tidur adalah penyebab utama fatigue kronis.',
         description_en: 'Make sure you sleep 7-9 hours tonight. Lack of sleep is the main cause of chronic fatigue.',
         category: 'health',
@@ -163,7 +163,7 @@ function generateCurhatResponse(message, riskLevel = 'Medium') {
       'Aku dengar kamu, dan perasaanmu valid. Kelelahan bisa datang dari banyak faktor — fisik, mental, atau emosional. Mari kita cari tahu bersama apa yang bisa membantumu.',
     ],
     senang: [
-      'Senang mendengar kamu dalam mood yang baik! ðŸ˜Š Manfaatkan energi positif ini untuk hal-hal produktif. Apa yang membuatmu senang hari ini?',
+      'Senang mendengar kamu dalam mood yang baik! 😊 Manfaatkan energi positif ini untuk hal-hal produktif. Apa yang membuatmu senang hari ini?',
       'Mood positif seperti ini sangat berharga! Coba catat apa yang membuatmu merasa baik, supaya bisa kamu ulangi di lain waktu.',
     ],
     malas: [

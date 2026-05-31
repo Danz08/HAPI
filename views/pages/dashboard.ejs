@@ -134,19 +134,13 @@
   <div class="glass-card p-6">
     <div class="flex items-center justify-between mb-5">
       <h3 class="text-lg font-bold font-display text-surface-50" data-i18n="dashboard.moodHistory">Riwayat Mood</h3>
-      <% if (typeof moodLoggedToday !== 'undefined' && moodLoggedToday) { %>
-      <span class="text-success-400" title="Mood sudah tercatat hari ini">
-        <i data-lucide="check-circle" class="w-4 h-4"></i>
-      </span>
-      <% } else { %>
       <button onclick="openMoodModal()" class="text-surface-400 hover:text-surface-200 transition-colors">
         <i data-lucide="plus-circle" class="w-4 h-4"></i>
       </button>
-      <% } %>
     </div>
     <% if (moodTrend && moodTrend.length > 0) { %>
     <div class="space-y-4">
-      <% moodTrend.slice(0, 4).forEach(function(entry) { %>
+      <% moodTrend.slice().reverse().slice(0, 7).forEach(function(entry) { %>
       <div class="border-b border-surface-700/30 pb-3 last:border-0 last:pb-0">
         <p class="text-[10px] text-surface-500 mb-1"><%= entry.log_date %>, <%= entry.log_time ? entry.log_time.substring(0,5) : '' %></p>
         <p class="text-sm text-surface-200 leading-relaxed">
@@ -242,7 +236,34 @@
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const showMoodReminderFlag = <%= showMoodReminder %>;
+    const showQuizReminderFlag = <%= typeof showQuizReminder !== 'undefined' ? showQuizReminder : false %>;
     const isDarkMode = document.documentElement.getAttribute('data-theme') !== 'light';
+
+    const checkQuizReminder = () => {
+      if (showQuizReminderFlag) {
+        Swal.fire({
+          title: 'Jangan lupa isi Quiz hari ini!',
+          text: 'Isi quiz sekarang untuk melihat tingkat kelelahanmu dan menjaga streak tetap menyala!',
+          icon: 'info',
+          showCancelButton: true,
+          confirmButtonText: 'Mulai Quiz',
+          cancelButtonText: 'Nanti Saja',
+          confirmButtonColor: '#A86240',
+          cancelButtonColor: '#489A98',
+          background: isDarkMode ? '#1e1611' : '#ffffff',
+          color: isDarkMode ? '#f8f4f0' : '#3a1e13',
+          backdrop: 'rgba(0,0,0,0.75)',
+          position: 'center',
+          customClass: {
+            container: 'z-[99999]'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/quiz';
+          }
+        });
+      }
+    };
 
     if (showMoodReminderFlag) {
       Swal.fire({
@@ -264,8 +285,16 @@
       }).then((result) => {
         if (result.isConfirmed) {
           openMoodModal();
+          // We don't chain checkQuizReminder here directly because mood modal opens,
+          // user might want to fill quiz after. But we can just show it after modal closes.
+          // For simplicity, we just show quiz reminder if they cancel.
+          // But wait, if they fill mood, the page reloads anyway, so it will show quiz reminder after reload!
+        } else {
+          checkQuizReminder();
         }
       });
+    } else {
+      checkQuizReminder();
     }
   });
 </script>

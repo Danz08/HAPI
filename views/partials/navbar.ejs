@@ -9,17 +9,10 @@
     </p>
   </div>
   <div class="flex items-center gap-2">
-    <% if (typeof moodLoggedToday !== 'undefined' && moodLoggedToday) { %>
-    <button onclick="openMoodModal()" class="btn-ghost btn-sm opacity-60" id="btn-quick-mood" data-i18n-title="btn.moodDone" title="Mood sudah tercatat hari ini">
-      <i data-lucide="check-circle" class="w-4 h-4 text-success-400"></i>
-      <span class="hidden sm:inline text-success-400 text-xs" data-i18n="btn.moodDone">Tercatat ✓</span>
-    </button>
-    <% } else { %>
     <button onclick="openMoodModal()" class="btn-secondary btn-sm" id="btn-quick-mood" data-i18n-title="btn.mood" title="Log Mood">
       <i data-lucide="smile" class="w-4 h-4"></i>
       <span class="hidden sm:inline" data-i18n="btn.mood">Catat Mood</span>
     </button>
-    <% } %>
     <button onclick="toggleTheme()" class="btn-ghost btn-sm" id="btn-theme" data-i18n-title="btn.theme" title="Ganti Tema">
       <i data-lucide="sun" class="w-4 h-4" id="theme-icon"></i>
     </button>

@@ -158,9 +158,20 @@ router.get('/', async (req, res) => {
     calendarDays ? Number(calendarDays.count) : 0
   );
 
-  const userRow = await db.prepare('SELECT current_streak, longest_streak FROM users WHERE id = ?').get(userId);
-  const streak = userRow ? userRow.current_streak : 0;
+  const userRow = await db.prepare('SELECT current_streak, longest_streak, last_streak_date FROM users WHERE id = ?').get(userId);
+  let streak = userRow ? userRow.current_streak : 0;
   const longest_streak = userRow ? userRow.longest_streak : 0;
+  
+  const todayDate = getLocalToday();
+  if (userRow && userRow.last_streak_date) {
+    const lastDate = new Date(userRow.last_streak_date);
+    const currDate = new Date(todayDate);
+    const diffTime = currDate.getTime() - lastDate.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays > 1) {
+      streak = 0;
+    }
+  }
 
   const googleUser = await db.prepare('SELECT google_connected FROM users WHERE id = ?').get(userId);
   const isGoogleConnected = googleUser && googleUser.google_connected === 1 && req.session.user.login_method === 'google';
