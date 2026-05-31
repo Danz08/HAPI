@@ -120,6 +120,9 @@ export function initActivityForm() {
 let selectedMood = null;
 
 export function openMoodModal() {
+  if (typeof window.openGlobalMood === 'function') {
+    return window.openGlobalMood();
+  }
   const modal = document.getElementById('global-mood-overlay') || document.getElementById('mood-modal');
   if (modal) {
     modal.classList.remove('hidden');

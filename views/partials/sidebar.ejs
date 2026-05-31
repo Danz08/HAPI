@@ -1,14 +1,19 @@
 <!-- Sidebar Navigation — Warm Theme -->
 <aside id="sidebar" class="fixed top-0 left-0 z-[60] h-screen w-64 bg-surface-900/80 backdrop-blur-xl border-r border-surface-700/50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
   <!-- Logo -->
-  <div class="flex items-center gap-3 px-6 py-6 border-b border-surface-700/50">
-    <div class="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center shadow-lg shadow-brand-600/25">
-      <i data-lucide="brain" class="w-5 h-5 text-white"></i>
+  <div class="flex items-center justify-between px-6 py-6 border-b border-surface-700/50">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center shadow-lg shadow-brand-600/25">
+        <i data-lucide="brain" class="w-5 h-5 text-white"></i>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold font-display text-surface-50">HAPI</h1>
+        <p class="text-[10px] text-surface-400 tracking-wider uppercase">Fatigue Intelligence</p>
+      </div>
     </div>
-    <div>
-      <h1 class="text-lg font-bold font-display text-surface-50">HAPI</h1>
-      <p class="text-[10px] text-surface-400 tracking-wider uppercase">Fatigue Intelligence</p>
-    </div>
+    <button onclick="toggleSidebar()" class="lg:hidden text-surface-400 hover:text-surface-100 transition-colors p-1" title="Tutup Sidebar">
+      <i data-lucide="x" class="w-5 h-5"></i>
+    </button>
   </div>
 
   <!-- Navigation -->
