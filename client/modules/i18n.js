@@ -788,8 +788,40 @@ function applyTranslations() {
   // Translate analytics insights
   const lang = currentLang === 'en' ? 'en' : 'id';
   document.querySelectorAll('.insight-title').forEach(el => {
-    const titleText = el.getAttribute(`data-title-${lang}`);
-    const icon = el.textContent.split(' ')[0]; // preserve emoji
+    let titleText = el.getAttribute(`data-title-${lang}`);
+    
+    // Robust fallback for legacy DB records that are missing title_en
+    if (lang === 'en' && titleText) {
+      const fallbackMap = {
+        '✨ Pertahankan Ritme Kerjamu!': '✨ Keep Up Your Rhythm!',
+        '🎯 Tetap Produktif': '🎯 Stay Productive',
+        '💪 Challenge Yourself': '💪 Challenge Yourself',
+        '⚠️ Waspada Kelelahan': '⚠️ Watch for Fatigue',
+        '🧘 Istirahat Berkualitas': '🧘 Quality Rest',
+        '📋 Prioritaskan Tugasmu': '📋 Prioritize Your Tasks',
+        '🚨 Tingkat Fatigue Tinggi': '🚨 High Fatigue Level',
+        '💤 Prioritaskan Tidur': '💤 Prioritize Sleep',
+        '🗣️ Jangan Ragu Bercerita': '🗣️ Don\'t Hesitate to Talk'
+      };
+      
+      // Try exact match first
+      if (fallbackMap[titleText]) {
+        titleText = fallbackMap[titleText];
+      } else {
+        // Fallback for slight emoji or spacing variations in old DB records
+        const clean = titleText.replace(/^[^\w\s]+\s*/u, '').trim();
+        if (clean === 'Pertahankan Ritme Kerjamu!') titleText = '✨ Keep Up Your Rhythm!';
+        else if (clean === 'Tetap Produktif') titleText = '🎯 Stay Productive';
+        else if (clean === 'Challenge Yourself') titleText = '💪 Challenge Yourself';
+        else if (clean === 'Waspada Kelelahan') titleText = '⚠️ Watch for Fatigue';
+        else if (clean === 'Istirahat Berkualitas') titleText = '🧘 Quality Rest';
+        else if (clean === 'Prioritaskan Tugasmu') titleText = '📋 Prioritize Your Tasks';
+        else if (clean === 'Tingkat Fatigue Tinggi') titleText = '🚨 High Fatigue Level';
+        else if (clean === 'Prioritaskan Tidur') titleText = '💤 Prioritize Sleep';
+        else if (clean === 'Jangan Ragu Bercerita') titleText = '🗣️ Don\'t Hesitate to Talk';
+      }
+    }
+
     const span = el.querySelector('span');
     if (span && titleText) span.textContent = titleText;
   });
