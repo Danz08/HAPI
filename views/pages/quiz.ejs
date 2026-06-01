@@ -412,7 +412,8 @@ async function submitQuiz() {
     if (data.recommendations && data.recommendations.insights) {
       data.recommendations.insights.forEach(ins => {
         const desc = (lang === 'en' && ins.description_en) ? ins.description_en : ins.description;
-        const cleanTitle = (ins.title || '').replace(/^[^\w\s]+\s*/u, '').trim();
+        const title = (lang === 'en' && ins.title_en) ? ins.title_en : ins.title;
+        const cleanTitle = (title || '').replace(/^[^\w\s]+\s*/u, '').trim();
         recContainer.innerHTML += `<div class="p-4 rounded-xl bg-surface-800/50 flex gap-3" style="border-left: 3px solid #A86240"><div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background: rgba(168,98,64,0.12)"><i data-lucide="lightbulb" class="w-4 h-4 text-warning-400"></i></div><div><p class="text-sm font-semibold text-surface-100 mb-1">${cleanTitle}</p><p class="text-sm text-surface-300 leading-relaxed">${desc}</p></div></div>`;
       });
     }
