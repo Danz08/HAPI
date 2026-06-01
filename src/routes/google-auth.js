@@ -81,8 +81,9 @@ router.get('/callback', async (req, res) => {
       );
 
       try {
-        await syncCalendarEvents(oauth2Client, userId);
-        req.flash('success', 'Google Calendar berhasil terhubung dan data tersinkronisasi! ðŸ“…');
+        const tz = (req.cookies && req.cookies.timezone) ? req.cookies.timezone : 'Asia/Jakarta';
+        await syncCalendarEvents(oauth2Client, userId, 30, tz);
+        req.flash('success', 'Google Calendar berhasil terhubung dan data tersinkronisasi! 📅');
       } catch (syncErr) {
         console.error('Calendar sync error:', syncErr);
         req.flash('success', 'Google Calendar terhubung!');
@@ -136,7 +137,8 @@ router.get('/callback', async (req, res) => {
 
     // Sync calendar
     try {
-      await syncCalendarEvents(oauth2Client, user.id);
+      const tz = (req.cookies && req.cookies.timezone) ? req.cookies.timezone : 'Asia/Jakarta';
+      await syncCalendarEvents(oauth2Client, user.id, 30, tz);
     } catch (syncErr) {
       console.error('Calendar sync error:', syncErr);
     }
@@ -205,7 +207,8 @@ router.post('/sync', requireAuth, async (req, res) => {
     });
 
     const days = parseInt(req.body.days) || 30;
-    await syncCalendarEvents(oauth2Client, userId, days);
+    const tz = (req.cookies && req.cookies.timezone) ? req.cookies.timezone : 'Asia/Jakarta';
+    await syncCalendarEvents(oauth2Client, userId, days, tz);
 
     res.json({ success: true, message: 'Kalender berhasil disinkronisasi.' });
   } catch (err) {
@@ -214,7 +217,7 @@ router.post('/sync', requireAuth, async (req, res) => {
   }
 });
 
-async function syncCalendarEvents(oauth2Client, userId, days = 30) {
+async function syncCalendarEvents(oauth2Client, userId, days = 30, tz = 'Asia/Jakarta') {
   const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
   const db = getDb();
 
@@ -238,8 +241,8 @@ async function syncCalendarEvents(oauth2Client, userId, days = 30) {
 
   const events = response.data.items || [];
 
-  const startStr = formatLocalDate(startDate, req.userTz);
-  const endStr = formatLocalDate(endDate, req.userTz);
+  const startStr = formatLocalDate(startDate, tz);
+  const endStr = formatLocalDate(endDate, tz);
   await db.prepare('DELETE FROM calendar_events WHERE user_id = ? AND date BETWEEN ? AND ?')
     .run(userId, startStr, endStr);
   await db.prepare('DELETE FROM calendar_features WHERE user_id = ? AND date BETWEEN ? AND ?')

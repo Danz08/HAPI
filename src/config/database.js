@@ -1,14 +1,19 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Default to a local neon connection string if not provided
+// Default to a local connection string if not provided
 const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/hapi_db';
+
+if (process.env.VERCEL && connectionString.includes('localhost')) {
+  console.error('❌ ERROR: Aplikasi dijalankan di Vercel tapi DATABASE_URL belum diatur (masih mengarah ke localhost)! Ini akan menyebabkan Gateway Timeout.');
+}
 
 const pool = new Pool({
   connectionString,
-  ssl: process.env.DATABASE_URL && process.env.DATABASE_URL.includes('neon.tech') 
+  ssl: connectionString.includes('neon.tech') || connectionString.includes('supabase.co') 
     ? { rejectUnauthorized: false } 
-    : false
+    : false,
+  connectionTimeoutMillis: 5000 // 5 seconds timeout to prevent Vercel 10s hang
 });
 
 // Wrapper to mimic better-sqlite3 API (with async/await)
@@ -41,8 +46,8 @@ function getDb() {
 }
 
 async function initDatabase() {
-  // Users table
-  await pool.query(`
+  const initQuery = `
+    -- Users table
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
       username VARCHAR(255) UNIQUE NOT NULL,
@@ -58,16 +63,12 @@ async function initDatabase() {
       login_method VARCHAR(50) DEFAULT 'manual',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
+    );
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS current_streak INTEGER DEFAULT 0;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS longest_streak INTEGER DEFAULT 0;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS last_streak_date VARCHAR(20);
 
-  // Alter users table to add streak columns if they don't exist
-  await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS current_streak INTEGER DEFAULT 0`);
-  await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS longest_streak INTEGER DEFAULT 0`);
-  await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS last_streak_date VARCHAR(20)`);
-
-  // Activity logs
-  await pool.query(`
+    -- Activity logs
     CREATE TABLE IF NOT EXISTS activities (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -77,11 +78,9 @@ async function initDatabase() {
       break_minutes INTEGER NOT NULL DEFAULT 0,
       date VARCHAR(20) NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
+    );
 
-  // Mood logs
-  await pool.query(`
+    -- Mood logs
     CREATE TABLE IF NOT EXISTS mood_logs (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -92,12 +91,10 @@ async function initDatabase() {
       notes TEXT,
       date VARCHAR(20),
       logged_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-  await pool.query(`ALTER TABLE mood_logs ADD COLUMN IF NOT EXISTS date VARCHAR(20)`);
+    );
+    ALTER TABLE mood_logs ADD COLUMN IF NOT EXISTS date VARCHAR(20);
 
-  // Quiz results
-  await pool.query(`
+    -- Quiz results
     CREATE TABLE IF NOT EXISTS quiz_results (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -107,12 +104,10 @@ async function initDatabase() {
       recommendations TEXT,
       date VARCHAR(20),
       taken_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-  await pool.query(`ALTER TABLE quiz_results ADD COLUMN IF NOT EXISTS date VARCHAR(20)`);
+    );
+    ALTER TABLE quiz_results ADD COLUMN IF NOT EXISTS date VARCHAR(20);
 
-  // Curhat / chat messages
-  await pool.query(`
+    -- Curhat / chat messages
     CREATE TABLE IF NOT EXISTS chat_messages (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -120,11 +115,9 @@ async function initDatabase() {
       message TEXT NOT NULL,
       session_id TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
+    );
 
-  // Pomodoro sessions
-  await pool.query(`
+    -- Pomodoro sessions
     CREATE TABLE IF NOT EXISTS pomodoro_sessions (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -136,12 +129,10 @@ async function initDatabase() {
       date VARCHAR(20),
       started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       ended_at TIMESTAMP
-    )
-  `);
-  await pool.query(`ALTER TABLE pomodoro_sessions ADD COLUMN IF NOT EXISTS date VARCHAR(20)`);
+    );
+    ALTER TABLE pomodoro_sessions ADD COLUMN IF NOT EXISTS date VARCHAR(20);
 
-  // Google Calendar: individual events
-  await pool.query(`
+    -- Google Calendar: individual events
     CREATE TABLE IF NOT EXISTS calendar_events (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -153,11 +144,9 @@ async function initDatabase() {
       event_type VARCHAR(50) DEFAULT 'event',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       UNIQUE(user_id, event_id)
-    )
-  `);
+    );
 
-  // Google Calendar: daily aggregated features for burnout analysis
-  await pool.query(`
+    -- Google Calendar: daily aggregated features for burnout analysis
     CREATE TABLE IF NOT EXISTS calendar_features (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -170,25 +159,29 @@ async function initDatabase() {
       calendar_burnout_score REAL DEFAULT 0,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       UNIQUE(user_id, date)
-    )
-  `);
+    );
 
-  // Create indexes safely (IF NOT EXISTS)
-  await pool.query(`CREATE INDEX IF NOT EXISTS idx_cal_events_user_date ON calendar_events(user_id, date)`);
-  await pool.query(`CREATE INDEX IF NOT EXISTS idx_cal_features_user_date ON calendar_features(user_id, date)`);
+    -- Create indexes safely
+    CREATE INDEX IF NOT EXISTS idx_cal_events_user_date ON calendar_events(user_id, date);
+    CREATE INDEX IF NOT EXISTS idx_cal_features_user_date ON calendar_features(user_id, date);
 
-  // Session table for connect-pg-simple
-  await pool.query(`
+    -- Session table for connect-pg-simple
     CREATE TABLE IF NOT EXISTS "session" (
       "sid" varchar NOT NULL COLLATE "default",
       "sess" json NOT NULL,
       "expire" timestamp(6) NOT NULL,
       CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE
     ) WITH (OIDS=FALSE);
-  `);
-  await pool.query(`CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire");`);
+    CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire");
+  `;
 
-  console.log('   ✅ PostgreSQL Database initialized successfully');
+  try {
+    await pool.query(initQuery);
+    console.log('   ✅ PostgreSQL Database initialized successfully');
+  } catch (err) {
+    console.error('   ❌ Database initialization failed:', err);
+    throw err;
+  }
 }
 
 module.exports = { getDb, initDatabase, pool };
