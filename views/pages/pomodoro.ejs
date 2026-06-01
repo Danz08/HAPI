@@ -64,7 +64,7 @@
       <i data-lucide="calendar" class="w-5 h-5 inline text-brand-400 mr-1"></i> <span data-i18n="pomo.todaySchedule">Jadwal Hari Ini</span>
     </h3>
     <div id="cal-events-list">
-      <p class="text-sm text-surface-400 text-center py-2">Memuat jadwal...</p>
+      <p class="text-sm text-surface-400 text-center py-2" data-i18n="general.loading">Memuat jadwal...</p>
     </div>
   </div>
 
@@ -366,7 +366,7 @@ window.setCalendarTimer = function(minutes, title) {
   setMode('work');
   document.getElementById('timer-label').textContent = title || `Meeting (${minutes}m)`;
   startTimer();
-  window.showToast?.(`Timer ${minutes} menit dimulai untuk "${title}"`, 'success');
+  window.showToast?.((window.t ? window.t('pomo.timerStarted') : 'Timer dimulai') + ` (${minutes}m)`, 'success');
 };
 
 // Initialize

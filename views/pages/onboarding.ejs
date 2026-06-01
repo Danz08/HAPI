@@ -157,7 +157,7 @@
           }
         } catch (err) {
           console.error(err);
-          if (window.showToast) window.showToast('Gagal memproses, silakan coba lagi.', 'error');
+          if (window.showToast) window.showToast(window.t ? window.t('chat.error') : 'Gagal memproses, silakan coba lagi.', 'error');
           startBtn.disabled = false;
           startBtn.innerHTML = '<span data-i18n="onboarding.start">Mulai Quiz Pertamamu</span> <i data-lucide="arrow-right" class="w-5 h-5"></i>';
           if (window.lucide) lucide.createIcons();

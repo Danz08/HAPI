@@ -87,6 +87,7 @@ export const translations = {
     'pomo.noSchedule': 'Tidak ada jadwal hari ini',
     'pomo.loadFail': 'Gagal memuat jadwal',
     'pomo.now': 'SEKARANG',
+    'pomo.timerStarted': 'Timer dimulai',
 
     // Analytics
     'analytics.title': 'Analitik Aktivitas',
@@ -130,6 +131,32 @@ export const translations = {
     'quiz.dimAccomplishment': 'Pencapaian Personal',
     'quiz.dimWorkPattern': 'Pola Kerja',
     'quiz.error': 'Terjadi Kesalahan',
+    
+    // Missing Quiz
+    'quiz.analyzing': 'Menganalisis jawabanmu...',
+    'quiz.dimensionBreakdown': 'Rincian Per Dimensi',
+    'quiz.exhaustion': 'Kelelahan (Exhaustion)',
+    'quiz.exhaustionDesc': 'Tingkat kelelahan fisik & emosional',
+    'quiz.cynicism': 'Sinisme (Cynicism)',
+    'quiz.cynicismDesc': 'Sikap negatif terhadap studi',
+    'quiz.efficacy': 'Efikasi Akademik',
+    'quiz.efficacyDesc': 'Keyakinan terhadap kemampuan akademik',
+    'quiz.recommendations': 'Rekomendasi',
+    'quiz.toDashboard': 'Dashboard',
+    'quiz.toAnalytics': 'Lihat Analitik',
+    'quiz.swal.streakTitle': '🔥 Streak Aktif!',
+    'quiz.swal.streakDays': 'Hari Berturut-turut!',
+    'quiz.swal.streakDesc': 'Hebat! Konsistensimu mengisi quiz sangat baik. Terus pertahankan!',
+    'quiz.swal.streakConfirm': 'Lanjutkan 💪',
+
+    // Dashboard Swal
+    'dashboard.swal.quizTitle': 'Jangan lupa isi Quiz hari ini!',
+    'dashboard.swal.quizText': 'Isi quiz sekarang untuk melihat tingkat kelelahanmu dan menjaga streak tetap menyala!',
+    'dashboard.swal.quizConfirm': 'Mulai Quiz',
+    'dashboard.swal.later': 'Nanti Saja',
+    'dashboard.swal.moodTitle': 'Bagaimana perasaanmu hari ini?',
+    'dashboard.swal.moodText': 'Kamu belum mencatat mood hari ini. Catat sekarang untuk menjaga streakmu!',
+    'dashboard.swal.moodConfirm': 'Catat Mood Sekarang',
 
     // Mood
     'mood.title': 'Bagaimana Perasaanmu?',
@@ -430,6 +457,7 @@ export const translations = {
     'pomo.noSchedule': 'No schedule for today',
     'pomo.loadFail': 'Failed to load schedule',
     'pomo.now': 'NOW',
+    'pomo.timerStarted': 'Timer started',
 
     // Analytics
     'analytics.title': 'Activity Analytics',
@@ -473,6 +501,32 @@ export const translations = {
     'quiz.dimAccomplishment': 'Personal Accomplishment',
     'quiz.dimWorkPattern': 'Work Pattern',
     'quiz.error': 'An Error Occurred',
+
+    // Missing Quiz
+    'quiz.analyzing': 'Analyzing your answers...',
+    'quiz.dimensionBreakdown': 'Dimension Breakdown',
+    'quiz.exhaustion': 'Exhaustion',
+    'quiz.exhaustionDesc': 'Physical & emotional fatigue level',
+    'quiz.cynicism': 'Cynicism',
+    'quiz.cynicismDesc': 'Negative attitude towards studies',
+    'quiz.efficacy': 'Academic Efficacy',
+    'quiz.efficacyDesc': 'Belief in academic abilities',
+    'quiz.recommendations': 'Recommendations',
+    'quiz.toDashboard': 'Dashboard',
+    'quiz.toAnalytics': 'View Analytics',
+    'quiz.swal.streakTitle': '🔥 Streak Active!',
+    'quiz.swal.streakDays': 'Consecutive Days!',
+    'quiz.swal.streakDesc': 'Great! Your consistency in taking the quiz is excellent. Keep it up!',
+    'quiz.swal.streakConfirm': 'Continue 💪',
+
+    // Dashboard Swal
+    'dashboard.swal.quizTitle': 'Don\'t forget to take today\'s Quiz!',
+    'dashboard.swal.quizText': 'Take the quiz now to see your fatigue level and keep your streak alive!',
+    'dashboard.swal.quizConfirm': 'Start Quiz',
+    'dashboard.swal.later': 'Later',
+    'dashboard.swal.moodTitle': 'How are you feeling today?',
+    'dashboard.swal.moodText': 'You haven\'t logged your mood today. Log it now to keep your streak!',
+    'dashboard.swal.moodConfirm': 'Log Mood Now',
 
     // Mood
     'mood.title': 'How Are You Feeling?',

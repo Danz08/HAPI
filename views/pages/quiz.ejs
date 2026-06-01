@@ -41,8 +41,9 @@
       <h3 class="text-2xl font-bold font-display text-surface-50 mb-2" data-i18n="quiz.<%= todayResult.riskLevel === 'Low' ? 'lowRisk' : todayResult.riskLevel === 'High' ? 'highRisk' : 'medRisk' %>"><%= trTitles[todayResult.riskLevel] || 'Risiko Sedang' %></h3>
       <span class="badge badge-<%= (todayResult.riskLevel || 'medium').toLowerCase() %> inline-flex"><%= todayResult.riskLevel %> Risk</span>
 
-      <% const trDescs = { Low: 'Tingkat kelelahan akademikmu masih rendah. Pertahankan ritme belajarmu!', Medium: 'Kamu menunjukkan tanda-tanda kelelahan sedang. Perhatikan pola istirahat.', High: 'Tingkat kelelahanmu tinggi. Segera ambil langkah untuk beristirahat.' }; %>
-      <p class="text-sm text-surface-400 mt-3 max-w-md mx-auto leading-relaxed" id="quiz-done-risk-desc"><%= trDescs[todayResult.riskLevel] || trDescs.Medium %></p>
+      <% const trDescs = { Low: 'quiz.descLow', Medium: 'quiz.descMedium', High: 'quiz.descHigh' }; %>
+      <% const defaultDesc = todayResult.riskLevel === 'Low' ? 'Tingkat kelelahan akademikmu masih rendah. Pertahankan ritme belajarmu!' : todayResult.riskLevel === 'High' ? 'Tingkat kelelahanmu tinggi. Segera ambil langkah untuk beristirahat.' : 'Kamu menunjukkan tanda-tanda kelelahan sedang. Perhatikan pola istirahat.'; %>
+      <p class="text-sm text-surface-400 mt-3 max-w-md mx-auto leading-relaxed" id="quiz-done-risk-desc" data-i18n="<%= trDescs[todayResult.riskLevel] || 'quiz.descMedium' %>"><%= defaultDesc %></p>
     </div>
 
     <!-- Recommendations from saved result -->
@@ -59,8 +60,8 @@
             <i data-lucide="lightbulb" class="w-4 h-4 text-warning-400"></i>
           </div>
           <div>
-            <p class="text-sm font-semibold text-surface-100 mb-1"><%= ins.title %></p>
-            <p class="text-sm text-surface-300 leading-relaxed"><%= ins.description %></p>
+            <p class="text-sm font-semibold text-surface-100 mb-1 insight-title" data-title-id="<%= ins.title %>" data-title-en="<%= ins.title_en || ins.title %>"><span><%= ins.title %></span></p>
+            <p class="text-sm text-surface-300 leading-relaxed insight-desc" data-desc-id="<%= ins.description %>" data-desc-en="<%= ins.description_en || ins.description %>"><%= ins.description %></p>
           </div>
         </div>
         <% }) %>
@@ -112,7 +113,7 @@
           <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="31.4" stroke-dashoffset="10" stroke-linecap="round"/>
         </svg>
       </div>
-      <p class="text-surface-300 font-medium">Menganalisis jawabanmu...</p>
+      <p class="text-surface-300 font-medium" data-i18n="quiz.analyzing">Menganalisis jawabanmu...</p>
     </div>
 
     <!-- Result -->
@@ -330,13 +331,13 @@ async function submitQuiz() {
     if (data.streak !== undefined) {
       const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
       Swal.fire({
-        title: '🔥 Streak Aktif!',
+        title: window.t ? window.t('quiz.swal.streakTitle') : '🔥 Streak Aktif!',
         html: `
           <div style="font-size: 48px; margin-bottom: 12px; animation: streakBounce 0.6s ease-out;">
             ${'🔥'.repeat(Math.min(data.streak, 7))}
           </div>
-          <p style="font-size: 18px; font-weight: bold; margin-bottom: 4px;">${data.streak} Hari Berturut-turut!</p>
-          <p style="font-size: 13px; opacity: 0.7;">Hebat! Konsistensimu mengisi quiz sangat baik. Terus pertahankan!</p>
+          <p style="font-size: 18px; font-weight: bold; margin-bottom: 4px;">${data.streak} ${window.t ? window.t('quiz.swal.streakDays') : 'Hari Berturut-turut!'}</p>
+          <p style="font-size: 13px; opacity: 0.7;">${window.t ? window.t('quiz.swal.streakDesc') : 'Hebat! Konsistensimu mengisi quiz sangat baik. Terus pertahankan!'}</p>
           <style>
             @keyframes streakBounce {
               0% { transform: scale(0); opacity: 0; }
@@ -352,7 +353,7 @@ async function submitQuiz() {
           </style>
         `,
         icon: 'success',
-        confirmButtonText: 'Lanjutkan 💪',
+        confirmButtonText: window.t ? window.t('quiz.swal.streakConfirm') : 'Lanjutkan 💪',
         confirmButtonColor: '#A86240',
         background: isDark ? '#1e1611' : '#ffffff',
         color: isDark ? '#f8f4f0' : '#3a1e13',

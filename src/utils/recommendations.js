@@ -4,18 +4,21 @@ const recommendationPool = {
     general: [
       {
         title: '✨ Pertahankan Ritme Kerjamu!',
+        title_en: '✨ Keep Up Your Rhythm!',
         description: 'Kondisimu saat ini sangat baik. Terus jaga keseimbangan antara kerja dan istirahat.',
         description_en: 'Your current condition is very good. Keep maintaining a balance between work and rest.',
         category: 'motivation',
       },
       {
         title: '🎯 Tetap Produktif',
+        title_en: '🎯 Stay Productive',
         description: 'Manfaatkan momentum positif ini. Coba selesaikan task yang paling challenging saat energimu masih tinggi.',
         description_en: 'Take advantage of this positive momentum. Try to complete the most challenging tasks while your energy is still high.',
         category: 'productivity',
       },
       {
         title: '💪 Challenge Yourself',
+        title_en: '💪 Challenge Yourself',
         description: 'Saat kondisi mental baik, ini waktu yang tepat untuk belajar skill baru atau mengambil proyek menantang.',
         description_en: 'When your mental condition is good, it\'s the perfect time to learn new skills or take on challenging projects.',
         category: 'growth',
@@ -32,19 +35,23 @@ const recommendationPool = {
     general: [
       {
         title: '⚠️ Waspada Kelelahan',
+        title_en: '⚠️ Watch for Fatigue',
         description: 'Tubuhmu mulai menunjukkan tanda-tanda fatigue. Saatnya untuk lebih memperhatikan pola istirahat.',
         description_en: 'Your body is starting to show signs of fatigue. It\'s time to pay more attention to your rest patterns.',
         category: 'warning',
       },
       {
         title: '🧘 Istirahat Berkualitas',
+        title_en: '🧘 Quality Rest',
         description: 'Cobalah teknik deep breathing 4-7-8: tarik nafas 4 detik, tahan 7 detik, hembuskan 8 detik.',
         description_en: 'Try the 4-7-8 deep breathing technique: inhale for 4 seconds, hold for 7 seconds, exhale for 8 seconds.',
         category: 'wellness',
       },
       {
         title: '📋 Prioritaskan Tugasmu',
+        title_en: '📋 Prioritize Your Tasks',
         description: 'Gunakan metode Eisenhower Matrix — fokus pada yang penting dan mendesak terlebih dahulu.',
+        description_en: 'Use the Eisenhower Matrix method — focus on what is important and urgent first.',
         category: 'productivity',
       },
     ],
@@ -61,18 +68,21 @@ const recommendationPool = {
     general: [
       {
         title: '🚨 Tingkat Fatigue Tinggi',
+        title_en: '🚨 High Fatigue Level',
         description: 'Kamu perlu segera beristirahat. Fatigue yang berkepanjangan dapat berdampak serius pada kesehatan fisik dan mental.',
         description_en: 'You need to rest immediately. Prolonged fatigue can have a serious impact on your physical and mental health.',
         category: 'critical',
       },
       {
         title: '💤 Prioritaskan Tidur',
+        title_en: '💤 Prioritize Sleep',
         description: 'Pastikan kamu tidur 7-9 jam malam ini. Kurang tidur adalah penyebab utama fatigue kronis.',
         description_en: 'Make sure you sleep 7-9 hours tonight. Lack of sleep is the main cause of chronic fatigue.',
         category: 'health',
       },
       {
         title: '🗣️ Jangan Ragu Bercerita',
+        title_en: '🗣️ Don\'t Hesitate to Talk',
         description: 'Bicarakan perasaanmu dengan orang terdekat, teman, atau mentor. Kamu tidak harus menanggung semuanya sendiri.',
         description_en: 'Talk about your feelings with those closest to you, friends, or a mentor. You don\'t have to bear it all alone.',
         category: 'social',

@@ -262,12 +262,12 @@
       if (showQuizReminderFlag) {
         localStorage.setItem('quizReminderSeenDate', todayStr);
         Swal.fire({
-          title: 'Jangan lupa isi Quiz hari ini!',
-          text: 'Isi quiz sekarang untuk melihat tingkat kelelahanmu dan menjaga streak tetap menyala!',
+          title: window.t ? window.t('dashboard.swal.quizTitle') : 'Jangan lupa isi Quiz hari ini!',
+          text: window.t ? window.t('dashboard.swal.quizText') : 'Isi quiz sekarang untuk melihat tingkat kelelahanmu dan menjaga streak tetap menyala!',
           icon: 'info',
           showCancelButton: true,
-          confirmButtonText: 'Mulai Quiz',
-          cancelButtonText: 'Nanti Saja',
+          confirmButtonText: window.t ? window.t('dashboard.swal.quizConfirm') : 'Mulai Quiz',
+          cancelButtonText: window.t ? window.t('dashboard.swal.later') : 'Nanti Saja',
           confirmButtonColor: '#A86240',
           cancelButtonColor: '#489A98',
           background: isDarkMode ? '#1e1611' : '#ffffff',
@@ -292,12 +292,12 @@
     if (showMoodReminderFlag) {
       localStorage.setItem('moodReminderSeenDate', todayStr);
       Swal.fire({
-        title: 'Bagaimana perasaanmu hari ini?',
-        text: 'Kamu belum mencatat mood hari ini. Catat sekarang untuk menjaga streakmu!',
+        title: window.t ? window.t('dashboard.swal.moodTitle') : 'Bagaimana perasaanmu hari ini?',
+        text: window.t ? window.t('dashboard.swal.moodText') : 'Kamu belum mencatat mood hari ini. Catat sekarang untuk menjaga streakmu!',
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Catat Mood Sekarang',
-        cancelButtonText: 'Nanti Saja',
+        confirmButtonText: window.t ? window.t('dashboard.swal.moodConfirm') : 'Catat Mood Sekarang',
+        cancelButtonText: window.t ? window.t('dashboard.swal.later') : 'Nanti Saja',
         confirmButtonColor: '#A86240',
         cancelButtonColor: '#489A98',
         background: isDarkMode ? '#1e1611' : '#ffffff',
