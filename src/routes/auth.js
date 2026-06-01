@@ -5,6 +5,8 @@ const { redirectIfAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
+const SESSION_VERSION = process.env.SESSION_VERSION || '1.0.0';
+
 // GET /auth/login
 router.get('/login', redirectIfAuth, (req, res) => {
   res.render('pages/login', {
@@ -46,6 +48,7 @@ router.post('/login', redirectIfAuth, async (req, res) => {
       is_onboarded: user.is_onboarded,
       login_method: 'manual',
     };
+    req.session.version = SESSION_VERSION;
     req.session.isFirstLogin = true;
 
     req.flash('success', `Selamat datang kembali, ${user.display_name || user.username}! 👋`);
@@ -116,6 +119,7 @@ router.post('/register', redirectIfAuth, async (req, res) => {
       is_onboarded: 0,
       login_method: 'manual',
     };
+    req.session.version = SESSION_VERSION;
 
     req.flash('success', 'Akun berhasil dibuat! Silakan ikuti pengenalan fitur.');
     res.redirect('/onboarding');

@@ -12,6 +12,8 @@ const formatLocalDate = (d, tz = 'Asia/Jakarta') => {
 
 const router = express.Router();
 
+const SESSION_VERSION = process.env.SESSION_VERSION || '1.0.0';
+
 function getOAuth2Client() {
   return new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
@@ -133,6 +135,7 @@ router.get('/callback', async (req, res) => {
       is_onboarded: user.is_onboarded,
       login_method: 'google',
     };
+    req.session.version = SESSION_VERSION;
     req.session.isFirstLogin = true;
 
     // Sync calendar

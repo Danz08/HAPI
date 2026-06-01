@@ -58,6 +58,24 @@ app.use(session({
   },
 }));
 
+const SESSION_VERSION = process.env.SESSION_VERSION || '1.0.0'; // Change to force logout all users
+
+// Session Validation Middleware
+app.use((req, res, next) => {
+  if (req.session && req.session.user) {
+    // Check if session structure is valid and version matches
+    if (req.session.version !== SESSION_VERSION || !req.session.user.id || !req.session.user.username) {
+      req.session.destroy((err) => {
+        if (err) console.error('Failed to destroy invalid session:', err);
+        res.clearCookie('connect.sid');
+        return res.redirect('/auth/login?expired=1');
+      });
+      return;
+    }
+  }
+  next();
+});
+
 // Timezone extraction middleware
 app.use((req, res, next) => {
   let tz = 'Asia/Jakarta'; // Fallback
