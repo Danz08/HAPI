@@ -1,9 +1,9 @@
 {
-  "google_connected": "__NOT_TRANSLATED__",
-  "google_disconnected": "__NOT_TRANSLATED__",
-  "google_not_connected": "__NOT_TRANSLATED__",
-  "google_sync_success": "__NOT_TRANSLATED__",
-  "sync_failed": "__NOT_TRANSLATED__",
-  "sync_success": "__NOT_TRANSLATED__",
-  "untitled_event": "__NOT_TRANSLATED__"
+  "google_connected": "Google_connected",
+  "google_disconnected": "Google_disconnected",
+  "google_not_connected": "Google_not_connected",
+  "google_sync_success": "Google_sync_success",
+  "sync_failed": "Sync_failed",
+  "sync_success": "Sync_success",
+  "untitled_event": "Untitled_event"
 }

@@ -1,8 +1,8 @@
 {
-  "dev_mode": "__NOT_TRANSLATED__",
+  "dev_mode": "Dev_mode",
   "error": "Sorry, something went wrong. Please try again.",
   "name": "HAPI Assistant",
-  "quick": "__NOT_TRANSLATED__",
+  "quick": "Quick",
   "startCustom": "Type custom message...",
   "status": "Ready to help",
   "suggestionText": "Choose a topic to start the conversation:",

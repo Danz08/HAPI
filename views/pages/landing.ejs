@@ -179,24 +179,24 @@
           <!-- Visual Preview: Score bars -->
           <div class="glass-card p-5 space-y-4">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-semibold landing-text-primary">Breakdown Skor</span>
-              <span class="badge-medium text-[10px]">⚡ 42 — Medium</span>
+              <span class="text-sm font-semibold landing-text-primary"><%= t('landing.feat.scoreBreakdown', 'Breakdown Skor') %></span>
+              <span class="badge-medium text-[10px]">⚡ 42 — <%= t('landing.feat.medium', 'Medium') %></span>
             </div>
             <div class="space-y-3">
               <div>
-                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary">Quiz MBI</span><span class="landing-text-muted">55%</span></div>
+                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary"><%= t('landing.feat.quizMBI', 'Quiz MBI') %></span><span class="landing-text-muted">55%</span></div>
                 <div class="h-2 bg-surface-700 rounded-full overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-warning-400 to-danger-400" style="width:55%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary">Mood</span><span class="landing-text-muted">35%</span></div>
+                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary"><%= t('landing.feat.mood', 'Mood') %></span><span class="landing-text-muted">35%</span></div>
                 <div class="h-2 bg-surface-700 rounded-full overflow-hidden"><div class="h-full rounded-full gradient-brand" style="width:35%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary">Beban Kerja</span><span class="landing-text-muted">60%</span></div>
+                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary"><%= t('landing.feat.workload', 'Beban Kerja') %></span><span class="landing-text-muted">60%</span></div>
                 <div class="h-2 bg-surface-700 rounded-full overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-warning-400 to-danger-500" style="width:60%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary">Istirahat</span><span class="landing-text-muted">20%</span></div>
+                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary"><%= t('landing.feat.rest', 'Istirahat') %></span><span class="landing-text-muted">20%</span></div>
                 <div class="h-2 bg-surface-700 rounded-full overflow-hidden"><div class="h-full rounded-full gradient-success" style="width:20%"></div></div>
               </div>
             </div>
@@ -324,23 +324,23 @@
         </div>
         <!-- Links -->
         <div>
-          <h4 class="text-sm font-semibold landing-text-secondary mb-3">Fitur</h4>
+          <h4 class="text-sm font-semibold landing-text-secondary mb-3"><%= t('landing.footer.features', 'Fitur') %></h4>
           <ul class="space-y-2 text-xs landing-text-muted">
-            <li>Fatigue Risk Score</li>
-            <li>Pomodoro Timer</li>
-            <li>AI Chatbot Asisten</li>
-            <li>Google Calendar Integration</li>
-            <li>Activity Analytics</li>
+            <li><%= t('landing.footer.feat1', 'Fatigue Risk Score') %></li>
+            <li><%= t('landing.footer.feat2', 'Pomodoro Timer') %></li>
+            <li><%= t('landing.footer.feat3', 'AI Chatbot Asisten') %></li>
+            <li><%= t('landing.footer.feat4', 'Google Calendar Integration') %></li>
+            <li><%= t('landing.footer.feat5', 'Activity Analytics') %></li>
           </ul>
         </div>
         <!-- Info -->
         <div>
-          <h4 class="text-sm font-semibold landing-text-secondary mb-3">Info</h4>
+          <h4 class="text-sm font-semibold landing-text-secondary mb-3"><%= t('landing.footer.info', 'Info') %></h4>
           <ul class="space-y-2 text-xs landing-text-muted">
-            <li>Berbasis Maslach Burnout Inventory</li>
-            <li>Data privat & aman</li>
-            <li>Bukan diagnosis medis</li>
-            <li>DBS Foundation Coding Camp 2026</li>
+            <li><%= t('landing.footer.info1', 'Berbasis Maslach Burnout Inventory') %></li>
+            <li><%= t('landing.footer.info2', 'Data privat & aman') %></li>
+            <li><%= t('landing.footer.info3', 'Bukan diagnosis medis') %></li>
+            <li><%= t('landing.footer.info4', 'DBS Foundation Coding Camp 2026') %></li>
           </ul>
         </div>
       </div>
