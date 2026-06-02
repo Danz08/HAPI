@@ -240,7 +240,7 @@ router.get('/', async (req, res) => {
   res.render('pages/analytics', {
     title: 'Analytics - HAPI',
     layout: 'layouts/main',
-    pageTitle: 'Analitik',
+    pageTitle: 'Analytics',
     pageKey: 'page.analytics',
     calendarData,
     monthlyWork,

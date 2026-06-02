@@ -15,10 +15,7 @@
         <button onclick="toggleTheme()" class="landing-nav-btn p-2 rounded-lg transition-colors" id="landing-theme-btn" title="Ganti Tema">
           <i data-lucide="sun" class="w-4 h-4" id="landing-theme-icon"></i>
         </button>
-        <!-- Language Toggle -->
-        <button onclick="toggleLang()" class="landing-nav-btn p-2 rounded-lg transition-colors" id="landing-lang-btn" title="Ganti Bahasa">
-          <span class="text-xs font-bold" id="lang-label">ID</span>
-        </button>
+
         <a href="/auth/login" class="landing-nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors" id="landing-login" >Masuk</a>
         <a href="/auth/register" class="btn-primary btn-sm" id="landing-register" >Mulai Sekarang</a>
       </div>
@@ -82,7 +79,7 @@
       <!-- Section Header -->
       <div class="text-center mb-6">
         <h2 class="text-3xl md:text-4xl font-bold font-display landing-text-primary mb-4">
-          <span >Kecerdasan untuk</span><span class="text-gradient-brand" >ritme harianmu</span>
+          <span>Kecerdasan untuk </span><span class="text-gradient-brand">ritme harianmu</span>
         </h2>
         <p class="landing-text-muted max-w-2xl mx-auto" >Lebih dari sekadar manajemen waktu — HAPI memahami kondisimu secara menyeluruh dengan fitur-fitur cerdas.</p>
       </div>
@@ -211,7 +208,7 @@
     <div class="max-w-5xl mx-auto">
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-4xl font-bold font-display landing-text-primary mb-4">
-          <span >Langkah sederhana menuju</span><span class="text-gradient-accent" >keseimbangan</span>
+          <span>Langkah sederhana menuju </span><span class="text-gradient-accent">keseimbangan</span>
         </h2>
         <p class="landing-text-muted max-w-xl mx-auto" >Mulai pantau kesehatan mentalmu dalam 4 langkah mudah.</p>
       </div>
@@ -270,7 +267,7 @@
           </div>
 
           <h2 class="text-3xl md:text-4xl font-bold font-display landing-text-primary mb-4">
-            <span >Basis Ilmiah &</span><span class="text-gradient-accent" >Komunitas</span>
+            <span>Basis Ilmiah & </span><span class="text-gradient-accent">Komunitas</span>
           </h2>
 
           <p class="landing-text-secondary leading-relaxed max-w-2xl mx-auto mb-8" >HAPI menggunakan Maslach Burnout Inventory (MBI), instrumen psikometri paling banyak digunakan di dunia untuk mengukur burnout.</p>
@@ -287,7 +284,7 @@
   <section class="py-24 px-6 landing-section-terracotta text-center relative overflow-hidden">
     <div class="max-w-3xl mx-auto relative z-10">
       <h2 class="text-3xl md:text-4xl font-bold font-display landing-text-primary mb-4">
-        <span >Siap menemukan</span><span class="text-gradient-brand" >keseimbanganmu?</span>
+        <span>Siap menemukan </span><span class="text-gradient-brand">keseimbanganmu?</span>
       </h2>
       <p class="landing-text-secondary mb-8" >Bergabunglah dengan para profesional yang membangun hubungan sehat dengan pekerjaan mereka.</p>
       <a href="/auth/register" class="btn-primary btn-lg">
@@ -374,10 +371,6 @@
   document.addEventListener('DOMContentLoaded', () => {
     const saved = localStorage.getItem('hapi-theme') || 'dark';
     updateLandingThemeIcon(saved);
-
-    const langSaved = localStorage.getItem('hapi-lang') || 'id';
-    const langLabel = document.getElementById('lang-label');
-    if (langLabel) langLabel.textContent = langSaved.toUpperCase();
 
     // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {

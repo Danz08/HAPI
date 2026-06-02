@@ -184,11 +184,11 @@ document.getElementById('widget-chat-form')?.addEventListener('submit', async (e
   const typingId = showWidgetTyping();
 
   try {
-    // TODO: Replace with actual API call when AI API is integrated
-    // const res = await axios.post('/api/chat', { message: msg, language: 'id' });
-    // if (res.data.success) {
-    //   appendWidgetMessage('ai', res.data.response);
-    // }
+     const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg, language: 'id' })
+    });
 
     // Placeholder: simulate a response for now
     await new Promise(resolve => setTimeout(resolve, 1200));
@@ -209,49 +209,26 @@ document.getElementById('widget-chat-form')?.addEventListener('submit', async (e
  */
 function generatePlaceholderResponse(message) {
   const lowerMsg = message.toLowerCase();
-  const lang = window.getLang ? window.getLang() : 'id';
-
-  if (lang === 'en') {
-    if (lowerMsg.includes('stres') || lowerMsg.includes('stress')) {
-      return 'I understand you are feeling stressed. Try taking 3 deep breaths, then tell me more about what makes you stressed. You can also try a Pomodoro session to manage your rhythm. 💆';
-    }
-    if (lowerMsg.includes('lelah') || lowerMsg.includes('capek') || lowerMsg.includes('tired') || lowerMsg.includes('exhausted')) {
-      return 'Your body is signaling for a rest. Make sure you drink enough water and get 7-9 hours of sleep. Try taking the Fatigue Quiz to check your condition! 😴';
-    }
-    if (lowerMsg.includes('sedih') || lowerMsg.includes('sad')) {
-      return 'Feeling sad is valid. There is no need to rush to feel better. Try logging your mood in the Mood Logger, and remember — you are not alone. 💙';
-    }
-    if (lowerMsg.includes('senang') || lowerMsg.includes('happy') || lowerMsg.includes('baik') || lowerMsg.includes('good')) {
-      return 'Glad to hear that! 😊 Use this positive energy for productive things. Check the Dashboard to see your daily progress!';
-    }
-    if (lowerMsg.includes('fokus') || lowerMsg.includes('focus') || lowerMsg.includes('konsentrasi')) {
-      return 'Focus tips: 1) Use the 25/5 Pomodoro technique, 2) Turn off distracting notifications, 3) Set one main priority, 4) Ensure your workspace is comfortable. Try starting a Pomodoro session now! 🎯';
-    }
-    if (lowerMsg.includes('tidur') || lowerMsg.includes('sleep') || lowerMsg.includes('insomnia')) {
-      return 'Sleep quality is very important. Try: 1) Avoid screens 1 hour before bed, 2) Create a consistent sleep routine, 3) Reduce caffeine after 2 PM. Adequate sleep greatly affects productivity. 🌙';
-    }
-    return 'Thank you for sharing! I am here to help you. You can share your feelings, ask for productivity tips, or try HAPI features like the Pomodoro Timer and Fatigue Quiz. 🤗';
-  } else {
-    if (lowerMsg.includes('stres') || lowerMsg.includes('stress')) {
-      return 'Aku mengerti kamu sedang tertekan. Coba tarik nafas dalam 3 kali, lalu ceritakan lebih lanjut apa yang membuatmu stres. Kamu juga bisa coba sesi Pomodoro untuk mengatur ritme kerjamu. 💆';
-    }
-    if (lowerMsg.includes('lelah') || lowerMsg.includes('capek') || lowerMsg.includes('tired')) {
-      return 'Tubuhmu memberi sinyal untuk istirahat. Pastikan kamu cukup minum air dan tidur 7-9 jam. Coba ambil Quiz Kelelahan untuk cek kondisimu ya! 😴';
-    }
-    if (lowerMsg.includes('sedih') || lowerMsg.includes('sad')) {
-      return 'Perasaan sedih itu valid. Tidak perlu terburu-buru untuk merasa baik. Coba catat moodmu di fitur Mood Logger, dan ingat — kamu tidak sendirian. 💙';
-    }
-    if (lowerMsg.includes('senang') || lowerMsg.includes('happy') || lowerMsg.includes('baik')) {
-      return 'Senang mendengarnya! 😊 Manfaatkan energi positif ini untuk hal-hal produktif. Cek Dashboard untuk melihat progress harianmu!';
-    }
-    if (lowerMsg.includes('fokus') || lowerMsg.includes('focus') || lowerMsg.includes('konsentrasi')) {
-      return 'Tips fokus: 1) Gunakan teknik Pomodoro 25/5, 2) Matikan notifikasi yang mengganggu, 3) Tentukan satu prioritas utama, 4) Pastikan tempat kerjamu nyaman. Coba mulai sesi Pomodoro sekarang! 🎯';
-    }
-    if (lowerMsg.includes('tidur') || lowerMsg.includes('sleep') || lowerMsg.includes('insomnia')) {
-      return 'Kualitas tidur sangat penting. Coba: 1) Hindari layar 1 jam sebelum tidur, 2) Buat rutinitas tidur yang konsisten, 3) Kurangi kafein setelah jam 2 siang. Tidur yang cukup sangat mempengaruhi produktivitas. 🌙';
-    }
-    return 'Terima kasih sudah berbagi! Aku di sini untuk membantumu. Kamu bisa ceritakan perasaanmu, tanya tips produktivitas, atau coba fitur-fitur HAPI seperti Pomodoro Timer dan Quiz Kelelahan. 🤗';
+  
+  if (lowerMsg.includes('stres') || lowerMsg.includes('stress')) {
+    return 'Aku mengerti kamu sedang tertekan. Coba tarik nafas dalam 3 kali, lalu ceritakan lebih lanjut apa yang membuatmu stres. Kamu juga bisa coba sesi Pomodoro untuk mengatur ritme kerjamu. 💆';
   }
+  if (lowerMsg.includes('lelah') || lowerMsg.includes('capek') || lowerMsg.includes('tired')) {
+    return 'Tubuhmu memberi sinyal untuk istirahat. Pastikan kamu cukup minum air dan tidur 7-9 jam. Coba ambil Quiz Kelelahan untuk cek kondisimu ya! 😴';
+  }
+  if (lowerMsg.includes('sedih') || lowerMsg.includes('sad')) {
+    return 'Perasaan sedih itu valid. Tidak perlu terburu-buru untuk merasa baik. Coba catat moodmu di fitur Mood Logger, dan ingat — kamu tidak sendirian. 💙';
+  }
+  if (lowerMsg.includes('senang') || lowerMsg.includes('happy') || lowerMsg.includes('baik')) {
+    return 'Senang mendengarnya! 😊 Manfaatkan energi positif ini untuk hal-hal produktif. Cek Dashboard untuk melihat progress harianmu!';
+  }
+  if (lowerMsg.includes('fokus') || lowerMsg.includes('focus') || lowerMsg.includes('konsentrasi')) {
+    return 'Tips fokus: 1) Gunakan teknik Pomodoro 25/5, 2) Matikan notifikasi yang mengganggu, 3) Tentukan satu prioritas utama, 4) Pastikan tempat kerjamu nyaman. Coba mulai sesi Pomodoro sekarang! 🎯';
+  }
+  if (lowerMsg.includes('tidur') || lowerMsg.includes('sleep') || lowerMsg.includes('insomnia')) {
+    return 'Kualitas tidur sangat penting. Coba: 1) Hindari layar 1 jam sebelum tidur, 2) Buat rutinitas tidur yang konsisten, 3) Kurangi kafein setelah jam 2 siang. Tidur yang cukup sangat mempengaruhi produktivitas. 🌙';
+  }
+  return 'Terima kasih sudah berbagi! Aku di sini untuk membantumu. Kamu bisa ceritakan perasaanmu, tanya tips produktivitas, atau coba fitur-fitur HAPI seperti Pomodoro Timer dan Quiz Kelelahan. 🤗';
 }
 
 async function clearWidgetChat() {

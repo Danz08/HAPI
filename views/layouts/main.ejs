@@ -43,11 +43,7 @@
     })();
   </script>
 
-  <!-- Inject Server-Side Translations to Client -->
-  <script>
-    window.HAPI_TRANSLATIONS = <%- JSON.stringify(typeof langDict !== 'undefined' ? langDict : {}) %>;
-    window.HAPI_LANG = "<%= typeof currentLang !== 'undefined' ? currentLang : 'id' %>";
-  </script>
+
 
   <style>
     /* ===== Comprehensive Light Mode — Warm Palette ===== */

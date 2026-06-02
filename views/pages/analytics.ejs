@@ -166,8 +166,8 @@
           <% insights.forEach(function(ins) { %>
           <% const borderColorClass = ins.color === 'brand' ? 'border-brand-500/50' : ins.color === 'success' ? 'border-success-500/50' : ins.color === 'warning' ? 'border-warning-500/50' : 'border-danger-500/50'; %>
           <div class="p-3 rounded-xl bg-surface-800/50 border-l-2 <%= borderColorClass %>">
-            <% const finalTitle = (typeof currentLang !== 'undefined' && currentLang === 'en' && ins.title_en) ? ins.title_en : ins.title; %>
-            <% const finalDesc = (typeof currentLang !== 'undefined' && currentLang === 'en' && ins.desc_en) ? ins.desc_en : ins.description; %>
+            <% const finalTitle = ins.title; %>
+            <% const finalDesc = ins.description; %>
             <p class="text-sm font-semibold text-surface-200 mb-1 insight-title"><%- ins.icon %> <span><%= finalTitle %></span></p>
             <p class="text-xs text-surface-400 insight-desc"><%= finalDesc %></p>
           </div>
@@ -338,10 +338,7 @@ async function showDayDetail(dateStr) {
   if (selected) selected.classList.add('ring-2', 'ring-accent-pink');
 
   const d = new Date(dateStr);
-  const isEn = window.HAPI_LANG === 'en';
-  const dayNamesId = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-  const dayNamesEn = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const dayNames = isEn ? dayNamesEn : dayNamesId;
+  const dayNames = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
   title.textContent = `${dayNames[d.getDay()]}, ${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
 
   

@@ -38,12 +38,12 @@
 
       <% const trTitles = { Low: 'Risiko Rendah', Medium: 'Risiko Sedang', High: 'Risiko Tinggi' }; %>
       <% const trBadgeColors = { Low: 'success', Medium: 'warning', High: 'danger' }; %>
-      <h3 class="text-2xl font-bold font-display text-surface-50 mb-2" data-i18n="quiz.<%= todayResult.riskLevel === 'Low' ? 'lowRisk' : todayResult.riskLevel === 'High' ? 'highRisk' : 'medRisk' %>"><%= trTitles[todayResult.riskLevel] || 'Risiko Sedang' %></h3>
+      <h3 class="text-2xl font-bold font-display text-surface-50 mb-2"><%= trTitles[todayResult.riskLevel] || 'Risiko Sedang' %></h3>
       <span class="badge badge-<%= (todayResult.riskLevel || 'medium').toLowerCase() %> inline-flex"><%= todayResult.riskLevel %> Risk</span>
 
       <% const trDescs = { Low: 'quiz.descLow', Medium: 'quiz.descMedium', High: 'quiz.descHigh' }; %>
       <% const defaultDesc = todayResult.riskLevel === 'Low' ? 'Tingkat kelelahan akademikmu masih rendah. Pertahankan ritme belajarmu!' : todayResult.riskLevel === 'High' ? 'Tingkat kelelahanmu tinggi. Segera ambil langkah untuk beristirahat.' : 'Kamu menunjukkan tanda-tanda kelelahan sedang. Perhatikan pola istirahat.'; %>
-      <p class="text-sm text-surface-400 mt-3 max-w-md mx-auto leading-relaxed" id="quiz-done-risk-desc" data-i18n="<%= trDescs[todayResult.riskLevel] || 'quiz.descMedium' %>"><%= defaultDesc %></p>
+      <p class="text-sm text-surface-400 mt-3 max-w-md mx-auto leading-relaxed" id="quiz-done-risk-desc"><%= defaultDesc %></p>
     </div>
 
     <!-- Recommendations from saved result -->
@@ -256,7 +256,7 @@ function getDimLabel(dim) {
 function showQuestion(idx) {
   if (idx >= questions.length) { submitQuiz(); return; }
   const q = questions[idx];
-  const lang = window.getLang ? window.getLang() : 'id';
+  
   document.getElementById('q-current').textContent = idx + 1;
   document.getElementById('q-progress').style.width = ((idx + 1) / questions.length * 100) + '%';
   document.getElementById('q-dimension').textContent = getDimLabel(q.dimension);
@@ -265,7 +265,7 @@ function showQuestion(idx) {
   const optContainer = document.getElementById('q-options');
   optContainer.innerHTML = '';
   q.options.forEach(opt => {
-    const optLabel = lang === 'en' && opt.label_en ? opt.label_en : opt.label;
+    const optLabel = opt.label;
     const btn = document.createElement('button');
     btn.className = 'quiz-option w-full text-left px-5 py-4 flex items-center gap-4';
     btn.innerHTML = `<span class="w-8 h-8 rounded-lg bg-surface-700 flex items-center justify-center text-sm font-bold text-surface-300">${opt.value}</span><span class="text-surface-200 font-medium">${optLabel}</span>`;
@@ -326,7 +326,7 @@ async function submitQuiz() {
     document.getElementById('quiz-loading').classList.add('hidden');
     document.getElementById('quiz-result').classList.remove('hidden');
 
-    const lang = window.getLang ? window.getLang() : 'id';
+    
     
     if (data.streak !== undefined) {
       const isDark = document.documentElement.getAttribute('data-theme') !== 'light';

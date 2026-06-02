@@ -89,12 +89,9 @@ const __moodLoggedToday = <%= typeof moodLoggedToday !== 'undefined' ? moodLogge
 function openGlobalMood() {
   if (__moodLoggedToday) {
     const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-    const lang = window.getLang ? window.getLang() : 'id';
     Swal.fire({
-      title: lang === 'en' ? 'Already Recorded!' : 'Sudah Tercatat!',
-      text: lang === 'en' 
-        ? 'You have already logged your mood today. Come back tomorrow!' 
-        : 'Kamu sudah mencatat mood hari ini. Coba lagi besok ya!',
+      title: 'Sudah Tercatat!',
+      text: 'Kamu sudah mencatat mood hari ini. Coba lagi besok ya!',
       icon: 'info',
       confirmButtonColor: '#A86240',
       background: isDark ? '#1e1611' : '#ffffff',
@@ -134,10 +131,9 @@ document.querySelectorAll('.global-mood-btn').forEach(btn => {
       b.classList.remove('bg-brand-600/20', 'border-brand-500', 'scale-110');
     });
     btn.classList.add('bg-brand-600/20', 'border-brand-500', 'scale-110');
-    const lang = window.getLang ? window.getLang() : 'id';
     globalSelectedMood = {
       score: parseInt(btn.dataset.score),
-      label: lang === 'en' ? btn.dataset.labelEn : btn.dataset.labelId,
+      label: btn.dataset.labelId,
     };
   });
 });
