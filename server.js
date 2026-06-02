@@ -9,6 +9,7 @@ const expressLayouts = require('express-ejs-layouts');
 const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
 const i18nextMiddleware = require('i18next-http-middleware');
+const cookieParser = require('cookie-parser');
 
 const { initDatabase, pool } = require('./src/config/database');
 
@@ -59,6 +60,7 @@ app.set('layout', 'layouts/main');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser());
 app.use(i18nextMiddleware.handle(i18next));
 
 app.set('trust proxy', 1);

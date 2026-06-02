@@ -754,20 +754,32 @@ export const translations = {
   },
 };
 
-let currentLang = localStorage.getItem('hapi-lang') || 'id';
+let currentLang = 'id';
+// Check cookie first (set by server or toggleLang), fallback to localStorage
+const match = document.cookie.match(new RegExp('(^| )i18next=([^;]+)'));
+if (match) {
+  currentLang = match[2];
+  localStorage.setItem('hapi-lang', currentLang);
+} else {
+  currentLang = localStorage.getItem('hapi-lang') || 'id';
+}
 
 export function initLang() {
   const langBtn = document.getElementById('lang-label');
   if (langBtn) langBtn.textContent = currentLang.toUpperCase();
-  applyTranslations();
 }
 
 export function toggleLang() {
   currentLang = currentLang === 'id' ? 'en' : 'id';
   localStorage.setItem('hapi-lang', currentLang);
+  // Set cookie for i18next-http-middleware to detect on reload
+  document.cookie = `i18next=${currentLang}; path=/; max-age=31536000`;
+  
   const langBtn = document.getElementById('lang-label');
   if (langBtn) langBtn.textContent = currentLang.toUpperCase();
-  applyTranslations();
+  
+  // Force reload to get the new EJS server-side translations
+  window.location.reload();
 }
 
 export function t(key) {

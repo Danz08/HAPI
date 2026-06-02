@@ -1,10 +1,10 @@
 {
   "dev_mode": "dev_mode",
-  "error": "error",
-  "name": "name",
+  "error": "Maaf, terjadi kesalahan. Coba lagi ya.",
+  "name": "HAPI Asisten",
   "quick": "quick",
-  "startCustom": "startCustom",
-  "status": "status",
-  "suggestionText": "suggestionText",
-  "welcome": "welcome"
+  "startCustom": "Ketik pesan sendiri...",
+  "status": "Siap membantumu",
+  "suggestionText": "Pilih topik untuk memulai percakapan:",
+  "welcome": "Halo! Aku HAPI Asisten. Ceritakan apa yang kamu rasakan, atau tanyakan apa saja seputar produktivitas dan kesehatanmu."
 }
