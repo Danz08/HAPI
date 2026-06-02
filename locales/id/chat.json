@@ -1,0 +1,10 @@
+{
+  "dev_mode": "dev_mode",
+  "error": "error",
+  "name": "name",
+  "quick": "quick",
+  "startCustom": "startCustom",
+  "status": "status",
+  "suggestionText": "suggestionText",
+  "welcome": "welcome"
+}

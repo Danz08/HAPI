@@ -1,0 +1,26 @@
+{
+  "loading": "Processing...",
+  "next": "Next",
+  "prev": "Previous",
+  "slide1": {
+    "desc": "HAPI (Human Activity Pattern Intelligence) is your smart companion that monitors fatigue, manages mood, and keeps your productivity balanced.",
+    "title": "Welcome to HAPI"
+  },
+  "slide2": {
+    "desc": "Your daily command center. See your current risk score, 7-day fatigue trend, and AI insights tailored to your condition.",
+    "title": "Meet Your Dashboard"
+  },
+  "slide3": {
+    "desc": "Not just a regular timer. HAPI recommends ideal focus and rest intervals based on your actual fatigue and mood today.",
+    "title": "Smart Pomodoro"
+  },
+  "slide4": {
+    "desc": "Track your activity history through an interactive calendar. Connect your Google Calendar to see correlations between meetings and burnout risk.",
+    "title": "Deep Analytics"
+  },
+  "slide5": {
+    "desc": "The core of HAPI. Complete a short questionnaire daily so the AI can measure your fatigue and give the best recommendations.",
+    "title": "Fatigue Quiz"
+  },
+  "start": "Start Your First Quiz"
+}

@@ -1,0 +1,20 @@
+{
+  "breakStat": "breakStat",
+  "cycles": "cycles",
+  "focus": "focus",
+  "focusMin": "focusMin",
+  "focusStat": "focusStat",
+  "loadFail": "loadFail",
+  "longBreak": "longBreak",
+  "longBreakLabel": "longBreakLabel",
+  "noSchedule": "noSchedule",
+  "now": "now",
+  "pause": "pause",
+  "reset": "reset",
+  "settings": "settings",
+  "shortBreak": "shortBreak",
+  "shortBreakMin": "shortBreakMin",
+  "start": "start",
+  "timerStarted": "timerStarted",
+  "todaySchedule": "todaySchedule"
+}

@@ -1,0 +1,11 @@
+{
+  "all_fields_required": "all_fields_required",
+  "empty_message": "empty_message",
+  "missing_credentials": "missing_credentials",
+  "mood_already_logged": "mood_already_logged",
+  "mood_score_invalid": "mood_score_invalid",
+  "password_min_length": "password_min_length",
+  "password_mismatch": "password_mismatch",
+  "quiz_already_taken": "quiz_already_taken",
+  "quiz_incomplete": "quiz_incomplete"
+}

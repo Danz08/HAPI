@@ -1,0 +1,11 @@
+{
+  "all_fields_required": "__NOT_TRANSLATED__",
+  "empty_message": "__NOT_TRANSLATED__",
+  "missing_credentials": "__NOT_TRANSLATED__",
+  "mood_already_logged": "__NOT_TRANSLATED__",
+  "mood_score_invalid": "__NOT_TRANSLATED__",
+  "password_min_length": "__NOT_TRANSLATED__",
+  "password_mismatch": "__NOT_TRANSLATED__",
+  "quiz_already_taken": "__NOT_TRANSLATED__",
+  "quiz_incomplete": "__NOT_TRANSLATED__"
+}

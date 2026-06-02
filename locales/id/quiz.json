@@ -1,0 +1,28 @@
+{
+  "<%= todayResult": "<%= todayResult",
+  "alreadyDoneDesc": "Kamu sudah mengisi quiz kelelahan hari ini. Berikut hasil terakhirmu:",
+  "alreadyDoneFooter": "Quiz dapat diisi kembali besok. Hasil ini berlaku untuk hari ini.",
+  "alreadyDoneTitle": "Quiz Hari Ini Sudah Selesai",
+  "analyzing": "Menganalisis jawabanmu...",
+  "cynicism": "Sinisme (Cynicism)",
+  "cynicismDesc": "Sikap negatif terhadap studi",
+  "dimensionBreakdown": "Rincian Per Dimensi",
+  "disclaimer": "Hasil quiz ini bukan diagnosis medis. Konsultasikan dengan profesional kesehatan jika diperlukan.",
+  "efficacy": "Efikasi Akademik",
+  "efficacyDesc": "Keyakinan terhadap kemampuan akademik",
+  "error": "Terjadi Kesalahan",
+  "exhaustion": "Kelelahan (Exhaustion)",
+  "exhaustionDesc": "Tingkat kelelahan fisik & emosional",
+  "of": "dari",
+  "question": "Pertanyaan",
+  "recommendations": "Rekomendasi",
+  "result": "Rekomendasi:",
+  "swal": {
+    "streakConfirm": "Lanjutkan 💪",
+    "streakDays": "Hari Berturut-turut!",
+    "streakDesc": "Hebat! Konsistensimu mengisi quiz sangat baik. Terus pertahankan!",
+    "streakTitle": "🔥 Streak Aktif!"
+  },
+  "toAnalytics": "Lihat Analitik",
+  "toDashboard": "Dashboard"
+}

@@ -6,8 +6,30 @@ const pgSession = require('connect-pg-simple')(session);
 const flash = require('connect-flash');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
+const i18next = require('i18next');
+const Backend = require('i18next-fs-backend');
+const i18nextMiddleware = require('i18next-http-middleware');
 
 const { initDatabase, pool } = require('./src/config/database');
+
+// i18next Configuration
+i18next
+  .use(Backend)
+  .use(i18nextMiddleware.LanguageDetector)
+  .init({
+    backend: {
+      loadPath: path.join(__dirname, 'locales/{{lng}}/{{ns}}.json'),
+      addPath: path.join(__dirname, 'locales/{{lng}}/{{ns}}.json')
+    },
+    fallbackLng: 'id',
+    preload: ['id', 'en'],
+    ns: ['common', 'auth', 'landing', 'dashboard', 'pomodoro', 'analytics', 'quiz', 'chatbot', 'mood', 'notification', 'validation', 'calendar', 'gamification', 'api', 'error'],
+    defaultNS: 'common',
+    saveMissing: process.env.NODE_ENV !== 'production',
+    missingKeyHandler: (lng, ns, key, fallbackValue) => {
+      console.warn(`[i18next] Missing key: ${ns}.${key} in language: ${lng}`);
+    }
+  });
 
 // Route imports
 const indexRoutes = require('./src/routes/index');
@@ -37,6 +59,7 @@ app.set('layout', 'layouts/main');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(i18nextMiddleware.handle(i18next));
 
 app.set('trust proxy', 1);
 

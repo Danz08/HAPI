@@ -11,10 +11,10 @@
               <i data-lucide="bot" class="w-5 h-5 text-white"></i>
             </div>
             <div>
-              <p class="font-bold text-sm text-surface-100" data-i18n="chat.name">HAPI Asisten</p>
+              <p class="font-bold text-sm text-surface-100" ><%= t('chat.name', 'HAPI Asisten') %></p>
               <p class="text-[11px] text-success-400 flex items-center gap-1.5">
                 <span class="w-1.5 h-1.5 bg-success-400 rounded-full animate-pulse-soft"></span>
-                <span data-i18n="chat.status">Siap membantumu</span>
+                <span ><%= t('chat.status', 'Siap membantumu') %></span>
               </p>
             </div>
           </div>
@@ -29,15 +29,6 @@
         </div>
       </div>
 
-      <!-- Quick Actions -->
-      <div class="px-4 py-2.5 border-b border-surface-700/30 flex gap-2 overflow-x-auto flex-shrink-0" id="chatbot-quick-actions">
-        <button onclick="sendQuickMessage('Aku merasa stres')" class="quick-chip whitespace-nowrap">😩 Stres</button>
-        <button onclick="sendQuickMessage('Aku merasa lelah')" class="quick-chip whitespace-nowrap">😴 Lelah</button>
-        <button onclick="sendQuickMessage('Aku merasa sedih')" class="quick-chip whitespace-nowrap">😢 Sedih</button>
-        <button onclick="sendQuickMessage('Aku merasa senang')" class="quick-chip whitespace-nowrap">😊 Senang</button>
-        <button onclick="sendQuickMessage('Tips fokus belajar')" class="quick-chip whitespace-nowrap">🎯 Fokus</button>
-      </div>
-
       <!-- Chat Messages -->
       <div id="widget-chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4" style="min-height: 0">
         <!-- Welcome message -->
@@ -47,16 +38,26 @@
               <i data-lucide="bot" class="w-3.5 h-3.5 text-white"></i>
             </div>
             <div class="widget-bubble-ai">
-              <p class="text-sm leading-relaxed" data-i18n="chat.welcome">Halo! 👋 Aku HAPI Asisten. Ceritakan apa yang kamu rasakan, atau tanyakan apa saja seputar produktivitas dan kesehatanmu.</p>
+              <p class="text-sm leading-relaxed" ><%= t('chat.welcome', 'Halo! 👋 Aku HAPI Asisten. Ceritakan apa yang kamu rasakan, atau tanyakan apa saja seputar produktivitas dan kesehatanmu.') %></p>
             </div>
           </div>
+        </div>
+
+        <!-- Chatbot Suggestions -->
+        <div id="chatbot-suggestions" class="flex flex-col gap-2 mt-4 animate-fade-in">
+          <p class="text-xs text-center text-surface-400 mb-1" ><%= t('chat.suggestionText', 'Pilih topik untuk memulai percakapan:') %></p>
+          <button onclick="startChatSuggestion('chat.quick.stress')" class="w-full text-left p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700 border border-surface-600/30 transition-colors text-sm text-surface-200"><span ><%= t('chat.quick.stressBtn', '😩 Aku merasa stres') %></span></button>
+          <button onclick="startChatSuggestion('chat.quick.tired')" class="w-full text-left p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700 border border-surface-600/30 transition-colors text-sm text-surface-200"><span ><%= t('chat.quick.tiredBtn', '😴 Aku merasa lelah') %></span></button>
+          <button onclick="startChatSuggestion('chat.quick.sad')" class="w-full text-left p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700 border border-surface-600/30 transition-colors text-sm text-surface-200"><span ><%= t('chat.quick.sadBtn', '😢 Aku merasa sedih') %></span></button>
+          <button onclick="startChatSuggestion('chat.quick.happy')" class="w-full text-left p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700 border border-surface-600/30 transition-colors text-sm text-surface-200"><span ><%= t('chat.quick.happyBtn', '😊 Aku merasa senang') %></span></button>
+          <button onclick="startChatCustom()" class="w-full text-center p-3 rounded-xl bg-brand-600/20 hover:bg-brand-600/30 border border-brand-500/30 transition-colors text-sm font-medium text-brand-300 mt-2" ><%= t('chat.startCustom', 'Ketik pesan sendiri...') %></button>
         </div>
       </div>
 
       <!-- Chat Input -->
-      <div class="px-4 py-3 border-t border-surface-700/50 bg-surface-900/50 backdrop-blur-xl flex-shrink-0">
+      <div id="widget-input-container" class="px-4 py-3 border-t border-surface-700/50 bg-surface-900/50 backdrop-blur-xl flex-shrink-0 hidden">
         <form id="widget-chat-form" class="flex gap-2">
-          <input type="text" id="widget-chat-input" data-i18n-placeholder="chat.placeholder" placeholder="Ketik pesanmu di sini..." class="flex-1 px-4 py-2.5 bg-surface-800/70 border border-surface-600/50 rounded-xl text-sm text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all" autocomplete="off">
+          <input type="text" id="widget-chat-input" placeholder="Ketik pesanmu di sini..." class="flex-1 px-4 py-2.5 bg-surface-800/70 border border-surface-600/50 rounded-xl text-sm text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all" autocomplete="off">
           <button type="submit" class="p-2.5 rounded-xl bg-brand-600 text-white hover:bg-brand-500 transition-all active:scale-95 shadow-lg shadow-brand-600/25 disabled:opacity-50 disabled:cursor-not-allowed" id="widget-send-btn">
             <i data-lucide="send" class="w-4 h-4"></i>
           </button>
@@ -111,11 +112,23 @@ function toggleChatbot() {
   lucide.createIcons();
 }
 
-function sendQuickMessage(msg) {
+function startChatSuggestion(key) {
+  const msg = window.t ? window.t(key) : 'Pesan';
+  startChatCustom();
   const input = document.getElementById('widget-chat-input');
   if (input) {
     input.value = msg;
     document.getElementById('widget-chat-form')?.dispatchEvent(new Event('submit'));
+  }
+}
+
+function startChatCustom() {
+  const sugg = document.getElementById('chatbot-suggestions');
+  if (sugg) sugg.style.display = 'none';
+  const inpCont = document.getElementById('widget-input-container');
+  if (inpCont) {
+    inpCont.classList.remove('hidden');
+    document.getElementById('widget-chat-input')?.focus();
   }
 }
 
@@ -164,15 +177,15 @@ document.getElementById('widget-chat-form')?.addEventListener('submit', async (e
   input.value = '';
   if (sendBtn) sendBtn.disabled = true;
 
-  // Hide quick actions after first message
-  const qa = document.getElementById('chatbot-quick-actions');
-  if (qa) qa.style.display = 'none';
+  // Hide suggestions if they somehow aren't
+  const sugg = document.getElementById('chatbot-suggestions');
+  if (sugg) sugg.style.display = 'none';
 
   const typingId = showWidgetTyping();
 
   try {
     // TODO: Replace with actual API call when AI API is integrated
-    // const res = await axios.post('/api/chat', { message: msg });
+    // const res = await axios.post('/api/chat', { message: msg, language: window.getLang ? window.getLang() : 'id' });
     // if (res.data.success) {
     //   appendWidgetMessage('ai', res.data.response);
     // }
@@ -196,38 +209,60 @@ document.getElementById('widget-chat-form')?.addEventListener('submit', async (e
  */
 function generatePlaceholderResponse(message) {
   const lowerMsg = message.toLowerCase();
+  const lang = window.getLang ? window.getLang() : 'id';
 
-  if (lowerMsg.includes('stres') || lowerMsg.includes('stress')) {
-    return 'Aku mengerti kamu sedang tertekan. Coba tarik nafas dalam 3 kali, lalu ceritakan lebih lanjut apa yang membuatmu stres. Kamu juga bisa coba sesi Pomodoro untuk mengatur ritme kerjamu. 💆';
+  if (lang === 'en') {
+    if (lowerMsg.includes('stres') || lowerMsg.includes('stress')) {
+      return 'I understand you are feeling stressed. Try taking 3 deep breaths, then tell me more about what makes you stressed. You can also try a Pomodoro session to manage your rhythm. 💆';
+    }
+    if (lowerMsg.includes('lelah') || lowerMsg.includes('capek') || lowerMsg.includes('tired') || lowerMsg.includes('exhausted')) {
+      return 'Your body is signaling for a rest. Make sure you drink enough water and get 7-9 hours of sleep. Try taking the Fatigue Quiz to check your condition! 😴';
+    }
+    if (lowerMsg.includes('sedih') || lowerMsg.includes('sad')) {
+      return 'Feeling sad is valid. There is no need to rush to feel better. Try logging your mood in the Mood Logger, and remember — you are not alone. 💙';
+    }
+    if (lowerMsg.includes('senang') || lowerMsg.includes('happy') || lowerMsg.includes('baik') || lowerMsg.includes('good')) {
+      return 'Glad to hear that! 😊 Use this positive energy for productive things. Check the Dashboard to see your daily progress!';
+    }
+    if (lowerMsg.includes('fokus') || lowerMsg.includes('focus') || lowerMsg.includes('konsentrasi')) {
+      return 'Focus tips: 1) Use the 25/5 Pomodoro technique, 2) Turn off distracting notifications, 3) Set one main priority, 4) Ensure your workspace is comfortable. Try starting a Pomodoro session now! 🎯';
+    }
+    if (lowerMsg.includes('tidur') || lowerMsg.includes('sleep') || lowerMsg.includes('insomnia')) {
+      return 'Sleep quality is very important. Try: 1) Avoid screens 1 hour before bed, 2) Create a consistent sleep routine, 3) Reduce caffeine after 2 PM. Adequate sleep greatly affects productivity. 🌙';
+    }
+    return 'Thank you for sharing! I am here to help you. You can share your feelings, ask for productivity tips, or try HAPI features like the Pomodoro Timer and Fatigue Quiz. 🤗';
+  } else {
+    if (lowerMsg.includes('stres') || lowerMsg.includes('stress')) {
+      return 'Aku mengerti kamu sedang tertekan. Coba tarik nafas dalam 3 kali, lalu ceritakan lebih lanjut apa yang membuatmu stres. Kamu juga bisa coba sesi Pomodoro untuk mengatur ritme kerjamu. 💆';
+    }
+    if (lowerMsg.includes('lelah') || lowerMsg.includes('capek') || lowerMsg.includes('tired')) {
+      return 'Tubuhmu memberi sinyal untuk istirahat. Pastikan kamu cukup minum air dan tidur 7-9 jam. Coba ambil Quiz Kelelahan untuk cek kondisimu ya! 😴';
+    }
+    if (lowerMsg.includes('sedih') || lowerMsg.includes('sad')) {
+      return 'Perasaan sedih itu valid. Tidak perlu terburu-buru untuk merasa baik. Coba catat moodmu di fitur Mood Logger, dan ingat — kamu tidak sendirian. 💙';
+    }
+    if (lowerMsg.includes('senang') || lowerMsg.includes('happy') || lowerMsg.includes('baik')) {
+      return 'Senang mendengarnya! 😊 Manfaatkan energi positif ini untuk hal-hal produktif. Cek Dashboard untuk melihat progress harianmu!';
+    }
+    if (lowerMsg.includes('fokus') || lowerMsg.includes('focus') || lowerMsg.includes('konsentrasi')) {
+      return 'Tips fokus: 1) Gunakan teknik Pomodoro 25/5, 2) Matikan notifikasi yang mengganggu, 3) Tentukan satu prioritas utama, 4) Pastikan tempat kerjamu nyaman. Coba mulai sesi Pomodoro sekarang! 🎯';
+    }
+    if (lowerMsg.includes('tidur') || lowerMsg.includes('sleep') || lowerMsg.includes('insomnia')) {
+      return 'Kualitas tidur sangat penting. Coba: 1) Hindari layar 1 jam sebelum tidur, 2) Buat rutinitas tidur yang konsisten, 3) Kurangi kafein setelah jam 2 siang. Tidur yang cukup sangat mempengaruhi produktivitas. 🌙';
+    }
+    return 'Terima kasih sudah berbagi! Aku di sini untuk membantumu. Kamu bisa ceritakan perasaanmu, tanya tips produktivitas, atau coba fitur-fitur HAPI seperti Pomodoro Timer dan Quiz Kelelahan. 🤗';
   }
-  if (lowerMsg.includes('lelah') || lowerMsg.includes('capek') || lowerMsg.includes('tired')) {
-    return 'Tubuhmu memberi sinyal untuk istirahat. Pastikan kamu cukup minum air dan tidur 7-9 jam. Coba ambil Quiz Kelelahan untuk cek kondisimu ya! 😴';
-  }
-  if (lowerMsg.includes('sedih') || lowerMsg.includes('sad')) {
-    return 'Perasaan sedih itu valid. Tidak perlu terburu-buru untuk merasa baik. Coba catat moodmu di fitur Mood Logger, dan ingat — kamu tidak sendirian. 💙';
-  }
-  if (lowerMsg.includes('senang') || lowerMsg.includes('happy') || lowerMsg.includes('baik')) {
-    return 'Senang mendengarnya! 😊 Manfaatkan energi positif ini untuk hal-hal produktif. Cek Dashboard untuk melihat progress harianmu!';
-  }
-  if (lowerMsg.includes('fokus') || lowerMsg.includes('focus') || lowerMsg.includes('konsentrasi')) {
-    return 'Tips fokus: 1) Gunakan teknik Pomodoro 25/5, 2) Matikan notifikasi yang mengganggu, 3) Tentukan satu prioritas utama, 4) Pastikan tempat kerjamu nyaman. Coba mulai sesi Pomodoro sekarang! 🎯';
-  }
-  if (lowerMsg.includes('tidur') || lowerMsg.includes('sleep') || lowerMsg.includes('insomnia')) {
-    return 'Kualitas tidur sangat penting. Coba: 1) Hindari layar 1 jam sebelum tidur, 2) Buat rutinitas tidur yang konsisten, 3) Kurangi kafein setelah jam 2 siang. Tidur yang cukup sangat mempengaruhi produktivitas. 🌙';
-  }
-
-  return 'Terima kasih sudah berbagi! Aku di sini untuk membantumu. Kamu bisa ceritakan perasaanmu, tanya tips produktivitas, atau coba fitur-fitur HAPI seperti Pomodoro Timer dan Quiz Kelelahan. 🤗';
 }
 
 async function clearWidgetChat() {
   const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
   Swal.fire({
-    title: 'Hapus Riwayat?',
-    text: 'Semua riwayat chat akan dihapus.',
+    title: window.t ? window.t('chatbot.clear_title', 'Hapus Riwayat?') : 'Hapus Riwayat?',
+    text: window.t ? window.t('chatbot.clear_text', 'Semua riwayat chat akan dihapus.') : 'Semua riwayat chat akan dihapus.',
     icon: 'warning',
     showCancelButton: true,
-    confirmButtonText: 'Ya, hapus!',
-    cancelButtonText: 'Batal',
+    confirmButtonText: window.t ? window.t('common.yes_delete', 'Ya, hapus!') : 'Ya, hapus!',
+    cancelButtonText: window.t ? window.t('common.cancel', 'Batal') : 'Batal',
     confirmButtonColor: '#A86240',
     cancelButtonColor: '#489A98',
     background: isDark ? '#1e1611' : '#ffffff',
@@ -244,11 +279,16 @@ async function clearWidgetChat() {
         // await axios.delete('/api/chat');
         const container = document.getElementById('widget-chat-messages');
         if (container) {
-          container.innerHTML = `<div class="flex justify-start animate-fade-in"><div class="flex gap-2.5 max-w-[85%]"><div class="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="bot" class="w-3.5 h-3.5 text-white"></i></div><div class="widget-bubble-ai"><p class="text-sm leading-relaxed">Percakapan telah dibersihkan! ✨ Ada yang bisa kubantu?</p></div></div></div>`;
+          const clearedMsg = window.t ? window.t('chatbot.cleared_msg', 'Percakapan telah dibersihkan! ✨ Ada yang bisa kubantu?') : 'Percakapan telah dibersihkan! ✨ Ada yang bisa kubantu?';
+          container.innerHTML = `<div class="flex justify-start animate-fade-in"><div class="flex gap-2.5 max-w-[85%]"><div class="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="bot" class="w-3.5 h-3.5 text-white"></i></div><div class="widget-bubble-ai"><p class="text-sm leading-relaxed">${clearedMsg}</p></div></div></div>`;
           lucide.createIcons();
         }
-        const qa = document.getElementById('chatbot-quick-actions');
-        if (qa) qa.style.display = '';
+        const sugg = document.getElementById('chatbot-suggestions');
+        const inpCont = document.getElementById('widget-input-container');
+        if (sugg && inpCont) {
+          sugg.style.display = 'flex';
+          inpCont.classList.add('hidden');
+        }
       } catch(err) {
         // Silently fail
       }

@@ -8,8 +8,8 @@
       <div class="w-16 h-16 rounded-2xl bg-success-500/15 flex items-center justify-center mx-auto mb-4">
         <i data-lucide="check-circle" class="w-8 h-8 text-success-400"></i>
       </div>
-      <h3 class="text-2xl font-bold font-display text-surface-50 mb-2" data-i18n="quiz.alreadyDoneTitle">Quiz Hari Ini Sudah Selesai</h3>
-      <p class="text-sm text-surface-400" data-i18n="quiz.alreadyDoneDesc">Kamu sudah mengisi quiz kelelahan hari ini. Berikut hasil terakhirmu:</p>
+      <h3 class="text-2xl font-bold font-display text-surface-50 mb-2" ><%= t('quiz.alreadyDoneTitle', 'Quiz Hari Ini Sudah Selesai') %></h3>
+      <p class="text-sm text-surface-400" ><%= t('quiz.alreadyDoneDesc', 'Kamu sudah mengisi quiz kelelahan hari ini. Berikut hasil terakhirmu:') %></p>
     </div>
 
     <!-- Score Gauge -->
@@ -51,7 +51,7 @@
     <div class="mb-6">
       <h4 class="text-lg font-bold font-display text-surface-50 mb-4 flex items-center gap-2">
         <i data-lucide="lightbulb" class="w-5 h-5 text-warning-400"></i>
-        <span data-i18n="quiz.result">Rekomendasi</span>
+        <span ><%= t('quiz.result', 'Rekomendasi') %></span>
       </h4>
       <div class="space-y-3">
         <% todayResult.recommendations.insights.forEach(function(ins) { %>
@@ -73,17 +73,17 @@
     <div class="flex flex-col sm:flex-row gap-3 justify-center pt-4 border-t border-surface-700/30">
       <a href="/dashboard" class="btn-secondary">
         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-        <span data-i18n="nav.dashboard">Dashboard</span>
+        <span ><%= t('nav.dashboard', 'Dashboard') %></span>
       </a>
       <a href="/analytics" class="btn-secondary">
         <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-        <span data-i18n="nav.analytics">Lihat Analitik</span>
+        <span ><%= t('nav.analytics', 'Lihat Analitik') %></span>
       </a>
     </div>
   </div>
 
   <div class="mt-4 text-center">
-    <p class="text-xs text-surface-500 mb-12 sm:mb-0" data-i18n="quiz.alreadyDoneFooter">Quiz dapat diisi kembali besok. Hasil ini berlaku untuk hari ini.</p>
+    <p class="text-xs text-surface-500 mb-12 sm:mb-0" ><%= t('quiz.alreadyDoneFooter', 'Quiz dapat diisi kembali besok. Hasil ini berlaku untuk hari ini.') %></p>
   </div>
 
 <% } else { %>
@@ -91,7 +91,7 @@
   <!-- Progress -->
   <div class="glass-card p-4 mb-6" id="quiz-progress-bar">
     <div class="flex items-center justify-between mb-2">
-      <span class="text-sm text-surface-400"><span data-i18n="quiz.question">Pertanyaan</span> <span id="q-current">1</span> <span data-i18n="quiz.of">dari</span> <span id="q-total"><%= questions.length %></span></span>
+      <span class="text-sm text-surface-400"><span ><%= t('quiz.question', 'Pertanyaan') %></span> <span id="q-current">1</span> <span ><%= t('quiz.of', 'dari') %></span> <span id="q-total"><%= questions.length %></span></span>
       <span class="text-sm font-semibold" id="q-dimension" style="color: #A86240"></span>
     </div>
     <div class="h-2 bg-surface-700 rounded-full overflow-hidden">
@@ -113,7 +113,7 @@
           <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="31.4" stroke-dashoffset="10" stroke-linecap="round"/>
         </svg>
       </div>
-      <p class="text-surface-300 font-medium" data-i18n="quiz.analyzing">Menganalisis jawabanmu...</p>
+      <p class="text-surface-300 font-medium" ><%= t('quiz.analyzing', 'Menganalisis jawabanmu...') %></p>
     </div>
 
     <!-- Result -->
@@ -145,7 +145,7 @@
       <div class="mb-8">
         <h4 class="text-lg font-bold font-display text-surface-50 mb-4 flex items-center gap-2">
           <i data-lucide="bar-chart-3" class="w-5 h-5" style="color: #A86240"></i>
-          <span data-i18n="quiz.dimensionBreakdown">Rincian Per Dimensi</span>
+          <span ><%= t('quiz.dimensionBreakdown', 'Rincian Per Dimensi') %></span>
         </h4>
         <div class="space-y-4" id="dimension-bars">
 
@@ -155,8 +155,8 @@
               <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background: rgba(239,68,68,0.12)">🔥</div>
                 <div>
-                  <p class="text-sm font-semibold text-surface-100" data-i18n="quiz.exhaustion">Kelelahan (Exhaustion)</p>
-                  <p class="text-[10px] text-surface-500" data-i18n="quiz.exhaustionDesc">Tingkat kelelahan fisik & emosional</p>
+                  <p class="text-sm font-semibold text-surface-100" ><%= t('quiz.exhaustion', 'Kelelahan (Exhaustion)') %></p>
+                  <p class="text-[10px] text-surface-500" ><%= t('quiz.exhaustionDesc', 'Tingkat kelelahan fisik & emosional') %></p>
                 </div>
               </div>
               <span id="dim-exhaustion-val" class="text-lg font-bold font-mono text-surface-100">0%</span>
@@ -173,8 +173,8 @@
               <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background: rgba(168,98,64,0.12)">😔</div>
                 <div>
-                  <p class="text-sm font-semibold text-surface-100" data-i18n="quiz.cynicism">Sinisme (Cynicism)</p>
-                  <p class="text-[10px] text-surface-500" data-i18n="quiz.cynicismDesc">Sikap negatif terhadap studi</p>
+                  <p class="text-sm font-semibold text-surface-100" ><%= t('quiz.cynicism', 'Sinisme (Cynicism)') %></p>
+                  <p class="text-[10px] text-surface-500" ><%= t('quiz.cynicismDesc', 'Sikap negatif terhadap studi') %></p>
                 </div>
               </div>
               <span id="dim-cynicism-val" class="text-lg font-bold font-mono text-surface-100">0%</span>
@@ -191,8 +191,8 @@
               <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background: rgba(34,197,94,0.12)">📚</div>
                 <div>
-                  <p class="text-sm font-semibold text-surface-100" data-i18n="quiz.efficacy">Efikasi Akademik</p>
-                  <p class="text-[10px] text-surface-500" data-i18n="quiz.efficacyDesc">Keyakinan terhadap kemampuan akademik</p>
+                  <p class="text-sm font-semibold text-surface-100" ><%= t('quiz.efficacy', 'Efikasi Akademik') %></p>
+                  <p class="text-[10px] text-surface-500" ><%= t('quiz.efficacyDesc', 'Keyakinan terhadap kemampuan akademik') %></p>
                 </div>
               </div>
               <span id="dim-efficacy-val" class="text-lg font-bold font-mono text-surface-100">0%</span>
@@ -210,7 +210,7 @@
       <div class="mb-6">
         <h4 class="text-lg font-bold font-display text-surface-50 mb-4 flex items-center gap-2">
           <i data-lucide="lightbulb" class="w-5 h-5 text-warning-400"></i>
-          <span data-i18n="quiz.recommendations">Rekomendasi</span>
+          <span ><%= t('quiz.recommendations', 'Rekomendasi') %></span>
         </h4>
         <div id="result-recommendations" class="space-y-3"></div>
       </div>
@@ -219,18 +219,18 @@
       <div class="flex flex-col sm:flex-row gap-3 justify-center pt-4 border-t border-surface-700/30">
         <a href="/dashboard" class="btn-secondary">
           <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-          <span data-i18n="quiz.toDashboard">Dashboard</span>
+          <span ><%= t('quiz.toDashboard', 'Dashboard') %></span>
         </a>
         <a href="/analytics" class="btn-secondary">
           <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-          <span data-i18n="quiz.toAnalytics">Lihat Analitik</span>
+          <span ><%= t('quiz.toAnalytics', 'Lihat Analitik') %></span>
         </a>
       </div>
     </div>
   </div>
 
   <div class="mt-4 text-center">
-    <p class="text-xs text-surface-500" data-i18n="quiz.disclaimer">⚠️ Hasil quiz ini bukan diagnosis medis. Konsultasikan dengan profesional jika diperlukan.</p>
+    <p class="text-xs text-surface-500" ><%= t('quiz.disclaimer', '⚠️ Hasil quiz ini bukan diagnosis medis. Konsultasikan dengan profesional jika diperlukan.') %></p>
   </div>
 <% } %>
 </div>
@@ -418,7 +418,8 @@ async function submitQuiz() {
       });
     }
     if (data.recommendations && data.recommendations.activities) {
-      data.recommendations.activities.forEach(a => {
+      const activitiesList = (lang === 'en' && data.recommendations.activities_en) ? data.recommendations.activities_en : data.recommendations.activities;
+      activitiesList.forEach(a => {
         recContainer.innerHTML += `<div class="p-3 rounded-xl bg-surface-800/30 text-sm text-surface-300 flex items-start gap-3"><span class="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5" style="background: rgba(168,98,64,0.15); color: #A86240">✓</span><span class="leading-relaxed">${a}</span></div>`;
       });
     }
