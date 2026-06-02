@@ -1,9 +1,0 @@
-{
-  "google_connected": "google_connected",
-  "google_disconnected": "google_disconnected",
-  "google_not_connected": "google_not_connected",
-  "google_sync_success": "google_sync_success",
-  "sync_failed": "sync_failed",
-  "sync_success": "sync_success",
-  "untitled_event": "untitled_event"
-}

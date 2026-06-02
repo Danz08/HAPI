@@ -6,46 +6,12 @@ const pgSession = require('connect-pg-simple')(session);
 const flash = require('connect-flash');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
-const i18next = require('i18next');
-const i18nextMiddleware = require('i18next-http-middleware');
 const cookieParser = require('cookie-parser');
 const fs = require('fs');
 
 const { initDatabase, pool } = require('./src/config/database');
 
-// Load translation resources synchronously
-function loadResources() {
-  const resources = { en: { translation: {} }, id: { translation: {} } };
-  const langs = ['en', 'id'];
-  for (const lang of langs) {
-    const dir = path.join(__dirname, 'locales', lang);
-    if (fs.existsSync(dir)) {
-      const files = fs.readdirSync(dir);
-      for (const file of files) {
-        if (file.endsWith('.json')) {
-          const ns = file.replace('.json', '');
-          const data = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8'));
-          resources[lang].translation[ns] = data;
-        }
-      }
-    }
-  }
-  return resources;
-}
 
-// i18next Configuration
-i18next
-  .use(i18nextMiddleware.LanguageDetector)
-  .init({
-    resources: loadResources(),
-    fallbackLng: 'id',
-    preload: ['id', 'en'],
-    defaultNS: 'translation',
-    saveMissing: false,
-    missingKeyHandler: (lng, ns, key, fallbackValue) => {
-      console.warn(`[i18next] Missing key: ${ns}.${key} in language: ${lng}`);
-    }
-  });
 
 // Route imports
 const indexRoutes = require('./src/routes/index');
@@ -76,7 +42,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
-app.use(i18nextMiddleware.handle(i18next));
 
 app.set('trust proxy', 1);
 
@@ -148,8 +113,6 @@ app.use(async (req, res, next) => {
   res.locals.error = req.flash('error');
   res.locals.warning = req.flash('warning');
   res.locals.currentPath = req.path;
-  res.locals.currentLang = req.language || 'id';
-  res.locals.langDict = req.i18n ? (req.i18n.getResourceBundle(req.language, 'translation') || {}) : {};
 
   // Check if mood already logged today (for navbar mood button)
   res.locals.moodLoggedToday = false;

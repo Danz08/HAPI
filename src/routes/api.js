@@ -68,15 +68,15 @@ router.post('/mood', async (req, res) => {
   const { mood_score, mood_label, energy_level, stress_level, notes } = req.body;
 
   if (!mood_score || mood_score < 1 || mood_score > 5) {
-    return res.status(400).json({ error: req.t('validation.mood_score_invalid', 'Mood score harus antara 1-5.') });
+    return res.status(400).json({ error: 'Mood score harus antara 1-5.' });
   }
 
   const labels = {
-    1: req.t('mood.1', 'Sangat Buruk'),
-    2: req.t('mood.2', 'Buruk'),
-    3: req.t('mood.3', 'Biasa'),
-    4: req.t('mood.4', 'Baik'),
-    5: req.t('mood.5', 'Sangat Baik')
+    1: 'Sangat Buruk',
+    2: 'Buruk',
+    3: 'Biasa',
+    4: 'Baik',
+    5: 'Sangat Baik'
   };
 
   const today = getLocalToday(req);
@@ -89,7 +89,7 @@ router.post('/mood', async (req, res) => {
   ).get(req.session.user.id, today);
 
   if (existingMood) {
-    return res.status(400).json({ error: req.t('validation.mood_already_logged', 'Kamu sudah mencatat mood hari ini. Coba lagi besok!'), alreadyLogged: true });
+    return res.status(400).json({ error: 'Kamu sudah mencatat mood hari ini. Coba lagi besok!', alreadyLogged: true });
   }
 
   await db.prepare(`
@@ -98,7 +98,7 @@ router.post('/mood', async (req, res) => {
   `).run(
     req.session.user.id,
     mood_score,
-    mood_label || labels[mood_score] || req.t('mood.3', 'Biasa'),
+    mood_label || labels[mood_score] || 'Biasa',
     energy_level || null,
     stress_level || null,
     notes || null,
@@ -190,7 +190,7 @@ router.post('/pomodoro/sessions', async (req, res) => {
     VALUES (?, 'pomodoro', ?, ?, ?, ?)
   `).run(
     req.session.user.id,
-    req.t('pomodoro.pomodoro_completed_log', { cycles: cycles_completed, defaultValue: `Pomodoro: ${cycles_completed} siklus selesai` }),
+    `Pomodoro: ${cycles_completed} siklus selesai`,
     total_focus_minutes || 25,
     (break_duration || 5) * (cycles_completed || 1),
     today
@@ -232,7 +232,7 @@ router.post('/quiz', async (req, res) => {
   const QUIZ_QUESTION_COUNT = 15;
 
   if (!answers || !Array.isArray(answers) || answers.length !== QUIZ_QUESTION_COUNT) {
-    return res.status(400).json({ error: req.t('validation.quiz_incomplete', 'Jawab semua pertanyaan terlebih dahulu.') });
+    return res.status(400).json({ error: 'Jawab semua pertanyaan terlebih dahulu.' });
   }
 
   const numericAnswers = answers.map(Number);
@@ -249,7 +249,7 @@ router.post('/quiz', async (req, res) => {
   ).get(req.session.user.id, today);
 
   if (existingQuiz) {
-    return res.status(400).json({ error: req.t('validation.quiz_already_taken', 'Kamu sudah mengisi quiz hari ini. Coba lagi besok!') });
+    return res.status(400).json({ error: 'Kamu sudah mengisi quiz hari ini. Coba lagi besok!' });
   }
 
   // Save to database
@@ -325,13 +325,13 @@ router.post('/chat', (req, res) => {
   const { message } = req.body;
 
   if (!message || message.trim().length === 0) {
-    return res.status(400).json({ error: req.t('validation.empty_message', 'Pesan tidak boleh kosong.') });
+    return res.status(400).json({ error: 'Pesan tidak boleh kosong.' });
   }
 
   // TODO: Replace with actual AI API call
   res.json({
     success: true,
-    response: req.t('chat.dev_mode', 'Fitur AI chatbot sedang dalam pengembangan. Sementara ini, chatbot menggunakan respons lokal.'),
+    response: 'Fitur AI chatbot sedang dalam pengembangan. Sementara ini, chatbot menggunakan respons lokal.',
   });
 });
 

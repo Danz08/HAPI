@@ -10,10 +10,7 @@ function processDir(dir) {
     } else if (fullPath.endsWith('.ejs')) {
       let content = fs.readFileSync(fullPath, 'utf8');
 
-      // Replace data-i18n="key" with <%= t('key') %>
-      // Example: <span data-i18n="dashboard.greeting">Selamat datang</span>
-      // To: <span><%= t('dashboard.greeting') %></span>
-      content = content.replace(/<([^>]+)\sdata-i18n="([^"]+)"([^>]*)>([^<]*)<\/\1>/g, '<$1$3><%= t(\'$2\') %></$1>');
+      // Replace data-i18n="key" with <%= '<$1$3><%= t(\'$2\' %></$1>');
       
       // Sometimes it's just data-i18n="key" on an element with children or other things, regex above might fail if nested tags.
       // Better approach: Just replace data-i18n attributes. But we want to replace the TEXT inside it too.

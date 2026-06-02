@@ -11,10 +11,10 @@
               <i data-lucide="bot" class="w-5 h-5 text-white"></i>
             </div>
             <div>
-              <p class="font-bold text-sm text-surface-100" ><%= t('chat.name', 'HAPI Asisten') %></p>
+              <p class="font-bold text-sm text-surface-100" >HAPI Asisten</p>
               <p class="text-[11px] text-success-400 flex items-center gap-1.5">
                 <span class="w-1.5 h-1.5 bg-success-400 rounded-full animate-pulse-soft"></span>
-                <span ><%= t('chat.status', 'Siap membantumu') %></span>
+                <span >Siap membantumu</span>
               </p>
             </div>
           </div>
@@ -38,19 +38,19 @@
               <i data-lucide="bot" class="w-3.5 h-3.5 text-white"></i>
             </div>
             <div class="widget-bubble-ai">
-              <p class="text-sm leading-relaxed" ><%= t('chat.welcome', 'Halo! 👋 Aku HAPI Asisten. Ceritakan apa yang kamu rasakan, atau tanyakan apa saja seputar produktivitas dan kesehatanmu.') %></p>
+              <p class="text-sm leading-relaxed" >Halo! 👋 Aku HAPI Asisten. Ceritakan apa yang kamu rasakan, atau tanyakan apa saja seputar produktivitas dan kesehatanmu.</p>
             </div>
           </div>
         </div>
 
         <!-- Chatbot Suggestions -->
         <div id="chatbot-suggestions" class="flex flex-col gap-2 mt-4 animate-fade-in">
-          <p class="text-xs text-center text-surface-400 mb-1" ><%= t('chat.suggestionText', 'Pilih topik untuk memulai percakapan:') %></p>
-          <button onclick="startChatSuggestion('chat.quick.stress')" class="w-full text-left p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700 border border-surface-600/30 transition-colors text-sm text-surface-200"><span ><%= t('chat.quick.stressBtn', '😩 Aku merasa stres') %></span></button>
-          <button onclick="startChatSuggestion('chat.quick.tired')" class="w-full text-left p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700 border border-surface-600/30 transition-colors text-sm text-surface-200"><span ><%= t('chat.quick.tiredBtn', '😴 Aku merasa lelah') %></span></button>
-          <button onclick="startChatSuggestion('chat.quick.sad')" class="w-full text-left p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700 border border-surface-600/30 transition-colors text-sm text-surface-200"><span ><%= t('chat.quick.sadBtn', '😢 Aku merasa sedih') %></span></button>
-          <button onclick="startChatSuggestion('chat.quick.happy')" class="w-full text-left p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700 border border-surface-600/30 transition-colors text-sm text-surface-200"><span ><%= t('chat.quick.happyBtn', '😊 Aku merasa senang') %></span></button>
-          <button onclick="startChatCustom()" class="w-full text-center p-3 rounded-xl bg-brand-600/20 hover:bg-brand-600/30 border border-brand-500/30 transition-colors text-sm font-medium text-brand-300 mt-2" ><%= t('chat.startCustom', 'Ketik pesan sendiri...') %></button>
+          <p class="text-xs text-center text-surface-400 mb-1" >Pilih topik untuk memulai percakapan:</p>
+          <button onclick="startChatSuggestion('chat.quick.stress')" class="w-full text-left p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700 border border-surface-600/30 transition-colors text-sm text-surface-200"><span >😩 Aku merasa stres</span></button>
+          <button onclick="startChatSuggestion('chat.quick.tired')" class="w-full text-left p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700 border border-surface-600/30 transition-colors text-sm text-surface-200"><span >😴 Aku merasa lelah</span></button>
+          <button onclick="startChatSuggestion('chat.quick.sad')" class="w-full text-left p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700 border border-surface-600/30 transition-colors text-sm text-surface-200"><span >😢 Aku merasa sedih</span></button>
+          <button onclick="startChatSuggestion('chat.quick.happy')" class="w-full text-left p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700 border border-surface-600/30 transition-colors text-sm text-surface-200"><span >😊 Aku merasa senang</span></button>
+          <button onclick="startChatCustom()" class="w-full text-center p-3 rounded-xl bg-brand-600/20 hover:bg-brand-600/30 border border-brand-500/30 transition-colors text-sm font-medium text-brand-300 mt-2" >Ketik pesan sendiri...</button>
         </div>
       </div>
 
@@ -113,7 +113,7 @@ function toggleChatbot() {
 }
 
 function startChatSuggestion(key) {
-  const msg = window.t ? window.t(key) : 'Pesan';
+  const msg = 'Pesan';
   startChatCustom();
   const input = document.getElementById('widget-chat-input');
   if (input) {
@@ -185,7 +185,7 @@ document.getElementById('widget-chat-form')?.addEventListener('submit', async (e
 
   try {
     // TODO: Replace with actual API call when AI API is integrated
-    // const res = await axios.post('/api/chat', { message: msg, language: window.getLang ? window.getLang() : 'id' });
+    // const res = await axios.post('/api/chat', { message: msg, language: 'id' });
     // if (res.data.success) {
     //   appendWidgetMessage('ai', res.data.response);
     // }
@@ -257,12 +257,12 @@ function generatePlaceholderResponse(message) {
 async function clearWidgetChat() {
   const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
   Swal.fire({
-    title: window.t ? window.t('chatbot.clear_title', 'Hapus Riwayat?') : 'Hapus Riwayat?',
-    text: window.t ? window.t('chatbot.clear_text', 'Semua riwayat chat akan dihapus.') : 'Semua riwayat chat akan dihapus.',
+    title: 'Hapus Riwayat?',
+    text: 'Semua riwayat chat akan dihapus.',
     icon: 'warning',
     showCancelButton: true,
-    confirmButtonText: window.t ? window.t('common.yes_delete', 'Ya, hapus!') : 'Ya, hapus!',
-    cancelButtonText: window.t ? window.t('common.cancel', 'Batal') : 'Batal',
+    confirmButtonText: 'Ya, hapus!',
+    cancelButtonText: 'Batal',
     confirmButtonColor: '#A86240',
     cancelButtonColor: '#489A98',
     background: isDark ? '#1e1611' : '#ffffff',
@@ -279,7 +279,7 @@ async function clearWidgetChat() {
         // await axios.delete('/api/chat');
         const container = document.getElementById('widget-chat-messages');
         if (container) {
-          const clearedMsg = window.t ? window.t('chatbot.cleared_msg', 'Percakapan telah dibersihkan! ✨ Ada yang bisa kubantu?') : 'Percakapan telah dibersihkan! ✨ Ada yang bisa kubantu?';
+          const clearedMsg = 'Percakapan telah dibersihkan! ✨ Ada yang bisa kubantu?';
           container.innerHTML = `<div class="flex justify-start animate-fade-in"><div class="flex gap-2.5 max-w-[85%]"><div class="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="bot" class="w-3.5 h-3.5 text-white"></i></div><div class="widget-bubble-ai"><p class="text-sm leading-relaxed">${clearedMsg}</p></div></div></div>`;
           lucide.createIcons();
         }

@@ -50,7 +50,7 @@ router.get('/callback', async (req, res) => {
   const flowType = req.query.state || 'login'; // 'login' or 'connect'
 
   if (!code) {
-    req.flash('error', req.t('auth.google_auth_cancelled', 'Autentikasi Google dibatalkan.'));
+    req.flash('error', 'Autentikasi Google dibatalkan.');
     return res.redirect(flowType === 'connect' ? '/analytics' : '/auth/login');
   }
 
@@ -85,10 +85,10 @@ router.get('/callback', async (req, res) => {
       try {
         const tz = (req.cookies && req.cookies.timezone) ? req.cookies.timezone : 'Asia/Jakarta';
         await syncCalendarEvents(oauth2Client, userId, 30, tz);
-        req.flash('success', req.t('calendar.google_sync_success', 'Google Calendar berhasil terhubung dan data tersinkronisasi! 📅'));
+        req.flash('success', 'Google Calendar berhasil terhubung dan data tersinkronisasi! 📅');
       } catch (syncErr) {
         console.error('Calendar sync error:', syncErr);
-        req.flash('success', req.t('calendar.google_connected', 'Google Calendar terhubung!'));
+        req.flash('success', 'Google Calendar terhubung!');
       }
 
       req.session.user.login_method = 'google';
@@ -154,7 +154,7 @@ router.get('/callback', async (req, res) => {
 
   } catch (err) {
     console.error('Google OAuth error:', err);
-    req.flash('error', req.t('auth.google_connect_failed', 'Gagal menghubungkan Google. Silakan coba lagi.'));
+    req.flash('error', 'Gagal menghubungkan Google. Silakan coba lagi.');
     return res.redirect(flowType === 'connect' ? '/analytics' : '/auth/login');
   }
 });
@@ -175,7 +175,7 @@ router.get('/disconnect', requireAuth, async (req, res) => {
   await db.prepare('DELETE FROM calendar_events WHERE user_id = ?').run(req.session.user.id);
   await db.prepare('DELETE FROM calendar_features WHERE user_id = ?').run(req.session.user.id);
 
-  req.flash('success', req.t('calendar.google_disconnected', 'Google Calendar berhasil diputuskan.'));
+  req.flash('success', 'Google Calendar berhasil diputuskan.');
   res.redirect('/analytics');
 });
 
@@ -186,7 +186,7 @@ router.post('/sync', requireAuth, async (req, res) => {
   const user = await db.prepare('SELECT google_refresh_token, google_access_token, google_token_expiry FROM users WHERE id = ?').get(userId);
 
   if (!user || !user.google_refresh_token) {
-    return res.status(400).json({ error: req.t('calendar.google_not_connected', 'Google Calendar belum terhubung.') });
+    return res.status(400).json({ error: 'Google Calendar belum terhubung.' });
   }
 
   try {
@@ -213,10 +213,10 @@ router.post('/sync', requireAuth, async (req, res) => {
     const tz = (req.cookies && req.cookies.timezone) ? req.cookies.timezone : 'Asia/Jakarta';
     await syncCalendarEvents(oauth2Client, userId, days, tz);
 
-    res.json({ success: true, message: req.t('calendar.sync_success', 'Kalender berhasil disinkronisasi.') });
+    res.json({ success: true, message: 'Kalender berhasil disinkronisasi.' });
   } catch (err) {
     console.error('Calendar sync error:', err);
-    res.status(500).json({ error: req.t('calendar.sync_failed', 'Gagal menyinkronisasi kalender.') });
+    res.status(500).json({ error: 'Gagal menyinkronisasi kalender.' });
   }
 });
 
@@ -271,7 +271,7 @@ async function syncCalendarEvents(oauth2Client, userId, days = 30, tz = 'Asia/Ja
     `).run(
       userId,
       ev.id,
-      ev.summary || req.t('calendar.untitled_event', '(Tanpa judul)'),
+      ev.summary || '(Tanpa judul)',
       ev.start.dateTime || ev.start.date,
       ev.end.dateTime || ev.end.date,
       dateStr,

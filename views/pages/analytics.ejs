@@ -22,21 +22,21 @@
         <i data-lucide="calendar-check" class="w-5 h-5 text-brand-400"></i>
       </div>
       <div class="stat-value text-xl"><%= activeDays %>/<%= daysInMonth %></div>
-      <div class="stat-label" ><%= t('analytics.activeDays', 'Hari Aktif') %></div>
+      <div class="stat-label" >Hari Aktif</div>
     </div>
     <div class="stat-card">
       <div class="w-9 h-9 rounded-xl bg-accent-purple/15 flex items-center justify-center mb-2">
         <i data-lucide="clock" class="w-5 h-5 text-accent-purple"></i>
       </div>
       <div class="stat-value text-xl"><%= Math.floor(monthlyWork.total / 60) %>h <%= monthlyWork.total % 60 %>m</div>
-      <div class="stat-label" ><%= t('analytics.totalWork', 'Total Kerja') %></div>
+      <div class="stat-label" >Total Kerja</div>
     </div>
     <div class="stat-card">
       <div class="w-9 h-9 rounded-xl bg-success-500/15 flex items-center justify-center mb-2">
         <i data-lucide="timer" class="w-5 h-5 text-success-400"></i>
       </div>
       <div class="stat-value text-xl"><%= monthlyPomodoro.cycles %></div>
-      <div class="stat-label" ><%= t('analytics.pomodoroCycles', 'Siklus Pomodoro') %></div>
+      <div class="stat-label" >Siklus Pomodoro</div>
     </div>
     <div class="stat-card">
       <div class="w-9 h-9 rounded-xl bg-accent-pink/15 flex items-center justify-center mb-2">
@@ -44,7 +44,7 @@
       </div>
       <% const avgM = monthlyMood.avg ? (Math.round(monthlyMood.avg * 10) / 10) : 0; %>
       <div class="stat-value text-xl"><%= avgM > 0 ? avgM + '/5' : '—' %></div>
-      <div class="stat-label" ><%= t('analytics.avgMood', 'Avg Mood') %></div>
+      <div class="stat-label" >Avg Mood</div>
     </div>
     <div class="stat-card">
       <div class="w-9 h-9 rounded-xl bg-warning-500/15 flex items-center justify-center mb-2">
@@ -52,7 +52,7 @@
       </div>
       <div class="stat-value text-xl"><%= streak %></div>
       <div class="text-[10px] text-surface-400 font-normal mt-1">Streak terlama: <%= typeof longest_streak !== 'undefined' ? longest_streak : 0 %></div>
-      <div class="stat-label mt-1" ><%= t('analytics.streak', 'Streak Hari Ini') %></div>
+      <div class="stat-label mt-1" >Streak Hari Ini</div>
     </div>
   </div>
 
@@ -61,35 +61,35 @@
     <!-- Calendar -->
     <div class="lg:col-span-2 glass-card p-6">
       <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
-        <i data-lucide="calendar" class="w-5 h-5 inline text-brand-400 mr-2"></i><span ><%= t('analytics.calendar', 'Kalender Aktivitas') %></span>
+        <i data-lucide="calendar" class="w-5 h-5 inline text-brand-400 mr-2"></i><span >Kalender Aktivitas</span>
       </h3>
       <!-- Legend -->
       <div class="flex flex-wrap items-center gap-2 md:gap-4 mb-4 text-[10px] md:text-xs text-surface-400">
-        <span ><%= t('analytics.legend.intensity', 'Intensitas:') %></span>
+        <span >Intensitas:</span>
         <div class="flex items-center gap-1">
           <div class="w-4 h-4 rounded bg-surface-800 border border-surface-700"></div>
-          <span ><%= t('analytics.legend.none', 'Tidak ada') %></span>
+          <span >Tidak ada</span>
         </div>
         <div class="flex items-center gap-1">
           <div class="w-4 h-4 rounded bg-brand-900/60"></div>
-          <span ><%= t('analytics.legend.low', 'Rendah') %></span>
+          <span >Rendah</span>
         </div>
         <div class="flex items-center gap-1">
           <div class="w-4 h-4 rounded bg-brand-700/70"></div>
-          <span ><%= t('analytics.legend.med', 'Sedang') %></span>
+          <span >Sedang</span>
         </div>
         <div class="flex items-center gap-1">
           <div class="w-4 h-4 rounded bg-brand-500"></div>
-          <span ><%= t('analytics.legend.high', 'Tinggi') %></span>
+          <span >Tinggi</span>
         </div>
         <div class="flex items-center gap-1">
           <div class="w-4 h-4 rounded bg-brand-400 shadow-lg shadow-brand-400/30"></div>
-          <span ><%= t('analytics.legend.max', 'Maksimal') %></span>
+          <span >Maksimal</span>
         </div>
         <span class="text-surface-600">|</span>
         <div class="flex items-center gap-1">
           <span class="text-sm">🔥</span>
-          <span><%= t('analytics.legend.streak', 'Streak Quiz') %></span>
+          <span>Streak Quiz</span>
         </div>
       </div>
 
@@ -99,7 +99,7 @@
         <% ['min','sen','sel','rab','kam','jum','sab'].forEach((d, i) => { 
              const defaultDays = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
         %>
-          <div class="text-center text-xs font-semibold text-surface-500 py-1.5"><%= t(`analytics.day.${d}`, defaultDays[i]) %></div>
+          <div class="text-center text-xs font-semibold text-surface-500 py-1.5"><%= defaultDays[i] %></div>
         <% }) %>
 
         <!-- Empty cells for first week offset -->
@@ -150,17 +150,17 @@
       <div class="glass-card p-6" id="day-detail-panel">
         <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
           <i data-lucide="info" class="w-5 h-5 inline text-brand-400 mr-2"></i>
-          <span id="detail-title" ><%= t('analytics.detailTitle', 'Detail Hari') %></span>
+          <span id="detail-title" >Detail Hari</span>
         </h3>
         <div id="day-detail-content">
-          <p class="text-sm text-surface-400 text-center py-8" ><%= t('analytics.detailEmpty', 'Klik tanggal di kalender untuk melihat detail aktivitas') %></p>
+          <p class="text-sm text-surface-400 text-center py-8" >Klik tanggal di kalender untuk melihat detail aktivitas</p>
         </div>
       </div>
 
       <!-- Monthly Insights -->
       <div class="glass-card p-6">
         <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
-          <i data-lucide="lightbulb" class="w-5 h-5 inline text-warning-400 mr-1"></i><span ><%= t('analytics.insights', 'Insights') %></span>
+          <i data-lucide="lightbulb" class="w-5 h-5 inline text-warning-400 mr-1"></i><span >Insights</span>
         </h3>
         <div class="space-y-3">
           <% insights.forEach(function(ins) { %>
@@ -182,7 +182,7 @@
     <!-- Work Trend Chart -->
     <div class="glass-card p-6">
       <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
-        <i data-lucide="bar-chart-3" class="w-5 h-5 inline text-brand-400 mr-2"></i><span ><%= t('analytics.workActivity', 'Aktivitas Kerja') %></span>
+        <i data-lucide="bar-chart-3" class="w-5 h-5 inline text-brand-400 mr-2"></i><span >Aktivitas Kerja</span>
       </h3>
       <div class="h-56"><canvas id="workTrendChart"></canvas></div>
     </div>
@@ -190,7 +190,7 @@
     <!-- Mood Trend Chart -->
     <div class="glass-card p-6">
       <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
-        <i data-lucide="trending-up" class="w-5 h-5 inline text-accent-pink mr-2"></i><span ><%= t('analytics.moodTrend', 'Tren Mood') %></span>
+        <i data-lucide="trending-up" class="w-5 h-5 inline text-accent-pink mr-2"></i><span >Tren Mood</span>
       </h3>
       <div class="h-56"><canvas id="moodTrendChart"></canvas></div>
     </div>
@@ -200,7 +200,7 @@
    <% if (activityTypes.length > 0) { %>
   <div class="glass-card p-6">
     <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
-      <i data-lucide="pie-chart" class="w-5 h-5 inline text-accent-purple mr-2"></i><span ><%= t('analytics.activityBreakdown', 'Breakdown Aktivitas') %></span>
+      <i data-lucide="pie-chart" class="w-5 h-5 inline text-accent-purple mr-2"></i><span >Breakdown Aktivitas</span>
     </h3>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <% 
@@ -234,19 +234,19 @@
         <div class="flex items-center gap-2">
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success-500/10 text-success-400 text-xs font-semibold border border-success-500/20">
             <span class="w-1.5 h-1.5 bg-success-400 rounded-full animate-pulse-soft"></span>
-            <span ><%= t('analytics.googleConnected', 'Terhubung') %></span>
+            <span >Terhubung</span>
           </span>
-          <button onclick="syncCalendar()" class="btn-ghost btn-sm" id="btn-sync-cal" title="<%= t('analytics.resync', 'Sinkronisasi ulang') %>">
+          <button onclick="syncCalendar()" class="btn-ghost btn-sm" id="btn-sync-cal" title="Sinkronisasi ulang">
             <i data-lucide="refresh-cw" class="w-4 h-4"></i>
           </button>
-          <a href="/auth/google/disconnect" class="btn-ghost btn-sm text-danger-400 hover:text-danger-300" title="<%= t('analytics.disconnect', 'Putuskan') %>" onclick="return confirm('<%= t('analytics.confirmDisconnect', 'Putuskan Google Calendar?') %>')">
+          <a href="/auth/google/disconnect" class="btn-ghost btn-sm text-danger-400 hover:text-danger-300" title="Putuskan" onclick="return confirm('Putuskan Google Calendar?')">
             <i data-lucide="unlink" class="w-4 h-4"></i>
           </a>
         </div>
       <% } else { %>
         <a href="/auth/google" class="btn-primary btn-sm group" id="btn-connect-google">
           <i data-lucide="link" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
-          <span ><%= t('analytics.googleConnect', 'Hubungkan Google Calendar') %></span>
+          <span >Hubungkan Google Calendar</span>
         </a>
       <% } %>
     </div>
@@ -257,12 +257,12 @@
         <div class="w-16 h-16 rounded-2xl bg-brand-500/10 flex items-center justify-center mx-auto mb-4">
           <i data-lucide="calendar-plus" class="w-8 h-8 text-brand-400"></i>
         </div>
-        <h4 class="text-surface-200 font-semibold mb-2" ><%= t('analytics.googleConnect', 'Hubungkan Google Calendar') %></h4>
-        <p class="text-sm text-surface-400 max-w-md mx-auto mb-4" ><%= t('analytics.googleDesc', 'Analisis jadwalmu secara otomatis untuk mendeteksi risiko burnout berdasarkan jumlah meeting,  durasi kerja, dan meeting back-to-back.') %></p>
+        <h4 class="text-surface-200 font-semibold mb-2" >Hubungkan Google Calendar</h4>
+        <p class="text-sm text-surface-400 max-w-md mx-auto mb-4" >Analisis jadwalmu secara otomatis untuk mendeteksi risiko burnout berdasarkan jumlah meeting,  durasi kerja, dan meeting back-to-back.</p>
         <div class="flex flex-wrap justify-center gap-3 text-xs text-surface-500">
-          <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-success-400"></i> <span ><%= t('analytics.googleFeature1', 'Read-only access') %></span></span>
-          <span class="flex items-center gap-1"><i data-lucide="lock" class="w-3.5 h-3.5 text-brand-400"></i> <span ><%= t('analytics.googleFeature2', 'Data tetap privat') %></span></span>
-          <span class="flex items-center gap-1"><i data-lucide="unlink" class="w-3.5 h-3.5 text-surface-400"></i> <span ><%= t('analytics.googleFeature3', 'Bisa diputuskan kapan saja') %></span></span>
+          <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-success-400"></i> <span >Read-only access</span></span>
+          <span class="flex items-center gap-1"><i data-lucide="lock" class="w-3.5 h-3.5 text-brand-400"></i> <span >Data tetap privat</span></span>
+          <span class="flex items-center gap-1"><i data-lucide="unlink" class="w-3.5 h-3.5 text-surface-400"></i> <span >Bisa diputuskan kapan saja</span></span>
         </div>
       </div>
     <% } else { %>
@@ -270,15 +270,15 @@
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div class="text-center p-4 rounded-xl bg-surface-800/50">
           <div class="text-2xl font-bold font-display text-surface-50"><%= monthlyCalendar.total_meetings %></div>
-          <div class="text-xs text-surface-400" ><%= t('analytics.totalMeeting', 'Total Meeting') %></div>
+          <div class="text-xs text-surface-400" >Total Meeting</div>
         </div>
         <div class="text-center p-4 rounded-xl bg-surface-800/50">
           <div class="text-2xl font-bold font-display text-surface-50"><%= Math.round(monthlyCalendar.avg_work_hours * 10) / 10 %>h</div>
-          <div class="text-xs text-surface-400" ><%= t('analytics.avgDuration', 'Avg Durasi/Hari') %></div>
+          <div class="text-xs text-surface-400" >Avg Durasi/Hari</div>
         </div>
         <div class="text-center p-4 rounded-xl bg-surface-800/50">
           <div class="text-2xl font-bold font-display text-surface-50"><%= monthlyCalendar.total_b2b %></div>
-          <div class="text-xs text-surface-400" ><%= t('analytics.b2b', 'Back-to-Back') %></div>
+          <div class="text-xs text-surface-400" >Back-to-Back</div>
         </div>
         <% 
           const calBurnout = Math.round(monthlyCalendar.avg_burnout_score);
@@ -286,7 +286,7 @@
         %>
         <div class="text-center p-4 rounded-xl <%= burnoutClass %>">
           <div class="text-2xl font-bold font-display <%= calBurnout > 65 ? 'text-danger-400' : calBurnout > 35 ? 'text-warning-400' : 'text-success-400' %>"><%= calBurnout %>%</div>
-          <div class="text-xs text-surface-400" ><%= t('analytics.calBurnout', 'Calendar Burnout Score') %></div>
+          <div class="text-xs text-surface-400" >Calendar Burnout Score</div>
           <div class="text-[10px] mt-1 <%= calBurnout > 65 ? 'text-danger-400' : calBurnout > 35 ? 'text-warning-400' : 'text-success-400' %>">
             <%= calBurnout > 65 ? '⚠️ Tinggi' : calBurnout > 35 ? '⚡ Sedang' : '✅ Rendah' %>
           </div>
@@ -299,7 +299,7 @@
         <canvas id="calBurnoutChart"></canvas>
       </div>
       <% } else { %>
-      <p class="text-sm text-surface-400 text-center py-4" ><%= t('analytics.noCalData', 'Belum ada data kalender untuk bulan ini. Klik sync untuk memperbarui.') %></p>
+      <p class="text-sm text-surface-400 text-center py-4" >Belum ada data kalender untuk bulan ini. Klik sync untuk memperbarui.</p>
       <% } %>
     <% } %>
   </div>
@@ -312,16 +312,16 @@ async function syncCalendar() {
   if (btn) btn.disabled = true;
   try {
     const res = await axios.post('/auth/google/sync', { days: 30 });
-    const t = window.t || (k => k);
+    
     if (res.data.success) {
-      window.showToast?.(t('analytics.toast.syncSuccess', 'Kalender berhasil disinkronisasi! 📅'), 'success');
+      window.showToast?.('Kalender berhasil disinkronisasi! 📅', 'success');
       setTimeout(() => location.reload(), 1000);
     } else {
-      window.showToast?.(res.data.error || t('analytics.toast.syncFail', 'Gagal sync.'), 'error');
+      window.showToast?.(res.data.error || 'Gagal sync.', 'error');
     }
   } catch(e) {
-    const t = window.t || (k => k);
-    window.showToast?.(t('analytics.toast.syncError', 'Gagal menyinkronisasi kalender.'), 'error');
+    
+    window.showToast?.('Gagal menyinkronisasi kalender.', 'error');
   } finally {
     if (btn) btn.disabled = false;
   }
@@ -344,8 +344,8 @@ async function showDayDetail(dateStr) {
   const dayNames = isEn ? dayNamesEn : dayNamesId;
   title.textContent = `${dayNames[d.getDay()]}, ${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
 
-  const t = window.t || (k => k.split('.').pop());
-  panel.innerHTML = `<p class="text-sm text-surface-400 text-center py-4">${t('analytics.detail.loading')}</p>`;
+  
+  panel.innerHTML = `<p class="text-sm text-surface-400 text-center py-4">Memuat...</p>`;
 
   try {
     const res = await axios.get(`/api/analytics/day/${dateStr}`);
@@ -356,10 +356,10 @@ async function showDayDetail(dateStr) {
     if (data.activities.length > 0) {
       const totalWork = data.activities.reduce((s, a) => s + a.duration_minutes, 0);
       const totalBreak = data.activities.reduce((s, a) => s + a.break_minutes, 0);
-      html += `<div class="mb-3"><p class="text-xs font-semibold text-brand-400 mb-1">💼 ${t('analytics.detail.activities')} (${data.activities.length})</p>`;
-      html += `<p class="text-sm text-surface-200">${Math.floor(totalWork/60)}h ${totalWork%60}m ${t('analytics.detail.work')} · ${totalBreak}m ${t('analytics.detail.break')}</p>`;
+      html += `<div class="mb-3"><p class="text-xs font-semibold text-brand-400 mb-1">💼 Aktivitas (${data.activities.length})</p>`;
+      html += `<p class="text-sm text-surface-200">${Math.floor(totalWork/60)}h ${totalWork%60}m Kerja · ${totalBreak}m Istirahat</p>`;
       data.activities.forEach(a => {
-        const typeMap = {work:t('analytics.detail.workType'),study:t('analytics.detail.studyType'),meeting:'Meeting',other:t('analytics.detail.otherType'),pomodoro:'Pomodoro'};
+        const typeMap = {work:'Work',study:'Study',meeting:'Meeting',other:'Lainnya',pomodoro:'Pomodoro'};
         html += `<div class="text-xs text-surface-400 mt-1">• ${typeMap[a.activity_type]||a.activity_type}: ${a.duration_minutes}m${a.description ? ' — '+a.description : ''}</div>`;
       });
       html += '</div>';
@@ -368,9 +368,9 @@ async function showDayDetail(dateStr) {
     // Mood summary
     if (data.moods.length > 0) {
       const moodEmojis = {1:'😞',2:'😕',3:'😐',4:'😊',5:'😄'};
-      html += `<div class="mb-3"><p class="text-xs font-semibold text-accent-pink mb-1">💗 ${t('analytics.detail.mood')}</p>`;
+      html += `<div class="mb-3"><p class="text-xs font-semibold text-accent-pink mb-1">💗 Mood</p>`;
       data.moods.forEach(m => {
-        const moodName = t(`mood.${m.mood_score}`) || m.mood_label;
+        const moodName = m.mood_label;
         html += `<div class="flex items-center gap-2 text-sm text-surface-200 mt-1">${moodEmojis[m.mood_score]||'😐'} ${moodName}`;
         if (m.energy_level) html += ` <span class="text-xs text-surface-400">⚡${m.energy_level}</span>`;
         if (m.stress_level) html += ` <span class="text-xs text-surface-400">😰${m.stress_level}</span>`;
@@ -385,19 +385,19 @@ async function showDayDetail(dateStr) {
       const totalCycles = data.pomodoros.reduce((s, p) => s + p.cycles_completed, 0);
       const totalFocus = data.pomodoros.reduce((s, p) => s + p.total_focus_minutes, 0);
       html += `<div class="mb-3"><p class="text-xs font-semibold text-success-400 mb-1">🍅 Pomodoro</p>`;
-      html += `<p class="text-sm text-surface-200">${totalCycles} ${t('analytics.detail.cycles')} · ${totalFocus}m ${t('analytics.detail.focus')}</p></div>`;
+      html += `<p class="text-sm text-surface-200">${totalCycles} Sesi Pomodoro · ${totalFocus}m Fokus</p></div>`;
     }
 
     // Quiz summary
     if (data.quiz) {
-      const riskLabels = {Low:t('analytics.detail.riskLow'),Medium:t('analytics.detail.riskMed'),High:t('analytics.detail.riskHigh')};
-      html += `<div class="mb-3"><p class="text-xs font-semibold text-warning-400 mb-1">📋 ${t('analytics.detail.quiz')}</p>`;
-      html += `<p class="text-sm text-surface-200">${t('analytics.detail.score')}: ${Math.round(data.quiz.fatigue_score)}% <span class="badge-${data.quiz.risk_level.toLowerCase()}">${riskLabels[data.quiz.risk_level] || data.quiz.risk_level}</span></p></div>`;
+      const riskLabels = {Low:'Rendah',Medium:'Sedang',High:'Tinggi'};
+      html += `<div class="mb-3"><p class="text-xs font-semibold text-warning-400 mb-1">📋 Quiz Kelelahan</p>`;
+      html += `<p class="text-sm text-surface-200">Skor: ${Math.round(data.quiz.fatigue_score)}% <span class="badge-${data.quiz.risk_level.toLowerCase()}">${riskLabels[data.quiz.risk_level] || data.quiz.risk_level}</span></p></div>`;
     }
 
     // Calendar events summary
     if (data.calEvents && data.calEvents.length > 0) {
-      html += `<div class="mb-3"><p class="text-xs font-semibold text-brand-400 mb-1">📅 ${t('analytics.detail.cal')}</p>`;
+      html += `<div class="mb-3"><p class="text-xs font-semibold text-brand-400 mb-1">📅 Google Calendar</p>`;
       data.calEvents.forEach(ev => {
         const start = ev.start_time.includes('T') ? ev.start_time.substring(11, 16) : t('analytics.detail.allDay');
         const end = ev.end_time.includes('T') ? ev.end_time.substring(11, 16) : '';
@@ -408,20 +408,20 @@ async function showDayDetail(dateStr) {
         const bs = Math.round(data.calFeature.calendar_burnout_score);
         const bsColor = bs > 65 ? 'danger' : bs > 35 ? 'warning' : 'success';
         html += `<div class="mt-2 p-2 rounded-lg bg-${bsColor}-500/10 border border-${bsColor}-500/20">`;
-        html += `<p class="text-xs text-${bsColor}-400">🔥 Burnout Score: ${bs}% · ${data.calFeature.meetings_count} ${t('analytics.detail.meeting')} · ${data.calFeature.back_to_back_count} ${t('analytics.detail.b2b')}</p>`;
+        html += `<p class="text-xs text-${bsColor}-400">🔥 Burnout Score: ${bs}% · ${data.calFeature.meetings_count} Meeting · ${data.calFeature.back_to_back_count} Back-to-back</p>`;
         html += '</div>';
       }
       html += '</div>';
     }
 
     if (!html) {
-      html = `<p class="text-sm text-surface-500 text-center py-4">${t('analytics.detail.empty')}</p>`;
+      html = `<p class="text-sm text-surface-500 text-center py-4">Tidak ada data untuk hari ini</p>`;
     }
 
     panel.innerHTML = html;
   } catch(e) {
-    const t = window.t || (k => k);
-    panel.innerHTML = `<p class="text-sm text-danger-400 text-center py-4">${t('analytics.detail.error')}</p>`;
+    
+    panel.innerHTML = `<p class="text-sm text-danger-400 text-center py-4">Gagal memuat data detail</p>`;
   }
 }
 

@@ -11,16 +11,16 @@ function processDir(dir) {
       let content = fs.readFileSync(fullPath, 'utf8');
       
       // Replace data-i18n="xxx" with <%= t('xxx') %> 
-      // <element data-i18n="key">Text</element> -> <element><%= t('key', 'Text') %></element>
+      // <element data-i18n="key">Text</element> -> <element>Text</element>
       let modified = content;
       
-      // Basic text replacement: <span data-i18n="key">Text</span> -> <span><%= t('key', 'Text') %></span>
+      // Basic text replacement: <span data-i18n="key">Text</span> -> <span>Text</span>
       modified = modified.replace(/<([^>\s]+)([^>]*)data-i18n="([^"]+)"([^>]*)>([^<]*)<\/\1>/g, (match, tag, beforeArgs, key, afterArgs, text) => {
           let innerText = text.trim();
           if (innerText) {
             // Escape single quotes in text for default value
             innerText = innerText.replace(/'/g, "\\'");
-            return `<${tag}${beforeArgs}${afterArgs}><%= t('${key}', '${innerText}') %></${tag}>`;
+            return `<${tag}${beforeArgs}${afterArgs}>${innerText}</${tag}>`;
           } else {
             return `<${tag}${beforeArgs}${afterArgs}><%= t('${key}') %></${tag}>`;
           }

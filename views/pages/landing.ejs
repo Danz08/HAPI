@@ -19,8 +19,8 @@
         <button onclick="toggleLang()" class="landing-nav-btn p-2 rounded-lg transition-colors" id="landing-lang-btn" title="Ganti Bahasa">
           <span class="text-xs font-bold" id="lang-label">ID</span>
         </button>
-        <a href="/auth/login" class="landing-nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors" id="landing-login" ><%= t('landing.nav.login', 'Masuk') %></a>
-        <a href="/auth/register" class="btn-primary btn-sm" id="landing-register" ><%= t('landing.nav.register', 'Mulai Sekarang') %></a>
+        <a href="/auth/login" class="landing-nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-colors" id="landing-login" >Masuk</a>
+        <a href="/auth/register" class="btn-primary btn-sm" id="landing-register" >Mulai Sekarang</a>
       </div>
     </div>
   </nav>
@@ -31,30 +31,30 @@
       <!-- Small pill badge -->
       <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-600/10 border border-brand-500/20 text-brand-400 text-xs font-semibold mb-8">
         <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-        <span ><%= t('landing.hero.badge', 'AI-Powered Fatigue Monitoring') %></span>
+        <span >AI-Powered Fatigue Monitoring</span>
       </div>
 
       <!-- Main heading -->
       <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold font-display leading-tight mb-6">
-        <span class="landing-text-primary" ><%= t('landing.hero.title1', 'Cara yang lebih tenang') %></span><br>
-        <span class="landing-text-primary" ><%= t('landing.hero.title2', 'untuk') %></span>
-        <span class="text-gradient-brand" ><%= t('landing.hero.title3', 'bekerja') %></span>
-        <span class="landing-text-primary" ><%= t('landing.hero.title4', 'dan') %></span>
-        <span class="text-gradient-accent" ><%= t('landing.hero.title5', 'beristirahat.') %></span>
+        <span class="landing-text-primary" >Cara yang lebih tenang</span><br>
+        <span class="landing-text-primary" >untuk</span>
+        <span class="text-gradient-brand" >bekerja</span>
+        <span class="landing-text-primary" >dan</span>
+        <span class="text-gradient-accent" >beristirahat.</span>
       </h1>
 
       <!-- Subtitle -->
-      <p class="text-lg landing-text-secondary leading-relaxed max-w-2xl mx-auto mb-10" ><%= t('landing.hero.subtitle', 'HAPI adalah teman pintar yang memantau kelelahanmu, mengelola mood, dan menjaga produktivitasmu tetap seimbang — semua didukung oleh kecerdasan buatan.') %></p>
+      <p class="text-lg landing-text-secondary leading-relaxed max-w-2xl mx-auto mb-10" >HAPI adalah teman pintar yang memantau kelelahanmu, mengelola mood, dan menjaga produktivitasmu tetap seimbang — semua didukung oleh kecerdasan buatan.</p>
 
       <!-- CTA Buttons -->
       <div class="flex flex-wrap gap-4 justify-center mb-8">
         <a href="/auth/register" class="btn-primary btn-lg" id="hero-cta">
           <i data-lucide="rocket" class="w-5 h-5 "></i>
-          <span ><%= t('landing.hero.cta', 'Mulai Sekarang') %></span>
+          <span >Mulai Sekarang</span>
         </a>
         <a href="#features" class="btn-secondary btn-lg" id="hero-learn-more">
           <i data-lucide="arrow-down" class="w-5 h-5"></i>
-          <span ><%= t('landing.hero.learnMore', 'Pelajari Lebih Lanjut') %></span>
+          <span >Pelajari Lebih Lanjut</span>
         </a>
       </div>
 
@@ -62,15 +62,15 @@
       <div class="flex flex-wrap items-center justify-center gap-6 text-sm landing-text-muted">
         <div class="flex items-center gap-2">
           <i data-lucide="shield-check" class="w-4 h-4 text-success-400"></i>
-          <span ><%= t('landing.hero.trust1', 'Bukan Diagnosis Medis') %></span>
+          <span >Bukan Diagnosis Medis</span>
         </div>
         <div class="flex items-center gap-2">
           <i data-lucide="lock" class="w-4 h-4 text-brand-400"></i>
-          <span ><%= t('landing.hero.trust2', 'Data Aman & Privat') %></span>
+          <span >Data Aman & Privat</span>
         </div>
         <div class="flex items-center gap-2">
           <i data-lucide="globe" class="w-4 h-4 text-accent-teal"></i>
-          <span ><%= t('landing.hero.trust3', 'Open Source') %></span>
+          <span >Open Source</span>
         </div>
       </div>
     </div>
@@ -82,9 +82,9 @@
       <!-- Section Header -->
       <div class="text-center mb-6">
         <h2 class="text-3xl md:text-4xl font-bold font-display landing-text-primary mb-4">
-          <span ><%= t('landing.feat.title1', 'Kecerdasan untuk') %></span><span class="text-gradient-brand" ><%= t('landing.feat.title2', 'ritme harianmu') %></span>
+          <span >Kecerdasan untuk</span><span class="text-gradient-brand" >ritme harianmu</span>
         </h2>
-        <p class="landing-text-muted max-w-2xl mx-auto" ><%= t('landing.feat.subtitle', 'Lebih dari sekadar manajemen waktu — HAPI memahami kondisimu secara menyeluruh dengan fitur-fitur cerdas.') %></p>
+        <p class="landing-text-muted max-w-2xl mx-auto" >Lebih dari sekadar manajemen waktu — HAPI memahami kondisimu secara menyeluruh dengan fitur-fitur cerdas.</p>
       </div>
 
       <div class="grid lg:grid-cols-2 gap-8 mb-12">
@@ -95,9 +95,9 @@
             <div class="w-10 h-10 rounded-xl bg-success-500/15 flex items-center justify-center ">
               <i data-lucide="timer" class="w-5 h-5 text-success-400"></i>
             </div>
-            <h3 class="text-lg font-bold landing-text-primary" ><%= t('landing.feat1.title', 'Smart Pomodoro Timer') %></h3>
+            <h3 class="text-lg font-bold landing-text-primary" >Smart Pomodoro Timer</h3>
           </div>
-          <p class="text-sm landing-text-muted leading-relaxed mb-6" ><%= t('landing.feat1.desc', 'Timer Pomodoro cerdas yang terintegrasi dengan Google Calendar. Durasi fokus dan istirahat tercatat otomatis, dan bisa disesuaikan berdasarkan jadwal meetingmu.') %></p>
+          <p class="text-sm landing-text-muted leading-relaxed mb-6" >Timer Pomodoro cerdas yang terintegrasi dengan Google Calendar. Durasi fokus dan istirahat tercatat otomatis, dan bisa disesuaikan berdasarkan jadwal meetingmu.</p>
           <!-- Visual Preview: Mini bar chart -->
           <div class="glass-card p-4 space-y-2">
             <div class="flex items-center justify-between mb-2">
@@ -125,9 +125,9 @@
             <div class="w-10 h-10 rounded-xl bg-accent-pink/15 flex items-center justify-center ">
               <i data-lucide="message-circle-heart" class="w-5 h-5 text-accent-pink"></i>
             </div>
-            <h3 class="text-lg font-bold landing-text-primary" ><%= t('landing.feat2.title', 'AI Chatbot Asisten') %></h3>
+            <h3 class="text-lg font-bold landing-text-primary" >AI Chatbot Asisten</h3>
           </div>
-          <p class="text-sm landing-text-muted leading-relaxed mb-6" ><%= t('landing.feat2.desc', 'Chatbot AI empatik yang selalu siap mendengarkan. Ceritakan perasaanmu kapan saja dan dapatkan respons yang menyesuaikan tingkat fatigue-mu.') %></p>
+          <p class="text-sm landing-text-muted leading-relaxed mb-6" >Chatbot AI empatik yang selalu siap mendengarkan. Ceritakan perasaanmu kapan saja dan dapatkan respons yang menyesuaikan tingkat fatigue-mu.</p>
           <!-- Visual Preview: Chat bubbles -->
           <div class="glass-card p-4 space-y-3">
             <div class="flex justify-start">
@@ -167,9 +167,9 @@
               <div class="w-10 h-10 rounded-xl bg-warning-500/15 flex items-center justify-center ">
                 <i data-lucide="activity" class="w-5 h-5 text-warning-400"></i>
               </div>
-              <h3 class="text-lg font-bold landing-text-primary" ><%= t('landing.feat3.title', 'Fatigue Risk Scoring') %></h3>
+              <h3 class="text-lg font-bold landing-text-primary" >Fatigue Risk Scoring</h3>
             </div>
-            <p class="text-sm landing-text-muted leading-relaxed mb-4" ><%= t('landing.feat3.desc', 'Algoritma AI menganalisis pola kerjamu, hasil quiz MBI (Maslach Burnout Inventory), mood harian, dan data Google Calendar untuk menghasilkan skor risiko kelelahan yang akurat.') %></p>
+            <p class="text-sm landing-text-muted leading-relaxed mb-4" >Algoritma AI menganalisis pola kerjamu, hasil quiz MBI (Maslach Burnout Inventory), mood harian, dan data Google Calendar untuk menghasilkan skor risiko kelelahan yang akurat.</p>
             <div class="flex flex-wrap gap-2">
               <span class="badge-low">✅ Low Risk</span>
               <span class="badge-medium">⚡ Medium Risk</span>
@@ -179,24 +179,24 @@
           <!-- Visual Preview: Score bars -->
           <div class="glass-card p-5 space-y-4">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-semibold landing-text-primary"><%= t('landing.feat.scoreBreakdown', 'Breakdown Skor') %></span>
-              <span class="badge-medium text-[10px]">⚡ 42 — <%= t('landing.feat.medium', 'Medium') %></span>
+              <span class="text-sm font-semibold landing-text-primary">Breakdown Skor</span>
+              <span class="badge-medium text-[10px]">⚡ 42 — Medium</span>
             </div>
             <div class="space-y-3">
               <div>
-                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary"><%= t('landing.feat.quizMBI', 'Quiz MBI') %></span><span class="landing-text-muted">55%</span></div>
+                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary">Quiz MBI</span><span class="landing-text-muted">55%</span></div>
                 <div class="h-2 bg-surface-700 rounded-full overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-warning-400 to-danger-400" style="width:55%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary"><%= t('landing.feat.mood', 'Mood') %></span><span class="landing-text-muted">35%</span></div>
+                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary">Mood</span><span class="landing-text-muted">35%</span></div>
                 <div class="h-2 bg-surface-700 rounded-full overflow-hidden"><div class="h-full rounded-full gradient-brand" style="width:35%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary"><%= t('landing.feat.workload', 'Beban Kerja') %></span><span class="landing-text-muted">60%</span></div>
+                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary">Beban Kerja</span><span class="landing-text-muted">60%</span></div>
                 <div class="h-2 bg-surface-700 rounded-full overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-warning-400 to-danger-500" style="width:60%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary"><%= t('landing.feat.rest', 'Istirahat') %></span><span class="landing-text-muted">20%</span></div>
+                <div class="flex justify-between text-xs mb-1"><span class="landing-text-secondary">Istirahat</span><span class="landing-text-muted">20%</span></div>
                 <div class="h-2 bg-surface-700 rounded-full overflow-hidden"><div class="h-full rounded-full gradient-success" style="width:20%"></div></div>
               </div>
             </div>
@@ -211,9 +211,9 @@
     <div class="max-w-5xl mx-auto">
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-4xl font-bold font-display landing-text-primary mb-4">
-          <span ><%= t('landing.step.title1', 'Langkah sederhana menuju') %></span><span class="text-gradient-accent" ><%= t('landing.step.title2', 'keseimbangan') %></span>
+          <span >Langkah sederhana menuju</span><span class="text-gradient-accent" >keseimbangan</span>
         </h2>
-        <p class="landing-text-muted max-w-xl mx-auto" ><%= t('landing.step.subtitle', 'Mulai pantau kesehatan mentalmu dalam 4 langkah mudah.') %></p>
+        <p class="landing-text-muted max-w-xl mx-auto" >Mulai pantau kesehatan mentalmu dalam 4 langkah mudah.</p>
       </div>
 
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
@@ -222,8 +222,8 @@
           <div class="w-14 h-14 rounded-2xl landing-step-box landing-step-box-teal flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-600/25 ">
             <span class="text-xl font-bold font-display">1</span>
           </div>
-          <h4 class="text-sm font-bold landing-text-primary mb-2" ><%= t('landing.step1.title', 'Daftar Akun') %></h4>
-          <p class="text-xs landing-text-muted leading-relaxed" ><%= t('landing.step1.desc', 'Buat akun atau masuk dengan Google dalam hitungan detik.') %></p>
+          <h4 class="text-sm font-bold landing-text-primary mb-2" >Daftar Akun</h4>
+          <p class="text-xs landing-text-muted leading-relaxed" >Buat akun atau masuk dengan Google dalam hitungan detik.</p>
         </div>
 
         <!-- Step 2 -->
@@ -231,8 +231,8 @@
           <div class="w-14 h-14 rounded-2xl landing-step-box landing-step-box-teal flex items-center justify-center mx-auto mb-4 shadow-lg shadow-accent-purple/25 ">
             <span class="text-xl font-bold font-display">2</span>
           </div>
-          <h4 class="text-sm font-bold landing-text-primary mb-2" ><%= t('landing.step2.title', 'Isi Quiz & Log Mood') %></h4>
-          <p class="text-xs landing-text-muted leading-relaxed" ><%= t('landing.step2.desc', 'Jawab 10 pertanyaan fatigue dan catat moodmu setiap hari.') %></p>
+          <h4 class="text-sm font-bold landing-text-primary mb-2" >Isi Quiz & Log Mood</h4>
+          <p class="text-xs landing-text-muted leading-relaxed" >Jawab 10 pertanyaan fatigue dan catat moodmu setiap hari.</p>
         </div>
 
         <!-- Step 3 -->
@@ -240,8 +240,8 @@
           <div class="w-14 h-14 rounded-2xl landing-step-box landing-step-box-teal flex items-center justify-center mx-auto mb-4 shadow-lg shadow-warning-500/25 ">
             <span class="text-xl font-bold font-display">3</span>
           </div>
-          <h4 class="text-sm font-bold landing-text-primary mb-2" ><%= t('landing.step3.title', 'Gunakan Pomodoro') %></h4>
-          <p class="text-xs landing-text-muted leading-relaxed" ><%= t('landing.step3.desc', 'Kerja dengan teknik Pomodoro yang terintegrasi kalender.') %></p>
+          <h4 class="text-sm font-bold landing-text-primary mb-2" >Gunakan Pomodoro</h4>
+          <p class="text-xs landing-text-muted leading-relaxed" >Kerja dengan teknik Pomodoro yang terintegrasi kalender.</p>
         </div>
 
         <!-- Step 4 -->
@@ -249,8 +249,8 @@
           <div class="w-14 h-14 rounded-2xl landing-step-box landing-step-box-teal flex items-center justify-center mx-auto mb-4 shadow-lg shadow-success-500/25 ">
             <span class="text-xl font-bold font-display">4</span>
           </div>
-          <h4 class="text-sm font-bold landing-text-primary mb-2" ><%= t('landing.step4.title', 'Lihat Insight') %></h4>
-          <p class="text-xs landing-text-muted leading-relaxed" ><%= t('landing.step4.desc', 'Dapatkan analisis, tren, dan rekomendasi personal dari AI.') %></p>
+          <h4 class="text-sm font-bold landing-text-primary mb-2" >Lihat Insight</h4>
+          <p class="text-xs landing-text-muted leading-relaxed" >Dapatkan analisis, tren, dan rekomendasi personal dari AI.</p>
         </div>
       </div>
     </div>
@@ -266,17 +266,17 @@
         <div class="relative z-10">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-purple/10 border border-accent-purple/20 text-accent-purple text-xs font-semibold mb-6">
             <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i>
-            <span ><%= t('landing.sci.badge', 'Berbasis Riset') %></span>
+            <span >Berbasis Riset</span>
           </div>
 
           <h2 class="text-3xl md:text-4xl font-bold font-display landing-text-primary mb-4">
-            <span ><%= t('landing.sci.title1', 'Basis Ilmiah &') %></span><span class="text-gradient-accent" ><%= t('landing.sci.title2', 'Komunitas') %></span>
+            <span >Basis Ilmiah &</span><span class="text-gradient-accent" >Komunitas</span>
           </h2>
 
-          <p class="landing-text-secondary leading-relaxed max-w-2xl mx-auto mb-8" ><%= t('landing.sci.desc', 'HAPI menggunakan Maslach Burnout Inventory (MBI), instrumen psikometri paling banyak digunakan di dunia untuk mengukur burnout.') %></p>
+          <p class="landing-text-secondary leading-relaxed max-w-2xl mx-auto mb-8" >HAPI menggunakan Maslach Burnout Inventory (MBI), instrumen psikometri paling banyak digunakan di dunia untuk mengukur burnout.</p>
           <a href="/auth/register" class="btn-secondary" id="btn-scientific-cta">
             <i data-lucide="book-open" class="w-4 h-4"></i>
-            <span ><%= t('landing.sci.methodology', 'Pelajari Metodologi Kami') %></span>
+            <span >Pelajari Metodologi Kami</span>
           </a>
         </div>
       </div>
@@ -287,11 +287,11 @@
   <section class="py-24 px-6 landing-section-terracotta text-center relative overflow-hidden">
     <div class="max-w-3xl mx-auto relative z-10">
       <h2 class="text-3xl md:text-4xl font-bold font-display landing-text-primary mb-4">
-        <span ><%= t('landing.cta.title1', 'Siap menemukan') %></span><span class="text-gradient-brand" ><%= t('landing.cta.title2', 'keseimbanganmu?') %></span>
+        <span >Siap menemukan</span><span class="text-gradient-brand" >keseimbanganmu?</span>
       </h2>
-      <p class="landing-text-secondary mb-8" ><%= t('landing.cta.desc', 'Bergabunglah dengan para profesional yang membangun hubungan sehat dengan pekerjaan mereka.') %></p>
+      <p class="landing-text-secondary mb-8" >Bergabunglah dengan para profesional yang membangun hubungan sehat dengan pekerjaan mereka.</p>
       <a href="/auth/register" class="btn-primary btn-lg">
-        <span ><%= t('landing.cta.btn', 'Mulai Perjalananmu') %></span>
+        <span >Mulai Perjalananmu</span>
         <i data-lucide="arrow-right" class="w-5 h-5 transition-transform"></i>
       </a>
     </div>
@@ -304,7 +304,7 @@
         <i data-lucide="alert-triangle" class="w-5 h-5"></i>
         <span class="font-semibold text-sm">Disclaimer</span>
       </div>
-      <p class="text-sm landing-text-muted leading-relaxed" ><%= t('landing.disclaimer', 'HAPI adalah alat monitoring dan self-assessment, bukan pengganti diagnosis medis profesional. Jika kamu mengalami gejala fatigue atau burnout yang berat, silakan konsultasikan dengan psikolog atau tenaga kesehatan profesional.') %></p>
+      <p class="text-sm landing-text-muted leading-relaxed" >HAPI adalah alat monitoring dan self-assessment, bukan pengganti diagnosis medis profesional. Jika kamu mengalami gejala fatigue atau burnout yang berat, silakan konsultasikan dengan psikolog atau tenaga kesehatan profesional.</p>
     </div>
   </section>
 
@@ -320,27 +320,27 @@
             </div>
             <span class="text-lg font-bold font-display landing-text-primary">HAPI</span>
           </div>
-          <p class="text-xs landing-text-muted leading-relaxed" ><%= t('landing.footer.desc', 'Human Activity Pattern Intelligence — Monitor kelelahan, kelola mood, dan tingkatkan produktivitasmu dengan AI.') %></p>
+          <p class="text-xs landing-text-muted leading-relaxed" >Human Activity Pattern Intelligence — Monitor kelelahan, kelola mood, dan tingkatkan produktivitasmu dengan AI.</p>
         </div>
         <!-- Links -->
         <div>
-          <h4 class="text-sm font-semibold landing-text-secondary mb-3"><%= t('landing.footer.features', 'Fitur') %></h4>
+          <h4 class="text-sm font-semibold landing-text-secondary mb-3">Fitur</h4>
           <ul class="space-y-2 text-xs landing-text-muted">
-            <li><%= t('landing.footer.feat1', 'Fatigue Risk Score') %></li>
-            <li><%= t('landing.footer.feat2', 'Pomodoro Timer') %></li>
-            <li><%= t('landing.footer.feat3', 'AI Chatbot Asisten') %></li>
-            <li><%= t('landing.footer.feat4', 'Google Calendar Integration') %></li>
-            <li><%= t('landing.footer.feat5', 'Activity Analytics') %></li>
+            <li>Fatigue Risk Score</li>
+            <li>Pomodoro Timer</li>
+            <li>AI Chatbot Asisten</li>
+            <li>Google Calendar Integration</li>
+            <li>Activity Analytics</li>
           </ul>
         </div>
         <!-- Info -->
         <div>
-          <h4 class="text-sm font-semibold landing-text-secondary mb-3"><%= t('landing.footer.info', 'Info') %></h4>
+          <h4 class="text-sm font-semibold landing-text-secondary mb-3">Info</h4>
           <ul class="space-y-2 text-xs landing-text-muted">
-            <li><%= t('landing.footer.info1', 'Berbasis Maslach Burnout Inventory') %></li>
-            <li><%= t('landing.footer.info2', 'Data privat & aman') %></li>
-            <li><%= t('landing.footer.info3', 'Bukan diagnosis medis') %></li>
-            <li><%= t('landing.footer.info4', 'DBS Foundation Coding Camp 2026') %></li>
+            <li>Berbasis Maslach Burnout Inventory</li>
+            <li>Data privat & aman</li>
+            <li>Bukan diagnosis medis</li>
+            <li>DBS Foundation Coding Camp 2026</li>
           </ul>
         </div>
       </div>

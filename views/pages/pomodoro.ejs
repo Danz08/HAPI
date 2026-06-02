@@ -4,9 +4,9 @@
   <div class="glass-card p-8 text-center mb-6 glow-brand">
     <!-- Mode Toggle -->
     <div class="flex flex-wrap justify-center gap-2 mb-8">
-      <button id="mode-work" onclick="setMode('work')" class="btn-primary btn-sm" ><%= t('pomo.focus', 'Fokus') %></button>
-      <button id="mode-break" onclick="setMode('break')" class="btn-ghost btn-sm" ><%= t('pomo.shortBreak', 'Istirahat Singkat') %></button>
-      <button id="mode-long" onclick="setMode('long')" class="btn-ghost btn-sm" ><%= t('pomo.longBreak', 'Istirahat Panjang') %></button>
+      <button id="mode-work" onclick="setMode('work')" class="btn-primary btn-sm" >Fokus</button>
+      <button id="mode-break" onclick="setMode('break')" class="btn-ghost btn-sm" >Istirahat Singkat</button>
+      <button id="mode-long" onclick="setMode('long')" class="btn-ghost btn-sm" >Istirahat Panjang</button>
     </div>
 
     <!-- Timer Display -->
@@ -24,20 +24,20 @@
       </svg>
       <div class="absolute inset-0 flex flex-col items-center justify-center">
         <div id="timer-display" class="pomodoro-display">25:00</div>
-        <p id="timer-label" class="text-sm text-surface-400 mt-2" ><%= t('pomo.focus', 'Fokus') %></p>
+        <p id="timer-label" class="text-sm text-surface-400 mt-2" >Fokus</p>
       </div>
     </div>
 
     <!-- Controls -->
     <div class="flex justify-center gap-4">
       <button id="btn-start" onclick="startTimer()" class="btn-primary btn-lg">
-        <i data-lucide="play" class="w-5 h-5"></i> <span id="action-text-start" ><%= t('pomo.start', 'Mulai') %></span>
+        <i data-lucide="play" class="w-5 h-5"></i> <span id="action-text-start" >Mulai</span>
       </button>
       <button id="btn-pause" onclick="pauseTimer()" class="btn-secondary btn-lg hidden">
-        <i data-lucide="pause" class="w-5 h-5"></i> <span id="action-text-pause" ><%= t('pomo.pause', 'Jeda') %></span>
+        <i data-lucide="pause" class="w-5 h-5"></i> <span id="action-text-pause" >Jeda</span>
       </button>
       <button id="btn-reset" onclick="resetTimer()" class="btn-ghost btn-lg">
-        <i data-lucide="rotate-ccw" class="w-5 h-5"></i> <span ><%= t('pomo.reset', 'Reset') %></span>
+        <i data-lucide="rotate-ccw" class="w-5 h-5"></i> <span >Reset</span>
       </button>
     </div>
   </div>
@@ -46,44 +46,44 @@
   <div class="grid grid-cols-3 gap-4 mb-6">
     <div class="stat-card text-center">
       <div class="stat-value text-xl" id="stat-cycles">0</div>
-      <div class="stat-label" ><%= t('pomo.cycles', 'Siklus') %></div>
+      <div class="stat-label" >Siklus</div>
     </div>
     <div class="stat-card text-center">
       <div class="stat-value text-xl" id="stat-focus">0m</div>
-      <div class="stat-label" ><%= t('pomo.focusStat', 'Fokus') %></div>
+      <div class="stat-label" >Fokus</div>
     </div>
     <div class="stat-card text-center">
       <div class="stat-value text-xl" id="stat-break">0m</div>
-      <div class="stat-label" ><%= t('pomo.breakStat', 'Istirahat Singkat') %></div>
+      <div class="stat-label" >Istirahat Singkat</div>
     </div>
   </div>
 
   <!-- Today's Calendar Events (#4) -->
   <div class="glass-card p-6 mb-6" id="cal-events-section">
     <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
-      <i data-lucide="calendar" class="w-5 h-5 inline text-brand-400 mr-1"></i> <span ><%= t('pomo.todaySchedule', 'Jadwal Hari Ini') %></span>
+      <i data-lucide="calendar" class="w-5 h-5 inline text-brand-400 mr-1"></i> <span >Jadwal Hari Ini</span>
     </h3>
     <div id="cal-events-list">
-      <p class="text-sm text-surface-400 text-center py-2" ><%= t('general.loading', 'Memuat jadwal...') %></p>
+      <p class="text-sm text-surface-400 text-center py-2" >Memuat jadwal...</p>
     </div>
   </div>
 
   <!-- Settings -->
   <div class="glass-card p-6">
     <h3 class="text-lg font-bold font-display text-surface-50 mb-4">
-      <i data-lucide="settings" class="w-5 h-5 inline text-surface-400 mr-1"></i> <span ><%= t('pomo.settings', 'Pengaturan') %></span>
+      <i data-lucide="settings" class="w-5 h-5 inline text-surface-400 mr-1"></i> <span >Pengaturan</span>
     </h3>
     <div class="grid grid-cols-3 gap-4">
       <div>
-        <label class="input-label" ><%= t('pomo.focusMin', 'Fokus (menit)') %></label>
+        <label class="input-label" >Fokus (menit)</label>
         <input type="number" id="set-work" value="25" min="1" max="120" class="input-field text-center" onchange="updateSettings()">
       </div>
       <div>
-        <label class="input-label" ><%= t('pomo.shortBreakMin', 'Istirahat Singkat (menit)') %></label>
+        <label class="input-label" >Istirahat Singkat (menit)</label>
         <input type="number" id="set-break" value="5" min="1" max="30" class="input-field text-center" onchange="updateSettings()">
       </div>
       <div>
-        <label class="input-label" ><%= t('pomo.longBreakLabel', 'Istirahat Panjang') %></label>
+        <label class="input-label" >Istirahat Panjang</label>
         <input type="number" id="set-long" value="15" min="1" max="60" class="input-field text-center" onchange="updateSettings()">
       </div>
     </div>
@@ -226,9 +226,8 @@ function resetTimer() {
 }
 
 function getModeLabel(mode) {
-  const t = window.t || (k => k);
-  const keys = { work: 'pomo.focus', break: 'pomo.shortBreak', long: 'pomo.longBreak' };
-  return t(keys[mode]) || mode;
+  const labels = { work: 'Sesi Fokus', break: 'Istirahat Pendek', long: 'Istirahat Panjang' };
+  return labels[mode] || mode;
 }
 
 function setMode(mode) {
@@ -322,8 +321,8 @@ async function saveSession() {
     const container = document.getElementById('cal-events-list');
 
     if (!data.calEvents || data.calEvents.length === 0) {
-      const t = window.t || (k => k);
-      container.innerHTML = `<p class="text-sm text-surface-500 text-center py-2">${t('pomo.noSchedule', 'Tidak ada jadwal tersisa hari ini.')}</p>`;
+      
+      container.innerHTML = `<p class="text-sm text-surface-500 text-center py-2">${'Tidak ada jadwal tersisa hari ini.'}</p>`;
       return;
     }
 
@@ -344,19 +343,19 @@ async function saveSession() {
       html += `<span class="text-xs">${typeIcons[ev.event_type] || '📌'}</span>`;
       html += `<span class="text-xs font-mono text-surface-500">${startStr}–${endStr}</span>`;
       html += `<span class="text-xs text-surface-200">${ev.title}</span>`;
-      if (isNow) { const t = window.t || (k => k); html += `<span class="px-1.5 py-0.5 rounded text-[9px] bg-brand-500/20 text-brand-400 font-bold">${t('pomo.now', 'Sekarang')}</span>`; }
+      if (isNow) {  html += `<span class="px-1.5 py-0.5 rounded text-[9px] bg-brand-500/20 text-brand-400 font-bold">${'Sekarang'}</span>`; }
       html += `</div>`;
       // Auto-set timer button for future events
       if (isFuture || isNow) {
-        const t = window.t || (k => k);
-        html += `<button onclick="setCalendarTimer(${durationMin}, '${ev.title.replace(/'/g, '')}')" class="btn-ghost text-[10px] px-2 py-1" title="${t('pomo.setTimer', 'Set timer')} ${durationMin}m">⏱️ ${durationMin}m</button>`;
+        
+        html += `<button onclick="setCalendarTimer(${durationMin}, '${ev.title.replace(/'/g, '')}')" class="btn-ghost text-[10px] px-2 py-1" title="${'Set timer'} ${durationMin}m">⏱️ ${durationMin}m</button>`;
       }
       html += `</div>`;
     });
     container.innerHTML = html;
   } catch(e) {
-    const t = window.t || (k => k);
-    document.getElementById('cal-events-list').innerHTML = `<p class="text-xs text-surface-500 text-center">${t('pomo.loadFail', 'Gagal memuat kalender')}</p>`;
+    
+    document.getElementById('cal-events-list').innerHTML = `<p class="text-xs text-surface-500 text-center">${'Gagal memuat kalender'}</p>`;
   }
 }
 
@@ -365,10 +364,10 @@ window.setCalendarTimer = function(minutes, title) {
   workDuration = minutes;
   document.getElementById('set-work').value = minutes;
   setMode('work');
-  const t = window.t || (k => k);
-  document.getElementById('timer-label').textContent = title || `${t('pomo.meetingLabel', 'Meeting')} (${minutes}m)`;
+  
+  document.getElementById('timer-label').textContent = title || `${'Meeting'} (${minutes}m)`;
   startTimer();
-  window.showToast?.(`${t('pomo.timerStarted', 'Timer dimulai')} (${minutes}m)`, 'success');
+  window.showToast?.(`${'Timer dimulai'} (${minutes}m)`, 'success');
 };
 
 // Initialize

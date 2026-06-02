@@ -8,8 +8,8 @@
       <div class="w-16 h-16 rounded-2xl bg-success-500/15 flex items-center justify-center mx-auto mb-4">
         <i data-lucide="check-circle" class="w-8 h-8 text-success-400"></i>
       </div>
-      <h3 class="text-2xl font-bold font-display text-surface-50 mb-2" ><%= t('quiz.alreadyDoneTitle', 'Quiz Hari Ini Sudah Selesai') %></h3>
-      <p class="text-sm text-surface-400" ><%= t('quiz.alreadyDoneDesc', 'Kamu sudah mengisi quiz kelelahan hari ini. Berikut hasil terakhirmu:') %></p>
+      <h3 class="text-2xl font-bold font-display text-surface-50 mb-2" >Quiz Hari Ini Sudah Selesai</h3>
+      <p class="text-sm text-surface-400" >Kamu sudah mengisi quiz kelelahan hari ini. Berikut hasil terakhirmu:</p>
     </div>
 
     <!-- Score Gauge -->
@@ -51,7 +51,7 @@
     <div class="mb-6">
       <h4 class="text-lg font-bold font-display text-surface-50 mb-4 flex items-center gap-2">
         <i data-lucide="lightbulb" class="w-5 h-5 text-warning-400"></i>
-        <span ><%= t('quiz.result', 'Rekomendasi') %></span>
+        <span >Rekomendasi</span>
       </h4>
       <div class="space-y-3">
         <% todayResult.recommendations.insights.forEach(function(ins) { %>
@@ -75,17 +75,17 @@
     <div class="flex flex-col sm:flex-row gap-3 justify-center pt-4 border-t border-surface-700/30">
       <a href="/dashboard" class="btn-secondary">
         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-        <span ><%= t('nav.dashboard', 'Dashboard') %></span>
+        <span >Dashboard</span>
       </a>
       <a href="/analytics" class="btn-secondary">
         <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-        <span ><%= t('nav.analytics', 'Lihat Analitik') %></span>
+        <span >Lihat Analitik</span>
       </a>
     </div>
   </div>
 
   <div class="mt-4 text-center">
-    <p class="text-xs text-surface-500 mb-12 sm:mb-0" ><%= t('quiz.alreadyDoneFooter', 'Quiz dapat diisi kembali besok. Hasil ini berlaku untuk hari ini.') %></p>
+    <p class="text-xs text-surface-500 mb-12 sm:mb-0" >Quiz dapat diisi kembali besok. Hasil ini berlaku untuk hari ini.</p>
   </div>
 
 <% } else { %>
@@ -93,7 +93,7 @@
   <!-- Progress -->
   <div class="glass-card p-4 mb-6" id="quiz-progress-bar">
     <div class="flex items-center justify-between mb-2">
-      <span class="text-sm text-surface-400"><span ><%= t('quiz.question', 'Pertanyaan') %></span> <span id="q-current">1</span> <span ><%= t('quiz.of', 'dari') %></span> <span id="q-total"><%= questions.length %></span></span>
+      <span class="text-sm text-surface-400"><span >Pertanyaan</span> <span id="q-current">1</span> <span >dari</span> <span id="q-total"><%= questions.length %></span></span>
       <span class="text-sm font-semibold" id="q-dimension" style="color: #A86240"></span>
     </div>
     <div class="h-2 bg-surface-700 rounded-full overflow-hidden">
@@ -115,7 +115,7 @@
           <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="31.4" stroke-dashoffset="10" stroke-linecap="round"/>
         </svg>
       </div>
-      <p class="text-surface-300 font-medium" ><%= t('quiz.analyzing', 'Menganalisis jawabanmu...') %></p>
+      <p class="text-surface-300 font-medium" >Menganalisis jawabanmu...</p>
     </div>
 
     <!-- Result -->
@@ -147,7 +147,7 @@
       <div class="mb-8">
         <h4 class="text-lg font-bold font-display text-surface-50 mb-4 flex items-center gap-2">
           <i data-lucide="bar-chart-3" class="w-5 h-5" style="color: #A86240"></i>
-          <span ><%= t('quiz.dimensionBreakdown', 'Rincian Per Dimensi') %></span>
+          <span >Rincian Per Dimensi</span>
         </h4>
         <div class="space-y-4" id="dimension-bars">
 
@@ -157,8 +157,8 @@
               <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background: rgba(239,68,68,0.12)">🔥</div>
                 <div>
-                  <p class="text-sm font-semibold text-surface-100" ><%= t('quiz.exhaustion', 'Kelelahan (Exhaustion)') %></p>
-                  <p class="text-[10px] text-surface-500" ><%= t('quiz.exhaustionDesc', 'Tingkat kelelahan fisik & emosional') %></p>
+                  <p class="text-sm font-semibold text-surface-100" >Kelelahan (Exhaustion)</p>
+                  <p class="text-[10px] text-surface-500" >Tingkat kelelahan fisik & emosional</p>
                 </div>
               </div>
               <span id="dim-exhaustion-val" class="text-lg font-bold font-mono text-surface-100">0%</span>
@@ -175,8 +175,8 @@
               <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background: rgba(168,98,64,0.12)">😔</div>
                 <div>
-                  <p class="text-sm font-semibold text-surface-100" ><%= t('quiz.cynicism', 'Sinisme (Cynicism)') %></p>
-                  <p class="text-[10px] text-surface-500" ><%= t('quiz.cynicismDesc', 'Sikap negatif terhadap studi') %></p>
+                  <p class="text-sm font-semibold text-surface-100" >Sinisme (Cynicism)</p>
+                  <p class="text-[10px] text-surface-500" >Sikap negatif terhadap studi</p>
                 </div>
               </div>
               <span id="dim-cynicism-val" class="text-lg font-bold font-mono text-surface-100">0%</span>
@@ -193,8 +193,8 @@
               <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background: rgba(34,197,94,0.12)">📚</div>
                 <div>
-                  <p class="text-sm font-semibold text-surface-100" ><%= t('quiz.efficacy', 'Efikasi Akademik') %></p>
-                  <p class="text-[10px] text-surface-500" ><%= t('quiz.efficacyDesc', 'Keyakinan terhadap kemampuan akademik') %></p>
+                  <p class="text-sm font-semibold text-surface-100" >Efikasi Akademik</p>
+                  <p class="text-[10px] text-surface-500" >Keyakinan terhadap kemampuan akademik</p>
                 </div>
               </div>
               <span id="dim-efficacy-val" class="text-lg font-bold font-mono text-surface-100">0%</span>
@@ -212,7 +212,7 @@
       <div class="mb-6">
         <h4 class="text-lg font-bold font-display text-surface-50 mb-4 flex items-center gap-2">
           <i data-lucide="lightbulb" class="w-5 h-5 text-warning-400"></i>
-          <span ><%= t('quiz.recommendations', 'Rekomendasi') %></span>
+          <span >Rekomendasi</span>
         </h4>
         <div id="result-recommendations" class="space-y-3"></div>
       </div>
@@ -221,18 +221,18 @@
       <div class="flex flex-col sm:flex-row gap-3 justify-center pt-4 border-t border-surface-700/30">
         <a href="/dashboard" class="btn-secondary">
           <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-          <span ><%= t('quiz.toDashboard', 'Dashboard') %></span>
+          <span >Dashboard</span>
         </a>
         <a href="/analytics" class="btn-secondary">
           <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-          <span ><%= t('quiz.toAnalytics', 'Lihat Analitik') %></span>
+          <span >Lihat Analitik</span>
         </a>
       </div>
     </div>
   </div>
 
   <div class="mt-4 text-center">
-    <p class="text-xs text-surface-500" ><%= t('quiz.disclaimer', '⚠️ Hasil quiz ini bukan diagnosis medis. Konsultasikan dengan profesional jika diperlukan.') %></p>
+    <p class="text-xs text-surface-500" >⚠️ Hasil quiz ini bukan diagnosis medis. Konsultasikan dengan profesional jika diperlukan.</p>
   </div>
 <% } %>
 </div>
@@ -244,15 +244,13 @@ let currentQ = 0;
 let answers = [];
 
 const dimLabels = {
-  emotional_exhaustion: 'quiz.exhaustion',
-  depersonalization: 'quiz.cynicism',
-  personal_accomplishment: 'quiz.efficacy',
+  emotional_exhaustion: 'Kelelahan Emosional',
+  depersonalization: 'Sinisme',
+  personal_accomplishment: 'Efikasi Akademik',
 };
 
 function getDimLabel(dim) {
-  const t = window.t || (k => k.split('.').pop());
-  const labelKey = dimLabels[dim];
-  return labelKey ? t(labelKey) : dim;
+  return dimLabels[dim] || dim;
 }
 
 function showQuestion(idx) {
@@ -262,7 +260,7 @@ function showQuestion(idx) {
   document.getElementById('q-current').textContent = idx + 1;
   document.getElementById('q-progress').style.width = ((idx + 1) / questions.length * 100) + '%';
   document.getElementById('q-dimension').textContent = getDimLabel(q.dimension);
-  document.getElementById('q-text').textContent = lang === 'en' && q.text_en ? q.text_en : q.text;
+  document.getElementById('q-text').textContent = q.text;
 
   const optContainer = document.getElementById('q-options');
   optContainer.innerHTML = '';
@@ -300,20 +298,20 @@ function animateValue(el, start, end, duration) {
 }
 
 function getDimDescription(dim, percent) {
-  const t = window.t || (k => k);
+  
   if (dim === 'emotional_exhaustion') {
-    if (percent <= 33) return t('quiz.exhaustionLow', 'Tingkat kelelahanmu rendah. Energimu masih terjaga baik.');
-    if (percent <= 66) return t('quiz.exhaustionMed', 'Kamu menunjukkan tanda-tanda kelelahan sedang. Perhatikan pola istirahat.');
-    return t('quiz.exhaustionHigh', 'Tingkat kelelahanmu tinggi. Prioritaskan istirahat dan pemulihan segera.');
+    if (percent <= 33) return 'Tingkat kelelahanmu rendah. Energimu masih terjaga baik.';
+    if (percent <= 66) return 'Kamu menunjukkan tanda-tanda kelelahan sedang. Perhatikan pola istirahat.';
+    return 'Tingkat kelelahanmu tinggi. Prioritaskan istirahat dan pemulihan segera.';
   }
   if (dim === 'depersonalization') {
-    if (percent <= 33) return t('quiz.cynicismLow', 'Kamu masih memiliki sikap positif terhadap studi.');
-    if (percent <= 66) return t('quiz.cynicismMed', 'Ada tanda sikap sinis. Coba kembali ke tujuan belajarmu.');
-    return t('quiz.cynicismHigh', 'Sinisme tinggi terdeteksi. Pertimbangkan untuk bicara dengan konselor.');
+    if (percent <= 33) return 'Kamu masih memiliki sikap positif terhadap studi.';
+    if (percent <= 66) return 'Ada tanda sikap sinis. Coba kembali ke tujuan belajarmu.';
+    return 'Sinisme tinggi terdeteksi. Pertimbangkan untuk bicara dengan konselor.';
   }
-  if (percent <= 33) return t('quiz.efficacyHigh', 'Kamu merasa yakin dengan kemampuan akademikmu. Bagus!');
-  if (percent <= 66) return t('quiz.efficacyMed', 'Kepercayaan akademikmu perlu ditingkatkan. Rayakan pencapaian kecil!');
-  return t('quiz.efficacyLow', 'Efikasi diri akademikmu rendah. Cari dukungan dan tetapkan target kecil.');
+  if (percent <= 33) return 'Kamu merasa yakin dengan kemampuan akademikmu. Bagus!';
+  if (percent <= 66) return 'Kepercayaan akademikmu perlu ditingkatkan. Rayakan pencapaian kecil!';
+  return 'Efikasi diri akademikmu rendah. Cari dukungan dan tetapkan target kecil.';
 }
 
 async function submitQuiz() {
@@ -333,13 +331,13 @@ async function submitQuiz() {
     if (data.streak !== undefined) {
       const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
       Swal.fire({
-        title: window.t ? window.t('quiz.swal.streakTitle') : '🔥 Streak Aktif!',
+        title: '🔥 Streak Aktif!',
         html: `
           <div style="font-size: 48px; margin-bottom: 12px; animation: streakBounce 0.6s ease-out;">
             ${'🔥'.repeat(Math.min(data.streak, 7))}
           </div>
-          <p style="font-size: 18px; font-weight: bold; margin-bottom: 4px;">${data.streak} ${window.t ? window.t('quiz.swal.streakDays', 'Hari Berturut-turut!') : 'Hari Berturut-turut!'}</p>
-          <p style="font-size: 13px; opacity: 0.7;">${window.t ? window.t('quiz.swal.streakDesc', 'Hebat! Konsistensimu mengisi quiz sangat baik. Terus pertahankan!') : 'Hebat! Konsistensimu mengisi quiz sangat baik. Terus pertahankan!'}</p>
+          <p style="font-size: 18px; font-weight: bold; margin-bottom: 4px;">${data.streak} ${'Hari Berturut-turut!'}</p>
+          <p style="font-size: 13px; opacity: 0.7;">${'Hebat! Konsistensimu mengisi quiz sangat baik. Terus pertahankan!'}</p>
           <style>
             @keyframes streakBounce {
               0% { transform: scale(0); opacity: 0; }
@@ -355,7 +353,7 @@ async function submitQuiz() {
           </style>
         `,
         icon: 'success',
-        confirmButtonText: window.t ? window.t('quiz.swal.streakConfirm') : 'Lanjutkan 💪',
+        confirmButtonText: 'Lanjutkan 💪',
         confirmButtonColor: '#A86240',
         background: isDark ? '#1e1611' : '#ffffff',
         color: isDark ? '#f8f4f0' : '#3a1e13',
@@ -379,14 +377,14 @@ async function submitQuiz() {
     scoreEl.style.color = gaugeColor;
     animateValue(scoreEl, 0, score, 1500);
 
-    const titles = { Low: window.t('quiz.lowRisk', 'Risiko Rendah'), Medium: window.t('quiz.medRisk', 'Risiko Sedang'), High: window.t('quiz.highRisk', 'Risiko Tinggi') };
-    const descriptions = { Low: window.t('quiz.descLow', 'Tingkat kelelahan akademikmu masih rendah. Pertahankan ritme belajarmu dan tetap jaga keseimbangan!'), Medium: window.t('quiz.descMedium', 'Kamu menunjukkan tanda-tanda kelelahan akademik sedang. Mulailah memperhatikan pola istirahat dan keseimbangan aktivitas.'), High: window.t('quiz.descHigh', 'Tingkat kelelahan akademikmu tinggi. Segera ambil langkah untuk beristirahat, kurangi beban, dan pertimbangkan bicara dengan konselor.') };
+    const titles = { Low: 'Risiko Rendah', Medium: 'Risiko Sedang', High: 'Risiko Tinggi' };
+    const descriptions = { Low: 'Tingkat kelelahan akademikmu masih rendah. Pertahankan ritme belajarmu dan tetap jaga keseimbangan!', Medium: 'Kamu menunjukkan tanda-tanda kelelahan akademik sedang. Mulailah memperhatikan pola istirahat dan keseimbangan aktivitas.', High: 'Tingkat kelelahan akademikmu tinggi. Segera ambil langkah untuk beristirahat, kurangi beban, dan pertimbangkan bicara dengan konselor.' };
 
     document.getElementById('result-title').textContent = titles[data.riskLevel] || titles.Medium;
     document.getElementById('result-description').textContent = descriptions[data.riskLevel] || descriptions.Medium;
 
     const badge = document.getElementById('result-badge');
-    const badgeLabels = { Low: window.t('quiz.riskLow', 'Rendah'), Medium: window.t('quiz.riskMed', 'Sedang'), High: window.t('quiz.riskHigh', 'Tinggi') };
+    const badgeLabels = { Low: 'Rendah', Medium: 'Sedang', High: 'Tinggi' };
     const badgeLabel = badgeLabels[data.riskLevel] || badgeLabels.Medium;
     badge.textContent = badgeLabel + ' Risk';
     badge.className = `badge badge-${data.riskLevel.toLowerCase()} inline-flex`;
@@ -428,7 +426,7 @@ async function submitQuiz() {
   } catch(e) {
     document.getElementById('quiz-loading').classList.add('hidden');
     document.getElementById('quiz-result').classList.remove('hidden');
-    document.getElementById('result-title').textContent = window.t ? window.t('quiz.error') : 'Terjadi kesalahan. Coba lagi.';
+    document.getElementById('result-title').textContent = 'Terjadi kesalahan. Coba lagi.';
     document.getElementById('result-description').textContent = e?.response?.data?.error || e.message || '';
   }
 }

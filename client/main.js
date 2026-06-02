@@ -3,7 +3,6 @@ import axios from 'axios';
 
 import { showToast } from './modules/toast.js';
 import { initTheme, toggleTheme } from './modules/theme.js';
-import { initLang, toggleLang, t, getLang } from './modules/i18n.js';
 import { initCharts, initActivityForm, initMoodModal, openMoodModal, closeMoodModal, initDashboardEvents } from './modules/dashboard.js';
 import { checkPomoOverlay, startOverlayTicker, toggleOverlay, getPomoState, savePomoState, clearPomoState } from './modules/pomodoro-state.js';
 
@@ -27,9 +26,6 @@ window.hapiApi = {
 
 window.showToast = showToast;
 window.toggleTheme = toggleTheme;
-window.toggleLang = toggleLang;
-window.t = t;
-window.getLang = getLang;
 window.openMoodModal = openMoodModal;
 window.closeMoodModal = closeMoodModal;
 window.togglePomoOverlay = toggleOverlay;
@@ -43,19 +39,17 @@ function startClock() {
     const dtEls = document.querySelectorAll('.live-time-display');
     if (!dtEls.length) return;
     const now = new Date();
-    const lang = window.getLang() === 'en' ? 'en-GB' : 'id-ID';
+    const lang = 'id-ID';
     const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
     const timeString = now.toLocaleString(lang, opts);
     dtEls.forEach(el => el.textContent = timeString);
   };
   update();
   setInterval(update, 1000);
-  window.addEventListener('langChanged', update);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
-  initLang();
   initCharts();
   initActivityForm();
   initMoodModal();

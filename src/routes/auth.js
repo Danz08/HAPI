@@ -20,7 +20,7 @@ router.post('/login', redirectIfAuth, async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    req.flash('error', req.t('validation.missing_credentials', 'Email dan password harus diisi.'));
+    req.flash('error', 'Email dan password harus diisi.');
     return res.redirect('/auth/login');
   }
 
@@ -29,13 +29,13 @@ router.post('/login', redirectIfAuth, async (req, res) => {
     const user = await db.prepare('SELECT * FROM users WHERE email = ?').get(email);
 
     if (!user) {
-      req.flash('error', req.t('auth.invalid_credentials', 'Email atau password salah.'));
+      req.flash('error', 'Email atau password salah.');
       return res.redirect('/auth/login');
     }
 
     const isMatch = bcrypt.compareSync(password, user.password);
     if (!isMatch) {
-      req.flash('error', req.t('auth.invalid_credentials', 'Email atau password salah.'));
+      req.flash('error', 'Email atau password salah.');
       return res.redirect('/auth/login');
     }
 
@@ -59,7 +59,7 @@ router.post('/login', redirectIfAuth, async (req, res) => {
     }
   } catch (err) {
     console.error('Login error:', err);
-    req.flash('error', req.t('error.server_error', 'Terjadi kesalahan. Silakan coba lagi.'));
+    req.flash('error', 'Terjadi kesalahan. Silakan coba lagi.');
     res.redirect('/auth/login');
   }
 });
@@ -78,17 +78,17 @@ router.post('/register', redirectIfAuth, async (req, res) => {
 
   // Validation
   if (!username || !email || !password) {
-    req.flash('error', req.t('validation.all_fields_required', 'Semua field harus diisi.'));
+    req.flash('error', 'Semua field harus diisi.');
     return res.redirect('/auth/register');
   }
 
   if (password.length < 6) {
-    req.flash('error', req.t('validation.password_min_length', 'Password minimal 6 karakter.'));
+    req.flash('error', 'Password minimal 6 karakter.');
     return res.redirect('/auth/register');
   }
 
   if (password !== confirm_password) {
-    req.flash('error', req.t('validation.password_mismatch', 'Password dan konfirmasi password tidak cocok.'));
+    req.flash('error', 'Password dan konfirmasi password tidak cocok.');
     return res.redirect('/auth/register');
   }
 
@@ -98,7 +98,7 @@ router.post('/register', redirectIfAuth, async (req, res) => {
     // Check existing user
     const existing = await db.prepare('SELECT id FROM users WHERE email = ? OR username = ?').get(email, username);
     if (existing) {
-      req.flash('error', req.t('auth.user_exists', 'Email atau username sudah terdaftar.'));
+      req.flash('error', 'Email atau username sudah terdaftar.');
       return res.redirect('/auth/register');
     }
 
@@ -125,7 +125,7 @@ router.post('/register', redirectIfAuth, async (req, res) => {
     res.redirect('/onboarding');
   } catch (err) {
     console.error('Register error:', err);
-    req.flash('error', req.t('error.server_error', 'Terjadi kesalahan. Silakan coba lagi.'));
+    req.flash('error', 'Terjadi kesalahan. Silakan coba lagi.');
     res.redirect('/auth/register');
   }
 });

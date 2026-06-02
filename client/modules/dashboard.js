@@ -107,12 +107,12 @@ export function initActivityForm() {
       const res = await logActivity(data);
       if (res.data.success) {
         form.reset();
-        showToast('Aktivitas berhasil disimpan! ✅', 'success').then(() => {
+        showToast('Aktivitas berhasil dicatat', 'success').then(() => {
           location.reload();
         });
       }
     } catch (err) {
-      showToast('Gagal menyimpan aktivitas.', 'error');
+      showToast('Gagal mencatat aktivitas', 'error');
     }
   });
 }
@@ -158,7 +158,7 @@ export function initMoodModal() {
   moodForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!selectedMood) {
-      showToast('Pilih mood terlebih dahulu.', 'warning');
+      showToast('Pilih mood terlebih dahulu', 'warning');
       return;
     }
 
@@ -174,12 +174,12 @@ export function initMoodModal() {
       const res = await logMood(data);
       if (res.data.success) {
         closeMoodModal();
-        showToast('Mood berhasil disimpan! 😊', 'success').then(() => {
+        showToast('Mood berhasil dicatat', 'success').then(() => {
           location.reload();
         });
       }
     } catch (err) {
-      showToast('Gagal menyimpan mood.', 'error');
+      showToast('Gagal mencatat mood', 'error');
     }
   });
 }
