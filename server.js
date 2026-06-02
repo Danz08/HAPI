@@ -148,6 +148,8 @@ app.use(async (req, res, next) => {
   res.locals.error = req.flash('error');
   res.locals.warning = req.flash('warning');
   res.locals.currentPath = req.path;
+  res.locals.currentLang = req.language || 'id';
+  res.locals.langDict = req.i18n ? (req.i18n.getResourceBundle(req.language, 'translation') || {}) : {};
 
   // Check if mood already logged today (for navbar mood button)
   res.locals.moodLoggedToday = false;

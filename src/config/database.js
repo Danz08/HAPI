@@ -13,7 +13,7 @@ const pool = new Pool({
   ssl: connectionString.includes('neon.tech') || connectionString.includes('supabase.co') 
     ? { rejectUnauthorized: false } 
     : false,
-  connectionTimeoutMillis: 5000 // 5 seconds timeout to prevent Vercel 10s hang
+  connectionTimeoutMillis: 15000 // 15 seconds timeout to allow Neon DB to wake up from idle
 });
 
 // Wrapper to mimic better-sqlite3 API (with async/await)
