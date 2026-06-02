@@ -89,15 +89,17 @@
         <span class="text-surface-600">|</span>
         <div class="flex items-center gap-1">
           <span class="text-sm">🔥</span>
-          <span>Streak Quiz</span>
+          <span><%= t('analytics.legend.streak', 'Streak Quiz') %></span>
         </div>
       </div>
 
       <!-- Calendar Grid -->
       <div class="grid grid-cols-7 gap-1.5">
         <!-- Day headers -->
-        <% ['Min','Sen','Sel','Rab','Kam','Jum','Sab'].forEach(d => { %>
-          <div class="text-center text-xs font-semibold text-surface-500 py-1.5" data-i18n="analytics.day.<%= d %>"><%= d %></div>
+        <% ['min','sen','sel','rab','kam','jum','sab'].forEach((d, i) => { 
+             const defaultDays = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+        %>
+          <div class="text-center text-xs font-semibold text-surface-500 py-1.5"><%= t(`analytics.day.${d}`, defaultDays[i]) %></div>
         <% }) %>
 
         <!-- Empty cells for first week offset -->
@@ -164,8 +166,10 @@
           <% insights.forEach(function(ins) { %>
           <% const borderColorClass = ins.color === 'brand' ? 'border-brand-500/50' : ins.color === 'success' ? 'border-success-500/50' : ins.color === 'warning' ? 'border-warning-500/50' : 'border-danger-500/50'; %>
           <div class="p-3 rounded-xl bg-surface-800/50 border-l-2 <%= borderColorClass %>">
-            <p class="text-sm font-semibold text-surface-200 mb-1 insight-title" data-title-id="<%= ins.title %>" data-title-en="<%= ins.title_en || ins.title %>"><%- ins.icon %> <span><%= ins.title %></span></p>
-            <p class="text-xs text-surface-400 insight-desc" data-desc-id="<%= ins.description %>" data-desc-en="<%= ins.desc_en || ins.description %>"><%= ins.description %></p>
+            <% const finalTitle = (typeof currentLang !== 'undefined' && currentLang === 'en' && ins.title_en) ? ins.title_en : ins.title; %>
+            <% const finalDesc = (typeof currentLang !== 'undefined' && currentLang === 'en' && ins.desc_en) ? ins.desc_en : ins.description; %>
+            <p class="text-sm font-semibold text-surface-200 mb-1 insight-title"><%- ins.icon %> <span><%= finalTitle %></span></p>
+            <p class="text-xs text-surface-400 insight-desc"><%= finalDesc %></p>
           </div>
           <% }) %>
         </div>
@@ -232,10 +236,10 @@
             <span class="w-1.5 h-1.5 bg-success-400 rounded-full animate-pulse-soft"></span>
             <span ><%= t('analytics.googleConnected', 'Terhubung') %></span>
           </span>
-          <button onclick="syncCalendar()" class="btn-ghost btn-sm" id="btn-sync-cal" title="Sinkronisasi ulang">
+          <button onclick="syncCalendar()" class="btn-ghost btn-sm" id="btn-sync-cal" title="<%= t('analytics.resync', 'Sinkronisasi ulang') %>">
             <i data-lucide="refresh-cw" class="w-4 h-4"></i>
           </button>
-          <a href="/auth/google/disconnect" class="btn-ghost btn-sm text-danger-400 hover:text-danger-300" title="Putuskan" onclick="return confirm('Putuskan Google Calendar?')">
+          <a href="/auth/google/disconnect" class="btn-ghost btn-sm text-danger-400 hover:text-danger-300" title="<%= t('analytics.disconnect', 'Putuskan') %>" onclick="return confirm('<%= t('analytics.confirmDisconnect', 'Putuskan Google Calendar?') %>')">
             <i data-lucide="unlink" class="w-4 h-4"></i>
           </a>
         </div>
@@ -308,14 +312,16 @@ async function syncCalendar() {
   if (btn) btn.disabled = true;
   try {
     const res = await axios.post('/auth/google/sync', { days: 30 });
+    const t = window.t || (k => k);
     if (res.data.success) {
-      window.showToast?.('Kalender berhasil disinkronisasi! 📅', 'success');
+      window.showToast?.(t('analytics.toast.syncSuccess', 'Kalender berhasil disinkronisasi! 📅'), 'success');
       setTimeout(() => location.reload(), 1000);
     } else {
-      window.showToast?.(res.data.error || 'Gagal sync.', 'error');
+      window.showToast?.(res.data.error || t('analytics.toast.syncFail', 'Gagal sync.'), 'error');
     }
   } catch(e) {
-    window.showToast?.('Gagal menyinkronisasi kalender.', 'error');
+    const t = window.t || (k => k);
+    window.showToast?.(t('analytics.toast.syncError', 'Gagal menyinkronisasi kalender.'), 'error');
   } finally {
     if (btn) btn.disabled = false;
   }
@@ -332,7 +338,10 @@ async function showDayDetail(dateStr) {
   if (selected) selected.classList.add('ring-2', 'ring-accent-pink');
 
   const d = new Date(dateStr);
-  const dayNames = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const isEn = window.HAPI_LANG === 'en';
+  const dayNamesId = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const dayNamesEn = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const dayNames = isEn ? dayNamesEn : dayNamesId;
   title.textContent = `${dayNames[d.getDay()]}, ${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
 
   const t = window.t || (k => k.split('.').pop());

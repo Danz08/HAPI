@@ -43,7 +43,7 @@ function startClock() {
     const dtEls = document.querySelectorAll('.live-time-display');
     if (!dtEls.length) return;
     const now = new Date();
-    const lang = window.getLang() === 'en' ? 'en-US' : 'id-ID';
+    const lang = window.getLang() === 'en' ? 'en-GB' : 'id-ID';
     const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
     const timeString = now.toLocaleString(lang, opts);
     dtEls.forEach(el => el.textContent = timeString);

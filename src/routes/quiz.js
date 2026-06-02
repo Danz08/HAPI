@@ -149,7 +149,7 @@ router.get('/', async (req, res) => {
   res.render('pages/quiz', {
     title: 'Fatigue Quiz - HAPI',
     layout: 'layouts/main',
-    pageTitle: 'Quiz Kelelahan Akademik',
+    pageTitle: req.t('quiz.pageTitle', 'Quiz Kelelahan Akademik'),
     pageKey: 'page.quiz',
     questions: quizQuestions,
     todayResult,

@@ -323,7 +323,7 @@ async function saveSession() {
 
     if (!data.calEvents || data.calEvents.length === 0) {
       const t = window.t || (k => k);
-      container.innerHTML = `<p class="text-sm text-surface-500 text-center py-2">${t('pomo.noSchedule')}</p>`;
+      container.innerHTML = `<p class="text-sm text-surface-500 text-center py-2">${t('pomo.noSchedule', 'Tidak ada jadwal tersisa hari ini.')}</p>`;
       return;
     }
 
@@ -344,18 +344,19 @@ async function saveSession() {
       html += `<span class="text-xs">${typeIcons[ev.event_type] || '📌'}</span>`;
       html += `<span class="text-xs font-mono text-surface-500">${startStr}–${endStr}</span>`;
       html += `<span class="text-xs text-surface-200">${ev.title}</span>`;
-      if (isNow) { const t = window.t || (k => k); html += `<span class="px-1.5 py-0.5 rounded text-[9px] bg-brand-500/20 text-brand-400 font-bold">${t('pomo.now')}</span>`; }
+      if (isNow) { const t = window.t || (k => k); html += `<span class="px-1.5 py-0.5 rounded text-[9px] bg-brand-500/20 text-brand-400 font-bold">${t('pomo.now', 'Sekarang')}</span>`; }
       html += `</div>`;
       // Auto-set timer button for future events
       if (isFuture || isNow) {
-        html += `<button onclick="setCalendarTimer(${durationMin}, '${ev.title.replace(/'/g, '')}')" class="btn-ghost text-[10px] px-2 py-1" title="Set timer ${durationMin}m">⏱️ ${durationMin}m</button>`;
+        const t = window.t || (k => k);
+        html += `<button onclick="setCalendarTimer(${durationMin}, '${ev.title.replace(/'/g, '')}')" class="btn-ghost text-[10px] px-2 py-1" title="${t('pomo.setTimer', 'Set timer')} ${durationMin}m">⏱️ ${durationMin}m</button>`;
       }
       html += `</div>`;
     });
     container.innerHTML = html;
   } catch(e) {
     const t = window.t || (k => k);
-    document.getElementById('cal-events-list').innerHTML = `<p class="text-xs text-surface-500 text-center">${t('pomo.loadFail')}</p>`;
+    document.getElementById('cal-events-list').innerHTML = `<p class="text-xs text-surface-500 text-center">${t('pomo.loadFail', 'Gagal memuat kalender')}</p>`;
   }
 }
 
@@ -364,9 +365,10 @@ window.setCalendarTimer = function(minutes, title) {
   workDuration = minutes;
   document.getElementById('set-work').value = minutes;
   setMode('work');
-  document.getElementById('timer-label').textContent = title || `Meeting (${minutes}m)`;
+  const t = window.t || (k => k);
+  document.getElementById('timer-label').textContent = title || `${t('pomo.meetingLabel', 'Meeting')} (${minutes}m)`;
   startTimer();
-  window.showToast?.((window.t ? window.t('pomo.timerStarted') : 'Timer dimulai') + ` (${minutes}m)`, 'success');
+  window.showToast?.(`${t('pomo.timerStarted', 'Timer dimulai')} (${minutes}m)`, 'success');
 };
 
 // Initialize

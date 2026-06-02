@@ -153,7 +153,7 @@ router.get('/', async (req, res) => {
     res.render('pages/dashboard', {
       title: 'Dashboard - HAPI',
       layout: 'layouts/main',
-      pageTitle: 'Dashboard',
+      pageTitle: req.t('nav.dashboard', 'Dashboard'),
       pageKey: 'page.dashboard',
       todayStats,
       todayActivities,
@@ -181,8 +181,8 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error("Dashboard error:", error);
     res.status(500).render('error', {
-      title: '500 - Kesalahan Server',
-      message: 'Gagal memuat data dashboard.',
+      title: req.t('error.server_error_500', '500 - Kesalahan Server'),
+      message: req.t('dashboard.load_error', 'Gagal memuat data dashboard.'),
       layout: 'layouts/main',
     });
   }

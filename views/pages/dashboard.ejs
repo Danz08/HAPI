@@ -182,7 +182,7 @@
       <i data-lucide="pie-chart" class="w-5 h-5 inline text-warning-400 mr-2"></i><%= t('dashboard.fatigueBreakdown', 'Rincian Kelelahan') %>
     </h3>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <% const bl = { quiz:'Quiz', mood:'Mood', workload:'Beban Kerja', breaks:'Istirahat' }; %>
+      <% const bl = { quiz: t('analytics.detail.quiz', 'Quiz'), mood: t('analytics.detail.mood', 'Mood'), workload: t('analytics.detail.work', 'Beban Kerja'), breaks: t('analytics.detail.break', 'Istirahat') }; %>
       <% for (const [k,l] of Object.entries(bl)) { %>
       <div class="text-center p-4 rounded-xl bg-surface-800/50">
         <div class="text-2xl font-bold font-display text-surface-50"><%= fatigueData.breakdown[k] %>%</div>
@@ -207,10 +207,10 @@
         <option value="meeting" ><%= t('form.meeting', 'Rapat') %></option>
         <option value="other" ><%= t('form.other', 'Lainnya') %></option>
       </select>
-      <input type="text" name="description" placeholder="Deskripsi kegiatan..." class="input-field text-sm">
+      <input type="text" name="description" placeholder="<%= t('dashboard.activityDesc', 'Deskripsi kegiatan...') %>" class="input-field text-sm">
       <div class="grid grid-cols-2 gap-3">
-        <input type="number" name="duration_minutes" min="0" value="25" class="input-field text-sm" placeholder="Durasi (mnt)">
-        <input type="number" name="break_minutes" min="0" value="5" class="input-field text-sm" placeholder="Istirahat (mnt)">
+        <input type="number" name="duration_minutes" min="0" value="25" class="input-field text-sm" placeholder="<%= t('dashboard.durationMin', 'Durasi (mnt)') %>">
+        <input type="number" name="break_minutes" min="0" value="5" class="input-field text-sm" placeholder="<%= t('dashboard.breakMin', 'Istirahat (mnt)') %>">
       </div>
       <button type="submit" class="btn-success w-full btn-sm"><i data-lucide="check" class="w-4 h-4"></i> <span ><%= t('form.save', 'Simpan') %></span></button>
     </form>
@@ -231,7 +231,7 @@
     </div>
     <form id="mood-form" class="space-y-6">
       <div class="flex justify-between gap-2" id="mood-selector">
-        <% [{s:1,e:'😞',l:'Sangat Buruk'},{s:2,e:'😕',l:'Buruk'},{s:3,e:'😐',l:'Biasa'},{s:4,e:'😊',l:'Baik'},{s:5,e:'😄',l:'Sangat Baik'}].forEach(function(m){ %>
+        <% [{s:1,e:'😞',l:t('mood.score1', 'Sangat Buruk')},{s:2,e:'😕',l:t('mood.score2', 'Buruk')},{s:3,e:'😐',l:t('mood.score3', 'Biasa')},{s:4,e:'😊',l:t('mood.score4', 'Baik')},{s:5,e:'😄',l:t('mood.score5', 'Sangat Baik')}].forEach(function(m){ %>
         <button type="button" class="flex-1 py-3 rounded-xl text-center hover:bg-surface-700/50 border border-transparent mood-btn" data-score="<%= m.s %>" data-label="<%= m.l %>">
           <div class="text-2xl"><%= m.e %></div><div class="text-[10px] text-surface-400 mt-1"><%= m.l %></div>
         </button>
@@ -239,7 +239,7 @@
       </div>
       <div><label class="input-label" ><%= t('mood.energy', 'Tingkat Energi') %></label><input type="range" min="1" max="5" value="3" class="w-full accent-brand-500" name="energy_level" id="energy-slider"></div>
       <div><label class="input-label" ><%= t('mood.stress', 'Tingkat Stres') %></label><input type="range" min="1" max="5" value="3" class="w-full accent-danger-500" name="stress_level" id="stress-slider"></div>
-      <textarea name="notes" rows="2" placeholder="Ada yang ingin diceritakan? (opsional)" class="input-field resize-none" id="mood-notes"></textarea>
+      <textarea name="notes" rows="2" placeholder="<%= t('mood.notesPlaceholder', 'Ada yang ingin diceritakan? (opsional)') %>" class="input-field resize-none" id="mood-notes"></textarea>
       <button type="submit" class="btn-primary w-full"><i data-lucide="save" class="w-4 h-4"></i> <span ><%= t('mood.saveMood', 'Simpan Mood') %></span></button>
     </form>
   </div>
@@ -249,6 +249,9 @@
   document.addEventListener('DOMContentLoaded', () => {
     const isDarkMode = document.documentElement.getAttribute('data-theme') !== 'light';
     const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    const t = window.t || (k => k.split('.').pop());
+    const isEn = window.HAPI_LANG === 'en';
+    const dayNames = isEn ? ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] : ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
     const todayStr = new Intl.DateTimeFormat('en-CA', { timeZone: userTz }).format(new Date());
     
     const showMoodReminderFlag = <%= showMoodReminder %> && (localStorage.getItem('moodReminderSeenDate') !== todayStr);

@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
   res.render('pages/pomodoro', {
     title: 'Pomodoro Timer - HAPI',
     layout: 'layouts/main',
-    pageTitle: 'Pomodoro',
+    pageTitle: req.t('nav.pomodoro', 'Pomodoro'),
     pageKey: 'page.pomodoro',
   });
 });

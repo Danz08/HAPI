@@ -60,8 +60,10 @@
             <i data-lucide="lightbulb" class="w-4 h-4 text-warning-400"></i>
           </div>
           <div>
-            <p class="text-sm font-semibold text-surface-100 mb-1 insight-title" data-title-id="<%= ins.title %>" data-title-en="<%= ins.title_en || ins.title %>"><span><%= ins.title %></span></p>
-            <p class="text-sm text-surface-300 leading-relaxed insight-desc" data-desc-id="<%= ins.description %>" data-desc-en="<%= ins.description_en || ins.description %>"><%= ins.description %></p>
+            <% const finalTitle = (typeof currentLang !== 'undefined' && currentLang === 'en' && ins.title_en) ? ins.title_en : ins.title; %>
+            <% const finalDesc = (typeof currentLang !== 'undefined' && currentLang === 'en' && ins.description_en) ? ins.description_en : ins.description; %>
+            <p class="text-sm font-semibold text-surface-100 mb-1 insight-title"><span><%= finalTitle %></span></p>
+            <p class="text-sm text-surface-300 leading-relaxed insight-desc"><%= finalDesc %></p>
           </div>
         </div>
         <% }) %>
@@ -242,15 +244,15 @@ let currentQ = 0;
 let answers = [];
 
 const dimLabels = {
-  emotional_exhaustion: { id: 'Kelelahan', en: 'Exhaustion' },
-  depersonalization: { id: 'Sinisme', en: 'Cynicism' },
-  personal_accomplishment: { id: 'Efikasi Akademik', en: 'Academic Efficacy' },
+  emotional_exhaustion: 'quiz.exhaustion',
+  depersonalization: 'quiz.cynicism',
+  personal_accomplishment: 'quiz.efficacy',
 };
 
 function getDimLabel(dim) {
-  const lang = window.getLang ? window.getLang() : 'id';
-  const labels = dimLabels[dim];
-  return labels ? (lang === 'en' ? labels.en : labels.id) : dim;
+  const t = window.t || (k => k.split('.').pop());
+  const labelKey = dimLabels[dim];
+  return labelKey ? t(labelKey) : dim;
 }
 
 function showQuestion(idx) {
@@ -298,20 +300,20 @@ function animateValue(el, start, end, duration) {
 }
 
 function getDimDescription(dim, percent) {
-  const lang = window.getLang ? window.getLang() : 'id';
+  const t = window.t || (k => k);
   if (dim === 'emotional_exhaustion') {
-    if (percent <= 33) return lang === 'en' ? 'Your exhaustion level is low. You still have good energy.' : 'Tingkat kelelahanmu rendah. Energimu masih terjaga baik.';
-    if (percent <= 66) return lang === 'en' ? 'You show moderate signs of exhaustion. Pay attention to rest patterns.' : 'Kamu menunjukkan tanda-tanda kelelahan sedang. Perhatikan pola istirahat.';
-    return lang === 'en' ? 'Your exhaustion is high. Prioritize rest and recovery immediately.' : 'Tingkat kelelahanmu tinggi. Prioritaskan istirahat dan pemulihan segera.';
+    if (percent <= 33) return t('quiz.exhaustionLow', 'Tingkat kelelahanmu rendah. Energimu masih terjaga baik.');
+    if (percent <= 66) return t('quiz.exhaustionMed', 'Kamu menunjukkan tanda-tanda kelelahan sedang. Perhatikan pola istirahat.');
+    return t('quiz.exhaustionHigh', 'Tingkat kelelahanmu tinggi. Prioritaskan istirahat dan pemulihan segera.');
   }
   if (dim === 'depersonalization') {
-    if (percent <= 33) return lang === 'en' ? 'You maintain positive attitudes toward your studies.' : 'Kamu masih memiliki sikap positif terhadap studi.';
-    if (percent <= 66) return lang === 'en' ? 'You show some cynical attitudes. Try to reconnect with your study goals.' : 'Ada tanda sikap sinis. Coba kembali ke tujuan belajarmu.';
-    return lang === 'en' ? 'High cynicism detected. Consider talking to a counselor or mentor.' : 'Sinisme tinggi terdeteksi. Pertimbangkan untuk bicara dengan konselor.';
+    if (percent <= 33) return t('quiz.cynicismLow', 'Kamu masih memiliki sikap positif terhadap studi.');
+    if (percent <= 66) return t('quiz.cynicismMed', 'Ada tanda sikap sinis. Coba kembali ke tujuan belajarmu.');
+    return t('quiz.cynicismHigh', 'Sinisme tinggi terdeteksi. Pertimbangkan untuk bicara dengan konselor.');
   }
-  if (percent <= 33) return lang === 'en' ? 'You feel confident in your academic abilities. Great!' : 'Kamu merasa yakin dengan kemampuan akademikmu. Bagus!';
-  if (percent <= 66) return lang === 'en' ? 'Your academic confidence needs some boost. Celebrate small wins!' : 'Kepercayaan akademikmu perlu ditingkatkan. Rayakan pencapaian kecil!';
-  return lang === 'en' ? 'Your academic self-efficacy is low. Seek support and set smaller goals.' : 'Efikasi diri akademikmu rendah. Cari dukungan dan tetapkan target kecil.';
+  if (percent <= 33) return t('quiz.efficacyHigh', 'Kamu merasa yakin dengan kemampuan akademikmu. Bagus!');
+  if (percent <= 66) return t('quiz.efficacyMed', 'Kepercayaan akademikmu perlu ditingkatkan. Rayakan pencapaian kecil!');
+  return t('quiz.efficacyLow', 'Efikasi diri akademikmu rendah. Cari dukungan dan tetapkan target kecil.');
 }
 
 async function submitQuiz() {
@@ -336,8 +338,8 @@ async function submitQuiz() {
           <div style="font-size: 48px; margin-bottom: 12px; animation: streakBounce 0.6s ease-out;">
             ${'🔥'.repeat(Math.min(data.streak, 7))}
           </div>
-          <p style="font-size: 18px; font-weight: bold; margin-bottom: 4px;">${data.streak} ${window.t ? window.t('quiz.swal.streakDays') : 'Hari Berturut-turut!'}</p>
-          <p style="font-size: 13px; opacity: 0.7;">${window.t ? window.t('quiz.swal.streakDesc') : 'Hebat! Konsistensimu mengisi quiz sangat baik. Terus pertahankan!'}</p>
+          <p style="font-size: 18px; font-weight: bold; margin-bottom: 4px;">${data.streak} ${window.t ? window.t('quiz.swal.streakDays', 'Hari Berturut-turut!') : 'Hari Berturut-turut!'}</p>
+          <p style="font-size: 13px; opacity: 0.7;">${window.t ? window.t('quiz.swal.streakDesc', 'Hebat! Konsistensimu mengisi quiz sangat baik. Terus pertahankan!') : 'Hebat! Konsistensimu mengisi quiz sangat baik. Terus pertahankan!'}</p>
           <style>
             @keyframes streakBounce {
               0% { transform: scale(0); opacity: 0; }
@@ -377,18 +379,16 @@ async function submitQuiz() {
     scoreEl.style.color = gaugeColor;
     animateValue(scoreEl, 0, score, 1500);
 
-    const titles = { Low: { id: 'Risiko Rendah', en: 'Low Risk' }, Medium: { id: 'Risiko Sedang', en: 'Medium Risk' }, High: { id: 'Risiko Tinggi', en: 'High Risk' } };
-    const descriptions = { Low: { id: 'Tingkat kelelahan akademikmu masih rendah. Pertahankan ritme belajarmu dan tetap jaga keseimbangan!', en: 'Your academic burnout level is low. Keep up your study rhythm and maintain balance!' }, Medium: { id: 'Kamu menunjukkan tanda-tanda kelelahan akademik sedang. Mulailah memperhatikan pola istirahat dan keseimbangan aktivitas.', en: 'You show moderate signs of academic burnout. Start paying attention to rest patterns and activity balance.' }, High: { id: 'Tingkat kelelahan akademikmu tinggi. Segera ambil langkah untuk beristirahat, kurangi beban, dan pertimbangkan bicara dengan konselor.', en: 'Your academic burnout level is high. Take immediate steps to rest, reduce workload, and consider speaking with a counselor.' } };
+    const titles = { Low: window.t('quiz.lowRisk', 'Risiko Rendah'), Medium: window.t('quiz.medRisk', 'Risiko Sedang'), High: window.t('quiz.highRisk', 'Risiko Tinggi') };
+    const descriptions = { Low: window.t('quiz.descLow', 'Tingkat kelelahan akademikmu masih rendah. Pertahankan ritme belajarmu dan tetap jaga keseimbangan!'), Medium: window.t('quiz.descMedium', 'Kamu menunjukkan tanda-tanda kelelahan akademik sedang. Mulailah memperhatikan pola istirahat dan keseimbangan aktivitas.'), High: window.t('quiz.descHigh', 'Tingkat kelelahan akademikmu tinggi. Segera ambil langkah untuk beristirahat, kurangi beban, dan pertimbangkan bicara dengan konselor.') };
 
-    const titleData = titles[data.riskLevel] || titles.Medium;
-    document.getElementById('result-title').textContent = lang === 'en' ? titleData.en : titleData.id;
-    const descData = descriptions[data.riskLevel] || descriptions.Medium;
-    document.getElementById('result-description').textContent = lang === 'en' ? descData.en : descData.id;
+    document.getElementById('result-title').textContent = titles[data.riskLevel] || titles.Medium;
+    document.getElementById('result-description').textContent = descriptions[data.riskLevel] || descriptions.Medium;
 
     const badge = document.getElementById('result-badge');
-    const badgeLabels = { Low: { id: 'Rendah', en: 'Low' }, Medium: { id: 'Sedang', en: 'Medium' }, High: { id: 'Tinggi', en: 'High' } };
+    const badgeLabels = { Low: window.t('quiz.riskLow', 'Rendah'), Medium: window.t('quiz.riskMed', 'Sedang'), High: window.t('quiz.riskHigh', 'Tinggi') };
     const badgeLabel = badgeLabels[data.riskLevel] || badgeLabels.Medium;
-    badge.textContent = (lang === 'en' ? badgeLabel.en : badgeLabel.id) + ' Risk';
+    badge.textContent = badgeLabel + ' Risk';
     badge.className = `badge badge-${data.riskLevel.toLowerCase()} inline-flex`;
 
     const dims = data.dimensions || {};
