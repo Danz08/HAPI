@@ -7,3 +7,35 @@ To prepare for this change:
 
 See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
 (Use `node --trace-warnings ...` to show where the warning was created)
+Error: Connection terminated due to connection timeout
+    at D:\DOKUMEN\HAPI2\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async PGStore._asyncQuery (D:\DOKUMEN\HAPI2\node_modules\connect-pg-simple\index.js:322:21)
+    at async PGStore._rawEnsureSessionStoreTable (D:\DOKUMEN\HAPI2\node_modules\connect-pg-simple\index.js:177:19)
+Error: Connection terminated due to connection timeout
+    at D:\DOKUMEN\HAPI2\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async PGStore._asyncQuery (D:\DOKUMEN\HAPI2\node_modules\connect-pg-simple\index.js:322:21)
+    at async PGStore._rawEnsureSessionStoreTable (D:\DOKUMEN\HAPI2\node_modules\connect-pg-simple\index.js:177:19)
+Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at ServerResponse.setHeader (node:_http_outgoing:699:11)
+    at ServerResponse.header (D:\DOKUMEN\HAPI2\node_modules\express\lib\response.js:794:10)
+    at ServerResponse.send (D:\DOKUMEN\HAPI2\node_modules\express\lib\response.js:174:12)
+    at done (D:\DOKUMEN\HAPI2\node_modules\express\lib\response.js:1045:10)
+    at tryHandleCache (D:\DOKUMEN\HAPI2\node_modules\ejs\lib\ejs.js:280:5)
+    at exports.renderFile [as engine] (D:\DOKUMEN\HAPI2\node_modules\ejs\lib\ejs.js:491:10)
+    at View.render (D:\DOKUMEN\HAPI2\node_modules\express\lib\view.js:135:8)
+    at tryRender (D:\DOKUMEN\HAPI2\node_modules\express\lib\application.js:657:10)
+    at Function.render (D:\DOKUMEN\HAPI2\node_modules\express\lib\application.js:609:3)
+    at ServerResponse.render (D:\DOKUMEN\HAPI2\node_modules\express\lib\response.js:1049:7)
+Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at ServerResponse.setHeader (node:_http_outgoing:699:11)
+    at ServerResponse.header (D:\DOKUMEN\HAPI2\node_modules\express\lib\response.js:794:10)
+    at ServerResponse.send (D:\DOKUMEN\HAPI2\node_modules\express\lib\response.js:174:12)
+    at done (D:\DOKUMEN\HAPI2\node_modules\express\lib\response.js:1045:10)
+    at tryHandleCache (D:\DOKUMEN\HAPI2\node_modules\ejs\lib\ejs.js:280:5)
+    at exports.renderFile [as engine] (D:\DOKUMEN\HAPI2\node_modules\ejs\lib\ejs.js:491:10)
+    at View.render (D:\DOKUMEN\HAPI2\node_modules\express\lib\view.js:135:8)
+    at tryRender (D:\DOKUMEN\HAPI2\node_modules\express\lib\application.js:657:10)
+    at Function.render (D:\DOKUMEN\HAPI2\node_modules\express\lib\application.js:609:3)
+    at ServerResponse.render (D:\DOKUMEN\HAPI2\node_modules\express\lib\response.js:1049:7)
