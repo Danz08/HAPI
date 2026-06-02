@@ -1,0 +1,11 @@
+
+    ╔═══════════════════════════════════════════════╗
+    ║                                               ║
+    ║   HAPI - Human Activity Pattern Intelligence  ║
+    ║                                               ║
+    ║   Server running on http://localhost:3000      ║
+    ║   Environment: development                ║
+    ║                                               ║
+    ╚═══════════════════════════════════════════════╝
+    
+   ✅ PostgreSQL Database initialized successfully

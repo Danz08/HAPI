@@ -7,26 +7,41 @@ const flash = require('connect-flash');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const i18next = require('i18next');
-const Backend = require('i18next-fs-backend');
 const i18nextMiddleware = require('i18next-http-middleware');
 const cookieParser = require('cookie-parser');
+const fs = require('fs');
 
 const { initDatabase, pool } = require('./src/config/database');
 
+// Load translation resources synchronously
+function loadResources() {
+  const resources = { en: { translation: {} }, id: { translation: {} } };
+  const langs = ['en', 'id'];
+  for (const lang of langs) {
+    const dir = path.join(__dirname, 'locales', lang);
+    if (fs.existsSync(dir)) {
+      const files = fs.readdirSync(dir);
+      for (const file of files) {
+        if (file.endsWith('.json')) {
+          const ns = file.replace('.json', '');
+          const data = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8'));
+          resources[lang].translation[ns] = data;
+        }
+      }
+    }
+  }
+  return resources;
+}
+
 // i18next Configuration
 i18next
-  .use(Backend)
   .use(i18nextMiddleware.LanguageDetector)
   .init({
-    backend: {
-      loadPath: path.join(__dirname, 'locales/{{lng}}/{{ns}}.json'),
-      addPath: path.join(__dirname, 'locales/{{lng}}/{{ns}}.json')
-    },
+    resources: loadResources(),
     fallbackLng: 'id',
     preload: ['id', 'en'],
-    ns: ['common', 'auth', 'landing', 'dashboard', 'pomodoro', 'analytics', 'quiz', 'chatbot', 'mood', 'notification', 'validation', 'calendar', 'gamification', 'api', 'error'],
-    defaultNS: 'common',
-    saveMissing: process.env.NODE_ENV !== 'production',
+    defaultNS: 'translation',
+    saveMissing: false,
     missingKeyHandler: (lng, ns, key, fallbackValue) => {
       console.warn(`[i18next] Missing key: ${ns}.${key} in language: ${lng}`);
     }
