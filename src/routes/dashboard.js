@@ -3,6 +3,7 @@ const { getDb } = require('../config/database');
 const { requireOnboarded } = require('../middleware/auth');
 const { calculateComprehensiveFatigue, getRiskColor } = require('../utils/fatigue-calculator');
 const { getRecommendations } = require('../utils/recommendations');
+const { predictBurnout, predictLifestyle } = require('../utils/ml-api');
 
 const getLocalToday = (tz = 'Asia/Jakarta') => {
   return new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date());
@@ -53,9 +54,12 @@ router.get('/', async (req, res) => {
       ORDER BY logged_at ASC
     `).all(userId, formatLocalDate(new Date(Date.now() - days * 24 * 60 * 60 * 1000), req.userTz));
     
+    const labelMap = { 'Terrible': 'Sangat Buruk', 'Bad': 'Buruk', 'Okay': 'Biasa', 'Good': 'Baik', 'Great': 'Sangat Baik', 'Excellent': 'Sangat Baik' };
+    
     // Format dates to string so the frontend chart can read them correctly
     const moodTrend = moodTrendQuery.map(row => ({
       ...row,
+      mood_label: labelMap[row.mood_label] || row.mood_label,
       log_date: row.log_date ? formatLocalDate(new Date(row.log_date), req.userTz) : null
     }));
 
@@ -118,6 +122,83 @@ router.get('/', async (req, res) => {
       latestMood ? latestMood.mood_score : 3
     );
 
+    // ML API Predictions — Burnout & Lifestyle
+    let mlBurnout = null;
+    let mlLifestyle = null;
+
+    // Get user streak for burnout features
+    const userStreakRow = await db.prepare('SELECT current_streak FROM users WHERE id = ?').get(userId);
+    const user_streak = userStreakRow ? userStreakRow.current_streak : 0;
+
+    try {
+      // Burnout model: 12 features from user data
+      // Features: [quiz_score, mood_score, energy_level, stress_level,
+      //            work_hours_today, break_minutes, session_count, pomodoro_cycles,
+      //            pomodoro_focus_min, total_quizzes, streak, days_since_join]
+      const daysJoined = req.session.user.created_at
+        ? Math.floor((Date.now() - new Date(req.session.user.created_at).getTime()) / (1000 * 60 * 60 * 24))
+        : 30;
+
+      const burnoutFeatures = [
+        latestQuiz ? latestQuiz.fatigue_score : 30,           // quiz score
+        latestMood ? latestMood.mood_score : 3,               // mood score
+        latestMood ? (latestMood.energy_level || 3) : 3,      // energy level
+        latestMood ? (latestMood.stress_level || 3) : 3,      // stress level
+        todayStats.total_work / 60,                           // work hours today
+        todayStats.total_break,                               // break minutes
+        todayStats.session_count,                              // session count
+        pomodoroToday.total_cycles,                            // pomodoro cycles
+        pomodoroToday.total_focus,                             // pomodoro focus min
+        todayQuizCount,                                        // quizzes today
+        user_streak || 0,                                      // current streak
+        daysJoined,                                            // days since join
+      ];
+
+      mlBurnout = await predictBurnout(burnoutFeatures);
+      console.log('[ML-API] Burnout prediction:', mlBurnout);
+    } catch (err) {
+      console.warn('[ML-API] Burnout prediction failed:', err.message);
+    }
+
+    try {
+      // Lifestyle model: 7 features
+      // Features: [avg_mood_7d, avg_energy_7d, avg_stress_7d,
+      //            avg_work_hours_7d, avg_break_ratio, pomodoro_avg_cycles, quiz_avg_score]
+      const avgMood7d = moodTrend.length > 0
+        ? moodTrend.reduce((s, m) => s + (m.mood_score || 3), 0) / moodTrend.length
+        : 3;
+      const avgEnergy7d = moodTrend.length > 0
+        ? moodTrend.reduce((s, m) => s + (m.energy_level || 3), 0) / moodTrend.length
+        : 3;
+      const avgStress7d = moodTrend.length > 0
+        ? moodTrend.reduce((s, m) => s + (m.stress_level || 3), 0) / moodTrend.length
+        : 3;
+      const avgWorkHours7d = recentActivities.length > 0
+        ? recentActivities.reduce((s, a) => s + (a.total_work || 0), 0) / recentActivities.length / 60
+        : 0;
+      const avgBreakRatio7d = recentActivities.length > 0
+        ? recentActivities.reduce((s, a) => {
+            const total = (a.total_work || 0) + (a.total_break || 0);
+            return s + (total > 0 ? (a.total_break || 0) / total : 0);
+          }, 0) / recentActivities.length
+        : 0;
+
+      const lifestyleFeatures = [
+        Math.round(avgMood7d * 100) / 100,
+        Math.round(avgEnergy7d * 100) / 100,
+        Math.round(avgStress7d * 100) / 100,
+        Math.round(avgWorkHours7d * 100) / 100,
+        Math.round(avgBreakRatio7d * 100) / 100,
+        pomodoroToday.total_cycles,
+        latestQuiz ? latestQuiz.fatigue_score : 30,
+      ];
+
+      mlLifestyle = await predictLifestyle(lifestyleFeatures);
+      console.log('[ML-API] Lifestyle prediction:', mlLifestyle);
+    } catch (err) {
+      console.warn('[ML-API] Lifestyle prediction failed:', err.message);
+    }
+
     // Get Google Calendar weekly data
     const googleUser = await db.prepare('SELECT google_connected FROM users WHERE id = ?').get(userId);
     const isGoogleConnected = googleUser && googleUser.google_connected === 1 && req.session.user.login_method === 'google';
@@ -177,6 +258,8 @@ router.get('/', async (req, res) => {
       weekStartStr,
       weekEndStr,
       selectedDays: days,
+      mlBurnout,
+      mlLifestyle,
     });
   } catch (error) {
     console.error("Dashboard error:", error);

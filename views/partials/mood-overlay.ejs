@@ -84,7 +84,7 @@
 
 <script>
 let globalSelectedMood = null;
-const __moodLoggedToday = <%= typeof moodLoggedToday !== 'undefined' ? moodLoggedToday : false %>;
+const __moodLoggedToday = ('<%= typeof moodLoggedToday !== "undefined" ? moodLoggedToday : false %>' === 'true');
 
 function openGlobalMood() {
   if (__moodLoggedToday) {

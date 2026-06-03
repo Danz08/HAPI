@@ -155,61 +155,7 @@ function getRecommendations(riskLevel = 'Low', moodScore = 3, context = {}) {
     disclaimer: 'Hasil ini bukan diagnosis medis. Jika kamu merasa membutuhkan bantuan profesional, silakan konsultasikan dengan psikolog atau tenaga kesehatan.',
   };
 }
-
-function generateCurhatResponse(message, riskLevel = 'Medium') {
-  const lowerMsg = message.toLowerCase();
-
-  // Keyword-based empathetic responses
-  const responses = {
-    stress: [
-      'Aku mengerti kamu sedang merasa tertekan. Stres adalah reaksi alami tubuh, tapi penting untuk mengelolanya. Coba tarik nafas dalam 3 kali, dan ceritakan lebih lanjut apa yang membuatmu stres?',
-      'Merasa stres itu wajar, terutama saat beban kerja menumpuk. Yang penting adalah mengenali batasmu. Apakah ada tugas spesifik yang membuatmu overwhelmed?',
-    ],
-    capek: [
-      'Capek setelah bekerja keras itu normal. Tapi kalau rasa capek tidak hilang setelah istirahat, itu bisa jadi tanda fatigue yang perlu diperhatikan. Sudah berapa lama kamu merasa seperti ini?',
-      'Tubuhmu sedang memberi sinyal untuk istirahat. Jangan abaikan ya! Coba istirahat 15-20 menit dulu, dan pastikan kamu cukup minum air.',
-    ],
-    lelah: [
-      'Kelelahan yang berkepanjangan bisa berdampak pada kesehatan fisik dan mentalmu. Apakah kamu sudah tidur cukup belakangan ini?',
-      'Aku dengar kamu, dan perasaanmu valid. Kelelahan bisa datang dari banyak faktor — fisik, mental, atau emosional. Mari kita cari tahu bersama apa yang bisa membantumu.',
-    ],
-    senang: [
-      'Senang mendengar kamu dalam mood yang baik! 😊 Manfaatkan energi positif ini untuk hal-hal produktif. Apa yang membuatmu senang hari ini?',
-      'Mood positif seperti ini sangat berharga! Coba catat apa yang membuatmu merasa baik, supaya bisa kamu ulangi di lain waktu.',
-    ],
-    malas: [
-      'Rasa malas kadang datang karena otak kita butuh stimulasi baru. Coba mulai dari task yang paling kecil dan mudah dulu — kadang momentum datang setelah langkah pertama.',
-      'Semua orang pernah merasa malas. Yang membedakan adalah bagaimana kita meresponsnya. Coba teknik "2-minute rule" — kerjakan sesuatu selama 2 menit saja, dan lihat apakah kamu ingin melanjutkan.',
-    ],
-    sedih: [
-      'Perasaan sedih itu valid dan kamu berhak merasakannya. Tidak perlu terburu-buru untuk "baik-baik saja". Ceritakan apa yang membuatmu sedih?',
-      'Aku di sini untukmu. Kesedihan adalah bagian dari menjadi manusia. Yang penting, jangan simpan sendiri ya. Bagikan apa yang kamu rasakan.',
-    ],
-    deadline: [
-      'Deadline memang bisa sangat menekan. Coba breakdown tugas besar menjadi bagian-bagian kecil, lalu selesaikan satu per satu. Kamu pasti bisa!',
-      'Saat dikejar deadline, prioritaskan yang paling penting. Gunakan Pomodoro timer untuk menjaga fokus — 25 menit kerja, 5 menit istirahat.',
-    ],
-  };
-
-  // Find matching response
-  for (const [keyword, responseList] of Object.entries(responses)) {
-    if (lowerMsg.includes(keyword)) {
-      return responseList[Math.floor(Math.random() * responseList.length)];
-    }
-  }
-
-  // Default empathetic responses based on risk level
-  const defaults = {
-    Low: 'Terima kasih sudah berbagi! Sepertinya kamu dalam kondisi yang cukup baik. Tetap jaga pola kerja dan istirahatmu ya. Ada hal lain yang ingin kamu ceritakan?',
-    Medium: 'Terima kasih sudah bercerita. Aku memperhatikan tingkat fatigue-mu sedang di level sedang. Penting untuk tetap waspada dan menjaga keseimbangan. Apa yang bisa kubantu?',
-    High: 'Aku mendengarmu, dan aku apresiasi kamu mau bercerita. Berdasarkan kondisimu saat ini, sepertinya kamu perlu istirahat yang cukup. Ingat, kesehatanmu lebih penting dari apapun. Mau cerita lebih lanjut?',
-  };
-
-  return defaults[riskLevel] || defaults.Medium;
-}
-
 module.exports = {
   getRecommendations,
-  generateCurhatResponse,
   recommendationPool,
 };

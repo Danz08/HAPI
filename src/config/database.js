@@ -117,6 +117,15 @@ async function initDatabase() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
+    -- Chatbot State
+    CREATE TABLE IF NOT EXISTS chatbot_states (
+      user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+      current_step VARCHAR(50) DEFAULT 'OPENING',
+      interactions INTEGER DEFAULT 0,
+      context JSON DEFAULT '{}',
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
     -- Pomodoro sessions
     CREATE TABLE IF NOT EXISTS pomodoro_sessions (
       id SERIAL PRIMARY KEY,

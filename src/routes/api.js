@@ -3,6 +3,8 @@ const { getDb } = require('../config/database');
 const { requireAuth } = require('../middleware/auth');
 const { calculateFatigueFromQuiz, getRiskColor } = require('../utils/fatigue-calculator');
 const { getRecommendations } = require('../utils/recommendations');
+const { processChat } = require('../utils/chatbot-engine');
+const { predictMBI, predictEmotion, predictBurnout, predictLifestyle } = require('../utils/ml-api');
 
 const getLocalToday = (req) => {
   return new Intl.DateTimeFormat('en-CA', { timeZone: req.userTz || 'Asia/Jakarta' }).format(new Date());
@@ -226,7 +228,7 @@ router.get('/pomodoro/stats', async (req, res) => {
 
 
 
-// POST /api/quiz - Submit quiz answers
+// POST /api/quiz - Submit quiz answers (with ML API integration)
 router.post('/quiz', async (req, res) => {
   const { answers } = req.body;
   const QUIZ_QUESTION_COUNT = 15;
@@ -240,6 +242,15 @@ router.post('/quiz', async (req, res) => {
   const riskColor = getRiskColor(result.riskLevel);
   const recommendations = getRecommendations(result.riskLevel);
 
+  // Call ML API for MBI prediction (non-blocking, with fallback)
+  let mlPrediction = null;
+  try {
+    mlPrediction = await predictMBI(numericAnswers);
+    console.log('[ML-API] MBI prediction:', mlPrediction);
+  } catch (err) {
+    console.warn('[ML-API] MBI prediction failed, using local calculation:', err.message);
+  }
+
   const today = getLocalToday(req);
   const db = getDb();
 
@@ -252,7 +263,10 @@ router.post('/quiz', async (req, res) => {
     return res.status(400).json({ error: 'Kamu sudah mengisi quiz hari ini. Coba lagi besok!' });
   }
 
-  // Save to database
+  // Use ML prediction risk level if available, else fallback to local
+  const finalRiskLevel = mlPrediction ? mlPrediction.risk_level : result.riskLevel;
+
+  // Save to database (include ML prediction data)
   await db.prepare(`
     INSERT INTO quiz_results (user_id, answers, fatigue_score, risk_level, recommendations, date)
     VALUES (?, ?, ?, ?, ?, ?)
@@ -260,7 +274,7 @@ router.post('/quiz', async (req, res) => {
     req.session.user.id,
     JSON.stringify(numericAnswers),
     result.score,
-    result.riskLevel,
+    finalRiskLevel,
     JSON.stringify(recommendations),
     today
   );
@@ -294,13 +308,14 @@ router.post('/quiz', async (req, res) => {
   res.json({
     success: true,
     score: result.score,
-    riskLevel: result.riskLevel,
-    riskColor,
+    riskLevel: finalRiskLevel,
+    riskColor: getRiskColor(finalRiskLevel),
     dimensions: result.dimensions,
     dimensionAverages: result.dimensionAverages,
     recommendations,
     streak,
-    streakUpdated
+    streakUpdated,
+    mlPrediction: mlPrediction || null,
   });
 });
 
@@ -317,28 +332,100 @@ router.get('/quiz/history', async (req, res) => {
 
 
 
-// TODO: Connect to AI API when ready
-// For now, the chatbot uses client-side placeholder responses
-
-// POST /api/chat - Send a chat message (placeholder)
-router.post('/chat', (req, res) => {
+// POST /api/chat - Send a chat message (with Emotion AI integration)
+router.post('/chat', async (req, res) => {
   const { message } = req.body;
 
   if (!message || message.trim().length === 0) {
     return res.status(400).json({ error: 'Pesan tidak boleh kosong.' });
   }
 
-  // TODO: Replace with actual AI API call
-  res.json({
-    success: true,
-    response: 'Fitur AI chatbot sedang dalam pengembangan. Sementara ini, chatbot menggunakan respons lokal.',
-  });
+  // Get user's latest quiz result for context
+  let userRiskLevel = 'Medium';
+  try {
+    const db = getDb();
+    const latestQuiz = await db.prepare(
+      'SELECT risk_level FROM quiz_results WHERE user_id = ? ORDER BY taken_at DESC LIMIT 1'
+    ).get(req.session.user.id);
+    if (latestQuiz) userRiskLevel = latestQuiz.risk_level;
+  } catch (e) { /* ignore */ }
+
+  // Try ML Emotion API first
+  let emotionResult = null;
+  try {
+    emotionResult = await predictEmotion(message);
+    console.log('[ML-API] Emotion prediction:', emotionResult);
+  } catch (err) {
+    console.warn('[ML-API] Emotion prediction failed:', err.message);
+  }
+
+  // Generate response using local logic (enhanced with emotion context)
+  try {
+    const chatResult = await processChat(req.session.user.id, message, emotionResult);
+
+    // Save chat messages to database
+    const db = getDb();
+    const sessionId = req.session.id || 'default';
+    await db.prepare(
+      'INSERT INTO chat_messages (user_id, role, message, session_id) VALUES (?, ?, ?, ?)'
+    ).run(req.session.user.id, 'user', message, sessionId);
+    
+    // Save AI responses
+    for (const r of chatResult.responses) {
+      await db.prepare(
+        'INSERT INTO chat_messages (user_id, role, message, session_id) VALUES (?, ?, ?, ?)'
+      ).run(req.session.user.id, 'ai', r.text, sessionId);
+    }
+
+    res.json({
+      success: true,
+      responses: chatResult.responses, // Array of {text, delay}
+      chips: chatResult.chips,
+      isCrisis: chatResult.isCrisis,
+      emotion: chatResult.emotionLabel
+    });
+  } catch (e) {
+    console.error('[Chat] Failed to process chat:', e);
+    res.status(500).json({ success: false, error: 'Terjadi kesalahan pada chatbot engine.' });
+  }
 });
 
-// DELETE /api/chat - Clear all chat messages
+// GET /api/chat - Get chat history
+router.get('/chat', async (req, res) => {
+  try {
+    const db = getDb();
+    const history = await db.prepare('SELECT role, message FROM chat_messages WHERE user_id = ? ORDER BY id ASC').all(req.session.user.id);
+    const state = await db.prepare('SELECT current_step FROM chatbot_states WHERE user_id = ?').get(req.session.user.id);
+    
+    let chips = [];
+    if (state) {
+      if (state.current_step === 'WEATHER_SELECTION') {
+        chips = [
+          { text: "☀️ Cerah, lumayan oke", value: "Cerah" },
+          { text: "🌤️ Agak mendung", value: "Mendung" },
+          { text: "🌧️ Hujan deras", value: "Hujan" },
+          { text: "⛈️ Badai, berat banget", value: "Badai" }
+        ];
+      } else if (state.current_step === 'SUMMARY') {
+        chips = [
+          { text: "Lihat kondisi aku hari ini", value: "Lihat kondisi" },
+          { text: "Mau cerita lagi besok", value: "Cerita besok" },
+          { text: "Tutup dulu", value: "Tutup" }
+        ];
+      }
+    }
+    
+    res.json({ success: true, history, chips });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// DELETE /api/chat - Clear all chat messages and reset state
 router.delete('/chat', async (req, res) => {
   const db = getDb();
   await db.prepare('DELETE FROM chat_messages WHERE user_id = ?').run(req.session.user.id);
+  await db.prepare('DELETE FROM chatbot_states WHERE user_id = ?').run(req.session.user.id);
   res.json({ success: true });
 });
 
@@ -356,9 +443,12 @@ router.get('/analytics/day/:date', async (req, res) => {
     SELECT * FROM activities WHERE user_id = ? AND date = ? ORDER BY created_at DESC
   `).all(userId, dateStr);
 
-  const moods = await db.prepare(`
+  const rawMoods = await db.prepare(`
     SELECT * FROM mood_logs WHERE user_id = ? AND date = ? ORDER BY logged_at DESC
   `).all(userId, dateStr);
+  
+  const labelMap = { 'Terrible': 'Sangat Buruk', 'Bad': 'Buruk', 'Okay': 'Biasa', 'Good': 'Baik', 'Great': 'Sangat Baik', 'Excellent': 'Sangat Baik' };
+  const moods = rawMoods.map(m => ({ ...m, mood_label: labelMap[m.mood_label] || m.mood_label }));
 
   const pomodoros = await db.prepare(`
     SELECT * FROM pomodoro_sessions WHERE user_id = ? AND date = ? ORDER BY started_at DESC
