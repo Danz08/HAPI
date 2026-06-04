@@ -396,8 +396,8 @@ async function showDayDetail(dateStr) {
     if (data.calEvents && data.calEvents.length > 0) {
       html += `<div class="mb-3"><p class="text-xs font-semibold text-brand-400 mb-1">📅 Google Calendar</p>`;
       data.calEvents.forEach(ev => {
-        const start = ev.start_time.includes('T') ? ev.start_time.substring(11, 16) : t('analytics.detail.allDay');
-        const end = ev.end_time.includes('T') ? ev.end_time.substring(11, 16) : '';
+        const start = ev.start_time?.includes('T') ? ev.start_time.substring(11, 16) : 'Seharian';
+        const end = ev.end_time?.includes('T') ? ev.end_time.substring(11, 16) : '';
         const typeIcons = { meeting: '🤝', break: '☕', deadline: '⏰', event: '📌' };
         html += `<div class="text-xs text-surface-400 mt-1">${typeIcons[ev.event_type] || '📌'} ${start}${end ? '–'+end : ''} ${ev.title}</div>`;
       });
