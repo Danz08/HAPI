@@ -15,9 +15,8 @@ router.use(requireAuth);
 
 // POST /api/onboard - Complete onboarding
 router.post('/onboard', async (req, res) => {
-  const db = getDb();
-  await db.prepare('UPDATE users SET is_onboarded = 1 WHERE id = ?').run(req.session.user.id);
-  req.session.user.is_onboarded = 1;
+  // We no longer set is_onboarded to 1 here.
+  // It is set when the user completes their first quiz.
   res.json({ success: true });
 });
 
@@ -279,6 +278,13 @@ router.post('/quiz', async (req, res) => {
     today
   );
   
+  let isFirstTime = false;
+  if (req.session.user.is_onboarded === 0) {
+    await db.prepare('UPDATE users SET is_onboarded = 1 WHERE id = ?').run(req.session.user.id);
+    req.session.user.is_onboarded = 1;
+    isFirstTime = true;
+  }
+  
   // Calculate streak
   const user = await db.prepare('SELECT current_streak, longest_streak, last_streak_date FROM users WHERE id = ?').get(req.session.user.id);
   let streak = user.current_streak || 0;
@@ -316,6 +322,7 @@ router.post('/quiz', async (req, res) => {
     streak,
     streakUpdated,
     mlPrediction: mlPrediction || null,
+    isFirstTime,
   });
 });
 

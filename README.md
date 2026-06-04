@@ -1,43 +1,43 @@
 # HAPI — Human Activity Pattern Intelligence
 
-Aplikasi web untuk memantau tingkat kelelahan, mengelola produktivitas, dan menjaga keseimbangan kerja-istirahat. Dibangun menggunakan Express.js dan Vite + TailwindCSS.
+Aplikasi web untuk memantau tingkat kelelahan, mengelola produktivitas, dan menjaga keseimbangan kerja-istirahat. Dibangun menggunakan Express.js, Vite, TailwindCSS, dan ditenagai oleh Machine Learning.
 
 ---
 
 ## Fitur Utama
 
-### Dashboard
-- Skor risiko kelelahan real-time berdasarkan quiz, mood, beban kerja, dan pola istirahat
-- Grafik tren kelelahan 7 hari terakhir
-- Pencatatan aktivitas kerja harian
-- Mood tracker dengan slider energi dan stres
-- Rekomendasi personal berdasarkan kondisi pengguna
+### Onboarding Interaktif
+- Alur *onboarding* ketat yang mewajibkan pengguna baru untuk menyelesaikan kuis kelelahan pertama sebelum dapat mengakses fitur lain, guna memastikan personalisasi AI yang akurat sejak awal.
+
+### Dashboard Pintar
+- Skor risiko kelelahan *real-time* berdasarkan quiz, mood, beban kerja, dan pola istirahat.
+- Integrasi Prediksi Machine Learning: Burnout Score & Lifestyle Analysis.
+- Grafik tren kelelahan dan *streak* harian.
+- Pencatatan aktivitas kerja harian.
+- Mood tracker interaktif dengan analisis emosi otomatis.
 
 ### Pomodoro Timer
-- Durasi fokus, istirahat pendek, dan istirahat panjang bisa dikustomisasi
-- Tracking siklus harian
-- Mini overlay yang mengikuti saat berpindah halaman
-- Otomatis tercatat sebagai aktivitas
+- Durasi fokus, istirahat pendek, dan istirahat panjang bisa dikustomisasi.
+- Tracking siklus harian.
+- Mini overlay yang mengikuti saat berpindah halaman.
+- Otomatis tercatat sebagai aktivitas kerja/istirahat.
 
 ### Analytics
-- Kalender heatmap aktivitas bulanan
-- Tren mood dan pola kerja
-- Breakdown aktivitas berdasarkan kategori
-- Streak harian
-- Insight bulanan otomatis
-- Integrasi Google Calendar untuk analisis jadwal meeting
+- Kalender heatmap aktivitas bulanan.
+- Tren mood dan pola kerja.
+- Breakdown aktivitas berdasarkan kategori.
+- Integrasi Google Calendar untuk analisis jadwal meeting dan potensi *calendar burnout*.
 
-### Quiz Kelelahan
-- 10 pertanyaan berbasis Maslach Burnout Inventory (MBI)
-- Analisis per dimensi: kelelahan emosional, depersonalisasi, pencapaian personal
-- Klasifikasi risiko: Rendah, Sedang, Tinggi
-- Rekomendasi aktivitas sesuai hasil
+### Quiz Kelelahan (MBI)
+- 15 pertanyaan berbasis Maslach Burnout Inventory (MBI) Adaptasi Mahasiswa.
+- Analisis per dimensi: Kelelahan Emosional (Exhaustion), Sinisme (Cynicism), dan Efikasi Akademik (Academic Efficacy).
+- Integrasi ML API untuk memprediksi tingkat kelelahan berdasarkan jawaban.
+- Klasifikasi risiko: Rendah, Sedang, Tinggi beserta rekomendasi yang disesuaikan.
 
-### AI Chatbot
-- Floating widget di kanan bawah, bisa diakses dari halaman manapun
-- Quick action untuk perasaan umum (stres, lelah, sedih, senang)
-- Respons empatik sesuai konteks
-- Siap diintegrasikan dengan API AI (Gemini)
+### AI Chatbot Asisten
+- Floating widget di kanan bawah, bisa diakses dari halaman manapun setelah *onboarding*.
+- Deteksi emosi otomatis (Emotion AI) dari pesan pengguna untuk merespons dengan konteks empati yang tepat.
+- *Quick actions* (chips) untuk respons cepat.
 
 ---
 
@@ -45,12 +45,11 @@ Aplikasi web untuk memantau tingkat kelelahan, mengelola produktivitas, dan menj
 
 | Komponen | Teknologi |
 |----------|-----------|
-| Backend | Express.js |
+| Backend | Node.js, Express.js |
 | Frontend | EJS + Vite |
 | Styling | TailwindCSS v3 |
-| Database (Dev) | SQLite (better-sqlite3) |
-| Database (Prod) | PostgreSQL (Neon) |
-| Deployment | Vercel |
+| Database | PostgreSQL (pg, connect-pg-simple) |
+| Deployment | Vercel (Web), Neon (Database) |
 | Bundler | Vite |
 | Ikon | Lucide Icons |
 | Grafik | Chart.js |
@@ -67,7 +66,6 @@ HAPI2/
 │   └── modules/
 │       ├── api.js              # HTTP client (axios)
 │       ├── dashboard.js        # Chart & form dashboard
-│       ├── i18n.js             # Bahasa ID/EN
 │       ├── pomodoro-state.js   # State pomodoro persistent
 │       ├── theme.js            # Toggle dark/light
 │       └── toast.js            # Notifikasi toast
@@ -75,10 +73,10 @@ HAPI2/
 │   ├── css/input.css           # Source TailwindCSS
 │   └── dist/                   # Output build Vite
 ├── src/
-│   ├── config/database.js      # Inisialisasi & schema DB
-│   ├── middleware/auth.js      # Middleware autentikasi
+│   ├── config/database.js      # Inisialisasi & schema DB (PostgreSQL)
+│   ├── middleware/auth.js      # Middleware autentikasi & onboarding
 │   ├── routes/
-│   │   ├── index.js            # Landing page
+│   │   ├── index.js            # Landing page & onboarding
 │   │   ├── auth.js             # Login, Register, Logout
 │   │   ├── dashboard.js        # Halaman dashboard
 │   │   ├── pomodoro.js         # Halaman pomodoro
@@ -89,6 +87,8 @@ HAPI2/
 │   └── utils/
 │       ├── fatigue-calculator.js
 │       ├── recommendations.js
+│       ├── chatbot-engine.js   
+│       ├── ml-api.js           # Integrasi Model Machine Learning
 │       └── calendar.js
 ├── views/
 │   ├── layouts/main.ejs
@@ -96,6 +96,7 @@ HAPI2/
 │   │   ├── landing.ejs
 │   │   ├── login.ejs
 │   │   ├── register.ejs
+│   │   ├── onboarding.ejs
 │   │   ├── dashboard.ejs
 │   │   ├── pomodoro.ejs
 │   │   ├── analytics.ejs
@@ -110,7 +111,6 @@ HAPI2/
 ├── vercel.json
 ├── vite.config.js
 ├── tailwind.config.js
-├── postcss.config.js
 ├── package.json
 └── .env
 ```
@@ -122,6 +122,7 @@ HAPI2/
 ### Prasyarat
 - Node.js v18+
 - npm v9+
+- PostgreSQL Server lokal atau Neon DB
 
 ### Instalasi
 
@@ -133,12 +134,15 @@ npm install
 
 ### Setup Environment
 
-Salin file `.env` dan sesuaikan:
+Salin file `.env.copy` menjadi `.env` dan sesuaikan nilainya:
 
 ```env
 PORT=3000
 SESSION_SECRET=ganti-dengan-secret-kamu
 NODE_ENV=development
+
+# Database PostgreSQL
+DATABASE_URL=postgresql://postgres:password@localhost:5432/hapi_db
 
 # Google Calendar (opsional)
 GOOGLE_CLIENT_ID=...
@@ -149,13 +153,13 @@ GOOGLE_REDIRECT_URI=http://localhost:3000/auth/google/callback
 ### Build & Jalankan
 
 ```bash
-# Build asset client
+# Build asset client menggunakan Vite
 npm run build:client
 
 # Jalankan server
 npm start
 
-# Atau mode development (auto-reload)
+# Atau mode development (concurrent Vite watch & Nodemon)
 npm run dev
 ```
 
@@ -163,153 +167,77 @@ Buka `http://localhost:3000` di browser.
 
 ---
 
-## Environment Variables
-
-| Variable | Keterangan | Default |
-|----------|-----------|---------|
-| `PORT` | Port server | `3000` |
-| `SESSION_SECRET` | Secret key untuk session | — |
-| `NODE_ENV` | Mode environment | `development` |
-| `GOOGLE_CLIENT_ID` | OAuth Client ID | — |
-| `GOOGLE_CLIENT_SECRET` | OAuth Client Secret | — |
-| `GOOGLE_REDIRECT_URI` | Redirect URI OAuth | `http://localhost:3000/auth/google/callback` |
-| `DATABASE_URL` | Connection string PostgreSQL (production) | — |
-
-### Konfigurasi Neon PostgreSQL (Production)
-
-```env
-DATABASE_URL=postgresql://user:password@ep-xxxx.us-east-2.aws.neon.tech/hapi_db?sslmode=require
-```
-
----
-
 ## Schema Database
 
-### users
-| Kolom | Tipe | Keterangan |
-|-------|------|-----------|
-| id | INTEGER PK | Auto-increment |
-| username | TEXT UNIQUE | Username |
-| email | TEXT UNIQUE | Email |
-| password | TEXT | Password (bcryptjs) |
-| display_name | TEXT | Nama tampilan |
-| google_connected | INTEGER | Status koneksi Google |
+### `users`
+- `id` (PK), `username`, `email`, `password` (bcrypt)
+- `display_name`, `avatar_url`
+- `is_onboarded` (INTEGER) - Penanda kelulusan onboarding
+- `current_streak`, `longest_streak`, `last_streak_date`
+- `google_connected`, Token Google Calendar
 
-### activities
-| Kolom | Tipe | Keterangan |
-|-------|------|-----------|
-| id | INTEGER PK | |
-| user_id | INTEGER FK | Referensi users |
-| activity_type | TEXT | work, study, meeting, other |
-| description | TEXT | Deskripsi |
-| duration_minutes | INTEGER | Durasi kerja (menit) |
-| break_minutes | INTEGER | Durasi istirahat (menit) |
-| date | TEXT | Tanggal (YYYY-MM-DD) |
+### `activities`
+- `id` (PK), `user_id` (FK)
+- `activity_type`, `description`
+- `duration_minutes`, `break_minutes`
+- `date`
 
-### mood_logs
-| Kolom | Tipe | Keterangan |
-|-------|------|-----------|
-| id | INTEGER PK | |
-| user_id | INTEGER FK | |
-| mood_score | INTEGER | Skala 1-5 |
-| mood_label | TEXT | Label mood |
-| energy_level | INTEGER | Skala 1-5 |
-| stress_level | INTEGER | Skala 1-5 |
-| notes | TEXT | Catatan opsional |
-| logged_at | DATETIME | Waktu log |
+### `mood_logs`
+- `id` (PK), `user_id` (FK)
+- `mood_score`, `mood_label` (Skala 1-5)
+- `energy_level`, `stress_level`, `notes`, `date`
 
-### quiz_results
-| Kolom | Tipe | Keterangan |
-|-------|------|-----------|
-| id | INTEGER PK | |
-| user_id | INTEGER FK | |
-| answers | TEXT (JSON) | Array skor jawaban |
-| fatigue_score | REAL | Skor kelelahan (0-100) |
-| risk_level | TEXT | Low / Medium / High |
-| recommendations | TEXT (JSON) | Rekomendasi |
-| taken_at | DATETIME | Waktu pengisian |
+### `quiz_results`
+- `id` (PK), `user_id` (FK)
+- `answers` (JSON Array)
+- `fatigue_score`, `risk_level`, `recommendations`
+- `date`
 
-### pomodoro_sessions
-| Kolom | Tipe | Keterangan |
-|-------|------|-----------|
-| id | INTEGER PK | |
-| user_id | INTEGER FK | |
-| work_duration | INTEGER | Durasi fokus (menit) |
-| break_duration | INTEGER | Durasi istirahat (menit) |
-| cycles_completed | INTEGER | Siklus selesai |
-| total_focus_minutes | INTEGER | Total waktu fokus |
-| started_at | DATETIME | Waktu mulai |
-| ended_at | DATETIME | Waktu selesai |
+### `pomodoro_sessions`
+- `id` (PK), `user_id` (FK)
+- `work_duration`, `break_duration`
+- `cycles_completed`, `total_focus_minutes`
+- `status`, `date`
 
-### chat_messages, calendar_events, calendar_features
-Tabel pendukung untuk chatbot dan integrasi Google Calendar.
+### `chat_messages` & `chatbot_states`
+- Tabel untuk menyimpan riwayat curhat pengguna dan state konteks chatbot.
 
----
-
-## API Endpoint
-
-### Autentikasi
-| Method | Endpoint | Keterangan |
-|--------|----------|-----------|
-| GET/POST | `/auth/login` | Halaman & proses login |
-| GET/POST | `/auth/register` | Halaman & proses registrasi |
-| GET | `/auth/logout` | Logout |
-| GET | `/auth/google` | OAuth Google Calendar |
-
-### Halaman
-| Method | Endpoint | Keterangan |
-|--------|----------|-----------|
-| GET | `/` | Landing page |
-| GET | `/dashboard` | Dashboard |
-| GET | `/pomodoro` | Pomodoro Timer |
-| GET | `/analytics` | Analytics |
-| GET | `/quiz` | Quiz Kelelahan |
-
-### REST API
-| Method | Endpoint | Keterangan |
-|--------|----------|-----------|
-| POST | `/api/activities` | Catat aktivitas |
-| GET | `/api/activities` | Ambil data aktivitas |
-| POST | `/api/mood` | Catat mood |
-| GET | `/api/mood` | Riwayat mood |
-| GET | `/api/stats/overview` | Statistik dashboard |
-| POST | `/api/pomodoro/sessions` | Simpan sesi pomodoro |
-| GET | `/api/pomodoro/stats` | Statistik pomodoro |
-| POST | `/api/quiz` | Submit jawaban quiz |
-| GET | `/api/quiz/history` | Riwayat quiz |
-| POST | `/api/chat` | Kirim pesan chatbot |
-| GET | `/api/analytics/day/:date` | Detail per hari |
+### `calendar_events` & `calendar_features`
+- Tabel sinkronisasi Google Calendar dan hasil ekstraksi fitur burnout dari jadwal.
 
 ---
 
 ## Design System
 
-- Warna utama: Terracotta (`#C47B5A`)
-- Aksen: Teal (`#489A98`)
-- Tipografi: Newsreader (heading), Manrope (body), JetBrains Mono (kode)
-- Tema: Dark mode (default) dan Light mode
-- Bahasa: Indonesia (default) dan English
+- **Warna Utama**: Terracotta (`#C47B5A`)
+- **Aksen**: Teal (`#489A98`)
+- **Tipografi**: Newsreader (heading), Manrope (body), JetBrains Mono (kode)
+- **Tema**: *Dark mode* (default) dan *Light mode* (Kaca / Glassmorphism)
+- **Bahasa**: Indonesia
+- **Responsivitas**: Desain *Mobile-First* yang nyaman di perangkat kecil maupun desktop.
 
 ---
 
 ## Deploy ke Vercel
 
-1. Push kode ke GitHub
-2. Import repository di [Vercel](https://vercel.com)
+1. Push kode ke GitHub.
+2. Import repository di [Vercel](https://vercel.com).
 3. Atur environment variable di dashboard Vercel:
-   - `SESSION_SECRET`, `NODE_ENV=production`
-   - `DATABASE_URL` (connection string Neon)
-   - Credential Google OAuth
-4. Deploy — Vercel akan menggunakan konfigurasi dari `vercel.json`
+   - `SESSION_SECRET`
+   - `NODE_ENV=production`
+   - `DATABASE_URL` (Connection string PostgreSQL Neon dengan `sslmode=require`)
+4. Deploy — Vercel akan otomatis membaca konfigurasi `vercel.json` dan mem-build menggunakan Vite.
 
 ---
 
 ## Roadmap
 
-- [ ] Migrasi Neon PostgreSQL untuk production
-- [ ] Notifikasi real-time
-- [ ] Perbaikan responsivitas mobile
-- [ ] Export data (PDF/CSV)
+- [x] Migrasi ke PostgreSQL untuk *production*
+- [x] Perbaikan responsivitas *mobile* dan *glassmorphism*
+- [x] Integrasi Model Machine Learning (API)
+- [x] Onboarding Flow *strict*
+- [ ] Notifikasi *real-time* (Push API / WebSockets)
+- [ ] Export data analisis (PDF/CSV)
 
 ---
 

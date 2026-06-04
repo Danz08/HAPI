@@ -275,18 +275,19 @@
       <%- include('../partials/sidebar') %>
       <main class="main-content">
         <%- include('../partials/navbar') %>
-        <div class="mt-6 animate-fade-in px-4 lg:px-8 pb-8">
+        <div class="mt-4 sm:mt-6 animate-fade-in px-3 sm:px-4 lg:px-8 pb-20 sm:pb-8">
           <%- body %>
         </div>
       </main>
     </div>
 
     <!-- Global Overlays -->
+    <% if (user && user.is_onboarded) { %>
     <%- include('../partials/mood-overlay') %>
     <%- include('../partials/chatbot-widget') %>
 
     <!-- Persistent Pomodoro Overlay -->
-    <div id="pomo-overlay" class="fixed bottom-20 right-6 z-40 hidden animate-scale-in">
+    <div id="pomo-overlay" class="fixed bottom-20 right-4 sm:right-6 z-40 hidden animate-scale-in">
       <div class="glass-card p-4 shadow-2xl border border-brand-500/20 min-w-[200px]">
         <div class="flex items-center justify-between mb-2">
           <span class="text-xs font-semibold text-surface-400" id="pomo-overlay-label">Pomodoro</span>
@@ -308,6 +309,7 @@
         </div>
       </div>
     </div>
+    <% } %>
   <% } else { %>
     <!-- Public layout -->
     <main>
@@ -322,6 +324,11 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
+      if (new URLSearchParams(window.location.search).get('openMood') === '1') {
+        if (typeof openGlobalMood === 'function') {
+          setTimeout(openGlobalMood, 500);
+        }
+      }
     });
   </script>
 </body>

@@ -44,7 +44,7 @@
 
   /* Navbar Glass */
   .navbar-glass {
-    @apply sticky top-0 z-30 flex items-center justify-between pb-4 pt-4 lg:pt-8 px-4 pl-14 lg:px-8 border-b border-surface-700/30 bg-surface-950/80 backdrop-blur-xl;
+    @apply sticky top-0 z-30 flex items-center justify-between pb-4 pt-4 lg:pt-8 px-3 pl-14 sm:px-4 sm:pl-14 lg:px-8 border-b border-surface-700/30 bg-surface-950/80 backdrop-blur-xl;
   }
 
   /* Gradient backgrounds */
@@ -194,6 +194,16 @@
 
   .main-content {
     @apply flex-1 ml-0 lg:ml-64 w-full min-w-0;
+  }
+
+  /* Mobile-specific overrides */
+  @media (max-width: 639px) {
+    .stat-value {
+      @apply text-xl;
+    }
+    .stat-card {
+      @apply p-4;
+    }
   }
 
   /* Chat bubble */

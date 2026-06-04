@@ -137,23 +137,11 @@
     // Start button
     const startBtn = document.getElementById('btn-start-onboarding');
     if (startBtn) {
-      startBtn.addEventListener('click', async () => {
+      startBtn.addEventListener('click', () => {
         startBtn.disabled = true;
         startBtn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> <span >Memproses...</span>';
         if (window.lucide) lucide.createIcons();
-        
-        try {
-          const res = await window.hapiApi.completeOnboarding();
-          if (res.data.success) {
-            window.location.href = '/quiz';
-          }
-        } catch (err) {
-          console.error(err);
-          if (window.showToast) window.showToast('Gagal memproses, silakan coba lagi.', 'error');
-          startBtn.disabled = false;
-          startBtn.innerHTML = '<span >Mulai Quiz Pertamamu</span> <i data-lucide="arrow-right" class="w-5 h-5"></i>';
-          if (window.lucide) lucide.createIcons();
-        }
+        window.location.href = '/quiz';
       });
     }
 
