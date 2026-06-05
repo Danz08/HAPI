@@ -43,7 +43,7 @@ Karakteristik & Aturanmu:
 - Konteks emosi pengguna saat ini berdasarkan analisis AI: ${emotionData?.emotion || 'Tidak diketahui'}. Sesuaikan nada bicaramu dengan emosi ini!`;
 
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-3.5-flash",
+      model: "gemini-flash-latest",
       systemInstruction: systemPrompt
     });
 
@@ -52,12 +52,20 @@ Karakteristik & Aturanmu:
     const recentHistory = history.slice(-15);
     
     // Gemini chat format: { role: 'user' | 'model', parts: [{ text: '...' }] }
-    // We must ensure the history alternates user and model.
-    // If it doesn't, we will just pass it as plain context to a simple generateContent call.
-    // But startChat is better if history is valid.
+    // Gemini requires alternating roles and the first message MUST be a user message.
     
-    // Let's filter out 'START' messages from frontend history
-    let validHistory = recentHistory.filter(msg => msg.message !== 'START');
+    // Instead of filtering out 'START', we replace it with 'Halo' to keep the sequence valid
+    let validHistory = recentHistory.map(msg => {
+      if (msg.message === 'START') {
+        return { ...msg, message: 'Halo' };
+      }
+      return msg;
+    });
+    
+    // Ensure the first message is from the user
+    while (validHistory.length > 0 && validHistory[0].role === 'ai') {
+      validHistory.shift();
+    }
     
     const formattedHistory = [];
     let lastRole = null;

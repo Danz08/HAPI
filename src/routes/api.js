@@ -406,22 +406,16 @@ router.get('/chat', async (req, res) => {
   try {
     const db = getDb();
     const history = await db.prepare('SELECT role, message FROM chat_messages WHERE user_id = ? ORDER BY id ASC').all(req.session.user.id);
-    const state = await db.prepare('SELECT current_step FROM chatbot_states WHERE user_id = ?').get(req.session.user.id);
     
     let chips = [];
-    if (state) {
-      if (state.current_step === 'WEATHER_SELECTION') {
+    if (history.length > 0) {
+      const lastMsg = history[history.length - 1];
+      if (lastMsg.role === 'ai' && lastMsg.message.includes('ibaratkan cuaca')) {
         chips = [
           { text: "☀️ Cerah, lumayan oke", value: "Cerah" },
           { text: "🌤️ Agak mendung", value: "Mendung" },
           { text: "🌧️ Hujan deras", value: "Hujan" },
           { text: "⛈️ Badai, berat banget", value: "Badai" }
-        ];
-      } else if (state.current_step === 'SUMMARY') {
-        chips = [
-          { text: "Lihat kondisi aku hari ini", value: "Lihat kondisi" },
-          { text: "Mau cerita lagi besok", value: "Cerita besok" },
-          { text: "Tutup dulu", value: "Tutup" }
         ];
       }
     }
