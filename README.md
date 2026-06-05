@@ -34,10 +34,11 @@ Aplikasi web untuk memantau tingkat kelelahan, mengelola produktivitas, dan menj
 - Integrasi ML API untuk memprediksi tingkat kelelahan berdasarkan jawaban.
 - Klasifikasi risiko: Rendah, Sedang, Tinggi beserta rekomendasi yang disesuaikan.
 
-### AI Chatbot Asisten
+### AI Chatbot Asisten (Powered by Gemini AI)
 - Floating widget di kanan bawah, bisa diakses dari halaman manapun setelah *onboarding*.
+- Terintegrasi penuh dengan **Google Gemini API** (`gemini-flash-latest`) untuk percakapan empatik dan pintar layaknya konselor atau teman cerita.
 - Deteksi emosi otomatis (Emotion AI) dari pesan pengguna untuk merespons dengan konteks empati yang tepat.
-- *Quick actions* (chips) untuk respons cepat.
+- *Quick actions* (chips) untuk respons cepat (misal: melaporkan cuaca/kondisi hari ini).
 
 ---
 
@@ -148,6 +149,9 @@ DATABASE_URL=postgresql://postgres:password@localhost:5432/hapi_db
 GOOGLE_CLIENT_ID=...
 GOOGLE_CLIENT_SECRET=...
 GOOGLE_REDIRECT_URI=http://localhost:3000/auth/google/callback
+
+# Gemini API Key untuk Chatbot
+GEMINI_API_KEY=AIzaSy...
 ```
 
 ### Build & Jalankan
@@ -236,6 +240,7 @@ Buka `http://localhost:3000` di browser.
 - [x] Perbaikan responsivitas *mobile* dan *glassmorphism*
 - [x] Integrasi Model Machine Learning (API)
 - [x] Onboarding Flow *strict*
+- [x] Integrasi Chatbot dengan Gemini API
 - [ ] Notifikasi *real-time* (Push API / WebSockets)
 - [ ] Export data analisis (PDF/CSV)
 
