@@ -43,7 +43,7 @@ Karakteristik & Aturanmu:
 - Konteks emosi pengguna saat ini berdasarkan analisis AI: ${emotionData?.emotion || 'Tidak diketahui'}. Sesuaikan nada bicaramu dengan emosi ini!`;
 
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
+      model: "gemini-3.5-flash",
       systemInstruction: systemPrompt
     });
 
@@ -85,8 +85,16 @@ Karakteristik & Aturanmu:
 
     // Intercept 'START' message
     if (userMessage === 'START') {
-      responses.push({ text: "Hei, senang kamu mampir ke sini. 😊\n\nIni ruang buat kamu — nggak ada yang dihakimi, nggak ada jawaban yang salah. Hari ini rasanya seperti apa?", delay: 0 });
-      return { responses, chips: [], isCrisis: false, emotionLabel: null };
+      responses.push({ text: "Hei, senang kamu mampir ke sini. 😊", delay: 1200 });
+      responses.push({ text: "Ini ruang buat kamu — nggak ada yang dihakimi, nggak ada jawaban yang salah.", delay: 1800 });
+      responses.push({ text: "Aku cuma mau tanya satu hal dulu...\n\nKalau hari ini kamu ibaratkan cuaca, kira-kira lagi kayak gimana?", delay: 0 });
+      chips = [
+        { text: "☀️ Cerah, lumayan oke", value: "Cerah" },
+        { text: "🌤️ Agak mendung", value: "Mendung" },
+        { text: "🌧️ Hujan deras", value: "Hujan" },
+        { text: "⛈️ Badai, berat banget", value: "Badai" }
+      ];
+      return { responses, chips, isCrisis: false, emotionLabel: null };
     }
 
     const chat = model.startChat({
