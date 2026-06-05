@@ -1,0 +1,13 @@
+# --- Framework Web & Server ---
+fastapi
+uvicorn
+pydantic
+
+# --- Machine Learning & Data Processing ---
+tensorflow
+numpy
+pandas
+scikit-learn
+
+# --- NLP & Teks ---
+emoji
