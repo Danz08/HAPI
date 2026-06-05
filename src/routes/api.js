@@ -368,10 +368,14 @@ router.post('/chat', async (req, res) => {
 
   // Generate response using local logic (enhanced with emotion context)
   try {
-    const chatResult = await processChat(req.session.user.id, message, emotionResult);
+    const db = getDb();
+    const historyData = await db.prepare(
+      'SELECT role, message FROM chat_messages WHERE user_id = ? ORDER BY id ASC LIMIT 50'
+    ).all(req.session.user.id);
+
+    const chatResult = await processChat(req.session.user.id, message, emotionResult, historyData);
 
     // Save chat messages to database
-    const db = getDb();
     const sessionId = req.session.id || 'default';
     await db.prepare(
       'INSERT INTO chat_messages (user_id, role, message, session_id) VALUES (?, ?, ?, ?)'
